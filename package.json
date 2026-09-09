@@ -5,11 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "server": "node server/index.js",
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google/genai": "^2.21.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
     "lucide-react": "^1.34.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"

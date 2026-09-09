@@ -37,6 +37,7 @@ import {
   ShieldCheck,
   AlertTriangle,
   UploadCloud,
+  Upload,
   Filter,
   TrendingUp,
   Wallet,
@@ -47,7 +48,12 @@ import {
   UserCheck,
   FileText,
   Clock,
-  RefreshCw
+  RefreshCw,
+  ThumbsUp,
+  ThumbsDown,
+  Share2,
+  MoreHorizontal,
+  Bookmark
 } from 'lucide-react'
 import thamiliLogoImg from './assets/thamili-logo.png'
 import sidebarLogoImg from './assets/thamili-logo.png'
@@ -126,6 +132,21 @@ export const SAMPLE_UPLOAD_PRESETS = [
     fileFormat: 'RAW Hi-Res',
     fileSize: '5.1 MB'
   }
+]
+
+export const INITIAL_LOGGED_IN_HISTORY = [
+  { id: 'chat-1', title: 'Casual Greeting', query: 'Casual Greeting and friendly conversation', timeTag: 'Today', dateBucket: 'today', createdAt: 'Today, 6:15 PM' },
+  { id: 'chat-2', title: 'Electric Sedan Coastal Drive', query: 'Electric Sedan Coastal Drive at sunset 8k cinematic wallpaper', timeTag: 'Today', dateBucket: 'today', createdAt: 'Today, 4:20 PM', image: '/images/basic/car-sports-red.jpg' },
+  { id: 'chat-3', title: 'Coastal Tesla Sunset Drive', query: 'Coastal Tesla Sunset Drive aesthetic highway wallpaper', timeTag: 'Today', dateBucket: 'today', createdAt: 'Today, 2:05 PM', image: '/images/basic/car-supercar.jpg' },
+  { id: 'chat-4', title: 'HHD Table Lab Guide', query: 'HHD Table Lab Guide visual technical diagram and schematic', timeTag: '29 Aug', dateBucket: 'older', createdAt: '29 Aug 2026', image: '/images/tamil/madurai-temple.jpg' },
+  { id: 'chat-5', title: 'Futuristic Cyberpunk Metropolis', query: 'Futuristic cyberpunk city at dusk 8k volumetric neon rain', timeTag: '25 Aug', dateBucket: 'older', createdAt: '25 Aug 2026', image: '/images/tamil/madurai-temple.jpg' },
+  { id: 'chat-6', title: 'Lotus Flower Macro Droplets', query: 'Lotus flower water droplets macro close up photography', timeTag: '18 Aug', dateBucket: 'older', createdAt: '18 Aug 2026', image: '/images/basic/flower-lotus.jpg' },
+  { id: 'chat-7', title: '3D Clay Style Mascot Character', query: '3D cute clay style smiling mascot character design', timeTag: '12 Aug', dateBucket: 'older', createdAt: '12 Aug 2026', image: '/images/basic/concept-plushie.jpg' }
+]
+
+export const INITIAL_GUEST_HISTORY = [
+  { id: 'guest-1', title: 'Futuristic cyberpunk city at dusk', query: 'Futuristic cyberpunk city at dusk 8k', timeTag: 'Session', dateBucket: 'session', createdAt: 'Just now', image: '/images/tamil/madurai-temple.jpg' },
+  { id: 'guest-2', title: 'Neon sports car in midnight rain', query: 'Neon sports car in midnight rain', timeTag: 'Session', dateBucket: 'session', createdAt: '1h ago', image: '/images/basic/car-supercar.jpg' }
 ]
 
 export function ThamiliLogoIcon({ className = 'logo-icon-svg' }) {
@@ -240,7 +261,6 @@ export function ThamiliLogoIcon({ className = 'logo-icon-svg' }) {
     </svg>
   )
 }
-export const AurqoLogoIcon = ThamiliLogoIcon
 
 export function ThamiliWordmark({ className = 'brand-title', isHero = false }) {
   return (
@@ -265,7 +285,6 @@ export function ThamiliWordmark({ className = 'brand-title', isHero = false }) {
     </span>
   )
 }
-export const AurqoWordmark = ThamiliWordmark
 
 // =========================================================================
 // ULTRA-SMOOTH HARDWARE-ACCELERATED AMBIENT AURORA (Zero Pixelation / Zero Banding)
@@ -285,399 +304,415 @@ export function BackgroundWaves() {
   )
 }
 
-const REFERENCE_TEMPLATE_SLOTS = [
-  // Slot 0: Tamil Vintage Houses (விண்டேஜ் இல்லங்கள்)
-  [
-    {
-      id: 'chettinad-house',
-      name: 'Chettinad Vintage Mansion',
-      prompt: '19th-century Chettinad vintage heritage ancestral mansion with massive Burma teak carved pillars, handmade colorful Athangudi floor tiles, sunlit central courtyard thinnai, antique brass urns, 8k architectural photo',
-      image: '/images/tamil/chettinad-mansion.jpg',
-      domain: 'Tamil Vintage Houses'
-    },
-    {
-      id: 'madras-agraharam',
-      name: 'Madras Agraharam Tiled House',
-      prompt: 'Traditional Tamil Madras Agraharam street house with sloping red terracotta tile roof, white lime-washed walls with red thiruman stripes, wooden veranda thinnai with morning Kolam, 8k nostalgic vintage photograph',
-      image: '/images/tamil/agraharam-street.jpg',
-      domain: 'Tamil Vintage Houses'
-    },
-    {
-      id: 'antique-wooden-door',
-      name: 'Antique Carved Teak Door',
-      prompt: 'Authentic antique Tamil wooden doorway hand-carved from solid Burma teak with intricate floral Gajalakshmi carvings, ornate heavy brass padlock and studs, vintage patina, 8k macro architectural photo',
-      image: '/images/tamil/chettinad-door.jpg',
-      domain: 'Tamil Vintage Houses'
-    },
-    {
-      id: 'ancestral-thinnai',
-      name: 'Ancestral Courtyard Thinnai',
-      prompt: 'Sun-drenched open-air courtyard (muttram) inside vintage Tamil heritage home with rain pillars, swinging teak wooden oonjal swing, polished red oxide floor, brass filter coffee davarah on corner stool, 8k',
-      image: '/images/tamil/chettinad-thinnai.jpg',
-      domain: 'Tamil Vintage Houses'
-    }
-  ],
+export const REFERENCE_CONCEPT_STYLES = [
+  // Artistic & Street
+  {
+    id: 'ref-paint',
+    name: 'Paint',
+    field: 'Artistic Styles',
+    categoryGroup: 'Artistic & Street',
+    tag: 'Oil & Watercolor',
+    image: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Expressive textured impressionist oil painting portrait of an elder lady in sun hat on city street, fine visible brushstrokes, rich canvas texture, master fine art'
+  },
+  {
+    id: 'ref-mural',
+    name: 'Mural',
+    field: 'Street & Urban Art',
+    categoryGroup: 'Artistic & Street',
+    tag: 'Graffiti & Murals',
+    image: 'https://images.unsplash.com/photo-1561055657-b9e0bf0fa360?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Vibrant large-scale urban street wall mural painting of cheerful person in striped jersey, vivid graffiti art, textured brick wall, street art style'
+  },
+  {
+    id: 'ref-mug',
+    name: 'Mug',
+    field: 'Merchandise & Products',
+    categoryGroup: '3D & Cute Goods',
+    tag: 'Custom Mug',
+    image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Cute cartoon character barista drinking coffee illustration printed on white ceramic mug, warm coffee shop table setting, clean merchandise mockup'
+  },
+  {
+    id: 'ref-plushie',
+    name: 'Plushie',
+    field: 'Cute & Kawaii Figures',
+    categoryGroup: '3D & Cute Goods',
+    tag: 'Soft Plushie',
+    image: '/images/basic/concept-plushie.jpg',
+    prompt: 'Adorable soft plushie stuffed toy character resting on a cozy bed with warm fairy lights in background, cute kawaii plush doll, detailed fabric texture'
+  },
+  {
+    id: 'ref-arcade',
+    name: 'Arcade',
+    field: 'Retro & Gaming',
+    categoryGroup: 'Retro, Sci-Fi & Action',
+    tag: 'Neon Arcade',
+    image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Fisheye lens wide photograph of a girl laughing enthusiastically in a glowing retro neon arcade gaming hall, colorful illuminated game machines'
+  },
+  {
+    id: 'ref-coach',
+    name: 'Coach',
+    field: 'Sports & Cinematic',
+    categoryGroup: 'Portraits & Characters',
+    tag: 'Team Coach',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Professional athletic sports coach in tailored navy suit holding clipboard on stadium sideline, crowd of spectators in background, intense game focus'
+  },
 
-  // Slot 1: Tamil Vintage Cars & Retro Streets (விண்டேஜ் கார்கள் & வீதிகள்)
-  [
-    {
-      id: 'vintage-ambassador',
-      name: '1970s Vintage Ambassador',
-      prompt: 'Classic vintage 1970s cream-white Hindustan Ambassador car parked under banyan tree on nostalgic Madras heritage street, old Tamil typography road sign, soft morning golden sunlight, 35mm film grain',
-      image: '/images/tamil/vintage-ambassador-1.jpg',
-      domain: 'Tamil Vintage Cars & Streets'
-    },
-    {
-      id: 'retro-padmini-madras',
-      name: 'Retro Premier Padmini Taxi',
-      prompt: 'Retro black and yellow vintage Premier Padmini taxi cruising past historic colonial building on Mount Road Chennai in 1980s, bustling street with vintage scooters and nostalgic atmosphere, 8k',
-      image: '/images/tamil/vintage-ambassador-2.jpg',
-      domain: 'Tamil Vintage Cars & Streets'
-    },
-    {
-      id: 'village-bullock-cart',
-      name: 'Village Bullock Cart Street',
-      prompt: 'Traditional Tamil Nadu countryside village red dirt road with antique wooden bullock cart (Maattu Vandi), palmyra trees silhouetted against warm sunset, rustic vintage village lifestyle, 8k photography',
-      image: '/images/tamil/bullock-cart-tamilnadu.jpg',
-      domain: 'Tamil Vintage Cars & Streets'
-    },
-    {
-      id: 'madurai-bazaar-street',
-      name: 'Madurai Temple Street Bazaar',
-      prompt: 'Lively vintage temple street bazaar outside Madurai Meenakshi Temple, flower vendors weaving fresh jasmine garlands, brass lamp shops, devotees in traditional silk veshti, nostalgic warm colors',
-      image: '/images/tamil/madurai-temple.jpg',
-      domain: 'Tamil Vintage Cars & Streets'
-    }
-  ],
+  // Row 2
+  {
+    id: 'ref-bloom',
+    name: 'Bloom',
+    field: 'Floral & Botanical',
+    categoryGroup: 'Nature & Botanical',
+    tag: 'Flower Bloom',
+    image: '/images/basic/flower-rose.jpg',
+    prompt: 'Smiling female florist holding an extravagant blooming Protea and fresh floral bouquet inside a cozy flower boutique shop, natural sunlight'
+  },
+  {
+    id: 'ref-dappled',
+    name: 'Dappled',
+    field: 'Cinematic Lighting',
+    categoryGroup: 'Portraits & Characters',
+    tag: 'Dappled Light',
+    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Warm smiling person in mustard knit sweater on sun-drenched cobblestone European canal street with dappled natural sunlight and tree shadows'
+  },
+  {
+    id: 'ref-clay',
+    name: 'Clay',
+    field: 'Claymation & 3D',
+    categoryGroup: '3D & Cute Goods',
+    tag: 'Clay Figure',
+    image: 'https://images.unsplash.com/photo-1563089145-599997674d42?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Cozy 3D claymation stop-motion animated clay character wearing knitted sweater sipping hot cocoa in a warm cafe library, textured clay figure'
+  },
+  {
+    id: 'ref-popup',
+    name: 'Pop up',
+    field: 'Papercraft & Storybook',
+    categoryGroup: '3D & Cute Goods',
+    tag: 'Pop-Up Book',
+    image: 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Intricate papercraft 3D pop-up book illustration of a young person in denim jacket emerging from illustrated storybook pages, paper layers'
+  },
+  {
+    id: 'ref-themepark',
+    name: 'Theme park',
+    field: 'Entertainment & Retro',
+    categoryGroup: 'Retro, Sci-Fi & Action',
+    tag: 'Theme Park',
+    image: 'https://images.unsplash.com/photo-1513889961551-628c1e5e2ee9?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Joyful retro 1980s theme park celebration with friendly purple dragon mascot, confetti, colorful roller coaster decorations, festive retro vibe'
+  },
+  {
+    id: 'ref-lavender',
+    name: 'Lavender',
+    field: 'Fashion & Scenic',
+    categoryGroup: 'Nature & Botanical',
+    tag: 'Lavender Field',
+    image: 'https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Fashion editorial of a stylish person in an oversized pastel lavender lilac suit standing in endless blooming purple lavender field at sunset'
+  },
 
-  // Slot 2: Tamil Pongal Festival (பொங்கல் திருவிழா)
-  [
-    {
-      id: 'thai-pongal-pot',
-      name: 'Village Pongal Earthen Pot',
-      prompt: 'Traditional rural Thai Pongal ritual with decorated earthenware clay pot bubbling over with sweet milk on open firewood stove, turmeric leaf tied around neck, tall fresh sugarcane stalks in village house courtyard, 8k',
-      image: '/images/tamil/pongal-pot.jpg',
-      domain: 'Tamil Pongal Festival'
-    },
-    {
-      id: 'pongal-kolam-sugarcane',
-      name: 'Sacred Kolam & Sugarcane',
-      prompt: 'Intricate white rice flour Pongal Kolam mandala drawn on damp red earth in front of ancestral house doorstep, flanked by fresh green sugarcane stalks and colorful flower petals, morning dew, 8k macro',
-      image: '/images/tamil/tamil-kolam.jpg',
-      domain: 'Tamil Pongal Festival'
-    },
-    {
-      id: 'mattu-pongal-bull',
-      name: 'Mattu Pongal Bull Art',
-      prompt: 'Majestic Tamil Kangayam bull celebrated during Mattu Pongal, horns painted with vibrant saffron and green bands, brass bell garland jingling around neck, floral marigold crown, village celebration',
-      image: '/images/tamil/mattu-pongal-cow.jpg',
-      domain: 'Tamil Pongal Festival'
-    },
-    {
-      id: 'village-pongal-feast',
-      name: 'Tamil Harvest Celebration',
-      prompt: 'Tamil family dressed in traditional pattu pavada and silk veshti celebrating Thai Pongal festival together in ancestral village home courtyard, offering Sakkarai Pongal on fresh plantain leaf, 8k',
-      image: '/images/tamil/pongal-cooking.jpg',
-      domain: 'Tamil Pongal Festival'
-    }
-  ],
+  // Row 3
+  {
+    id: 'ref-pin',
+    name: 'Pin',
+    field: 'Merchandise & Badges',
+    categoryGroup: '3D & Cute Goods',
+    tag: 'Enamel Pin',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Custom enamel lapel pin badge of a smiling person character pinned onto a vintage blue denim jacket with brass zipper, macro merchandise photo'
+  },
+  {
+    id: 'ref-monstera',
+    name: 'Monstera',
+    field: 'Nature & Greenhouse',
+    categoryGroup: 'Nature & Botanical',
+    tag: 'Monstera Foliage',
+    image: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Aesthetic portrait of a person peering through vibrant lush green Monstera and tropical jungle foliage in a sunlit botanical greenhouse'
+  },
+  {
+    id: 'ref-elven',
+    name: 'Elven',
+    field: 'Fantasy & Mythology',
+    categoryGroup: 'Portraits & Characters',
+    tag: 'Elven Archer',
+    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Cinematic fantasy elven warrior archer with braided hair and leather armor drawing a bow in a golden sunlit mystical ancient forest, epic fantasy'
+  },
+  {
+    id: 'ref-studio',
+    name: 'Studio',
+    field: 'Studio Photography',
+    categoryGroup: 'Portraits & Characters',
+    tag: 'Studio Portrait',
+    image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Clean high-key professional studio sports portrait of a female soccer athlete in striped jersey holding soccer ball, dramatic rim lighting'
+  },
+  {
+    id: 'ref-yogi',
+    name: 'Yogi',
+    field: 'Mindfulness & Yoga',
+    categoryGroup: 'Portraits & Characters',
+    tag: 'Yoga Master',
+    image: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Serene outdoor yoga master performing advanced arm-balance crow pose on wooden pier over tranquil mist-covered lake at sunrise, zen meditation'
+  },
+  {
+    id: 'ref-neon',
+    name: 'Neon',
+    field: 'Cyberpunk & Night',
+    categoryGroup: 'Retro, Sci-Fi & Action',
+    tag: 'Neon Tokyo',
+    image: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Moody cinematic cyberpunk Tokyo neon rain street portrait of a person holding clear umbrella under glowing red and cyan neon signs, puddle reflections'
+  },
 
-  // Slot 3: Tamil Diwali & Deepam (தீபாவளி & திருவிளக்கு)
-  [
-    {
-      id: 'agal-vilakku-lamps',
-      name: 'Terracotta Agal Vilakku Lamps',
-      prompt: 'Rows of traditional terracotta clay agal vilakku oil lamps glowing with warm golden flame on wooden steps of vintage heritage house, Karthigai Deepam & Diwali festival night, beautiful bokeh, 8k',
-      image: '/images/tamil/diwali-diya.jpg',
-      domain: 'Tamil Diwali Celebrations'
-    },
-    {
-      id: 'brass-kuthuvilakku',
-      name: 'Ancestral Brass Kuthuvilakku',
-      prompt: 'Grand traditional five-wick brass Kuthuvilakku standing tall in antique Tamil pooja room, illuminated by fragrant sesame oil flames, decorated with fresh Madurai jasmine garland and vermillion kumkum, 8k',
-      image: '/images/tamil/kuthuvilakku-brass.jpg',
-      domain: 'Tamil Diwali Celebrations'
-    },
-    {
-      id: 'diwali-sparklers-night',
-      name: 'Diwali Sparklers (Mathappu)',
-      prompt: 'Joyful traditional Tamil Diwali celebration at dusk in village courtyard, children waving glowing golden sparklers (Kambi Mathappu) dressed in bright silk pavada, flower pots showering golden sparks, 8k',
-      image: '/images/tamil/diwali-sparklers.jpg',
-      domain: 'Tamil Diwali Celebrations'
-    },
-    {
-      id: 'deepam-temple-steps',
-      name: 'Karthigai Deepam Glow',
-      prompt: 'Historic stone temple steps and ancestral thinnai completely illuminated with hundreds of glowing terracotta oil lamps during auspicious Karthigai Deepam festival night, sacred golden aura, 8k photo',
-      image: '/images/tamil/diwali-diyas-night.jpg',
-      domain: 'Tamil Diwali Celebrations'
-    }
-  ],
+  // Row 4
+  {
+    id: 'ref-hollywood',
+    name: 'Hollywood',
+    field: 'Vintage Glamour',
+    categoryGroup: 'Portraits & Characters',
+    tag: 'Golden Age Hollywood',
+    image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Classic black and white vintage Golden Age Hollywood glamour portrait of a handsome gentleman in tailored black tuxedo and bow tie, dramatic chiaroscuro film lighting'
+  },
+  {
+    id: 'ref-jump',
+    name: 'Jump',
+    field: 'Action & Extreme',
+    categoryGroup: 'Retro, Sci-Fi & Action',
+    tag: 'Skydiving Jump',
+    image: 'https://images.unsplash.com/photo-1521673461164-de300ebcfb17?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Exciting first-person extreme skydiver freefalling with safety goggles and open smile above sweeping green coastal landscape, action GoPro shot'
+  },
+  {
+    id: 'ref-marble',
+    name: 'Marble',
+    field: 'Sculpture & Classical',
+    categoryGroup: 'Artistic & Street',
+    tag: 'Marble Sculpture',
+    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Classical ancient Greek Roman carved white marble statue of a goddess standing gracefully in museum gallery with warm ambient gallery spotlights'
+  },
+  {
+    id: 'ref-pulp',
+    name: 'Pulp',
+    field: 'Vintage Comic & Poster',
+    categoryGroup: 'Artistic & Street',
+    tag: 'Pulp Thriller',
+    image: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Vintage 1970s pulp horror comedy movie poster style illustration of a screaming man with glasses and retro typography title, distressed paper grain'
+  },
+  {
+    id: 'ref-origami',
+    name: 'Origami',
+    field: 'Geometric & Low-Poly',
+    categoryGroup: 'Artistic & Street',
+    tag: 'Paper Origami',
+    image: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Modern geometric 3D papercraft origami sculpture mask of a human face with precise polygonal faceted planes in golden yellow and beige'
+  },
+  {
+    id: 'ref-slide',
+    name: 'Slide',
+    field: 'Sports Celebrations',
+    categoryGroup: 'Retro, Sci-Fi & Action',
+    tag: 'Goal Slide',
+    image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Triumphant soccer player sliding on knees on wet stadium turf celebrating a winning goal in front of roaring cheering stadium crowd, dynamic action'
+  },
 
-  // Slot 4: Tamil Jallikattu & Bull Heritage (ஜல்லிக்கட்டு & மாடு)
-  [
-    {
-      id: 'alanganallur-jallikattu',
-      name: 'Alanganallur Jallikattu Bull',
-      prompt: 'High-speed action photograph of the iconic Alanganallur Jallikattu bull charging into the sandy arena, sharp painted horns, powerful muscular Kangayam breed, cheering crowd in golden afternoon sun, 8k',
-      image: '/images/tamil/alanganallur-jallikattu.jpg',
-      domain: 'Tamil Jallikattu Heritage'
-    },
-    {
-      id: 'jallikattu-veera-tamer',
-      name: 'Bull Hump Taming Action',
-      prompt: 'Dynamic cultural photograph of brave Tamil youth embracing the muscular hump of the charging native bull at Palamedu Jallikattu arena, billowing golden sand dust, intense bravery, National Geographic',
-      image: '/images/tamil/bull-taming-1.jpg',
-      domain: 'Tamil Jallikattu Heritage'
-    },
-    {
-      id: 'decorated-temple-bull',
-      name: 'Festive Temple Kovil Kaalai',
-      prompt: 'Magnificent Tamil native temple bull (Kovil Kaalai) adorned with silk shawl, golden horn caps, floral jasmine and marigold garlands, standing proudly in temple courtyard, authentic heritage',
-      image: '/images/tamil/bull-taming-2.jpg',
-      domain: 'Tamil Jallikattu Heritage'
-    },
-    {
-      id: 'rekla-race-chariot',
-      name: 'Rural Rekla Race Chariot',
-      prompt: 'High-speed action shot of traditional Tamil Rekla race, wooden two-wheeled racing cart driven by skilled rider pulled by two sprint-trained Kangayam prize bulls, dirt flying, golden dust storm, 8k',
-      image: '/images/tamil/jallikattu-action.jpg',
-      domain: 'Tamil Jallikattu Heritage'
-    }
-  ]
+  // Row 5
+  {
+    id: 'ref-headshot',
+    name: 'Headshot',
+    field: 'Corporate & Editorial',
+    categoryGroup: 'Portraits & Characters',
+    tag: 'Executive Headshot',
+    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Crisp contemporary corporate headshot of a confident professional woman wearing glasses and black turtleneck in modern sunlit office atrium'
+  },
+  {
+    id: 'ref-bento',
+    name: 'Bento',
+    field: 'Miniature & Culinary',
+    categoryGroup: '3D & Cute Goods',
+    tag: 'Sushi Bento',
+    image: 'https://images.unsplash.com/photo-1553621042-f6e147245754?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Cute miniature diorama doll character seated inside a traditional Japanese wooden bento box surrounded by fresh sushi rolls and onigiri rice balls'
+  },
+  {
+    id: 'ref-nyc',
+    name: 'NYC',
+    field: 'City Life & Dance',
+    categoryGroup: 'Retro, Sci-Fi & Action',
+    tag: 'NYC Street',
+    image: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Dynamic street style photo of a joyful dancer leaping across a sunny New York City crosswalk between historic brownstones, breezy summer light'
+  },
+  {
+    id: 'ref-claw',
+    name: 'Claw',
+    field: 'Arcade & Whimsical',
+    categoryGroup: '3D & Cute Goods',
+    tag: 'Claw Machine',
+    image: 'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Whimsical miniature cute chibi doll character being lifted by a metal crane claw inside a glowing neon illuminated arcade claw machine filled with plushies'
+  },
+  {
+    id: 'ref-zen',
+    name: 'Zen',
+    field: 'Surreal & Spiritual',
+    categoryGroup: 'Nature & Botanical',
+    tag: 'Zen Floating',
+    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Surreal dreamlike peaceful zero-gravity weightless floating figure in white flowing robes levitating above a serene Japanese rock zen garden and calm ocean at twilight'
+  },
+  {
+    id: 'ref-chibi',
+    name: 'Chibi',
+    field: 'Anime & Kawaii Goods',
+    categoryGroup: '3D & Cute Goods',
+    tag: 'Chibi Keychain',
+    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Cute acrylic star keychain charm featuring an adorable chibi girl cartoon character with glasses holding coffee, dangling on a pink backpack strap'
+  },
+
+  // Row 6
+  {
+    id: 'ref-bronze',
+    name: 'Bronze',
+    field: 'Historical & Sculptural',
+    categoryGroup: 'Artistic & Street',
+    tag: 'Bronze Bust',
+    image: 'https://images.unsplash.com/photo-1549887534-1541e9326642?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Intricately embossed weathered antique bronze statue bust of a commanding warrior commander in ornate armor, historic museum lighting, greenish patina'
+  },
+  {
+    id: 'ref-sitcom',
+    name: 'Sitcom',
+    field: 'Retro Television',
+    categoryGroup: 'Portraits & Characters',
+    tag: '90s Sitcom',
+    image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Nostalgic 1990s retro TV sitcom intro scene with smiling actor in vibrant neon color-block jacket and stonewashed denim in a checkerboard floor retro kitchen with GUEST STAR yellow text'
+  },
+  {
+    id: 'ref-frontrow',
+    name: 'Front row',
+    field: 'Haute Couture & Runway',
+    categoryGroup: 'Retro, Sci-Fi & Action',
+    tag: 'Fashion Front Row',
+    image: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Edgy avant-garde high fashion portrait of a model sitting in the front row of Paris Fashion Week runway surrounded by flashing paparazzi strobe lights, blurred background'
+  },
+  {
+    id: 'ref-pastel',
+    name: 'Pastel',
+    field: 'Anime & Illustration',
+    categoryGroup: 'Artistic & Street',
+    tag: 'Pastel Bakery',
+    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Heartwarming cozy anime illustration of a cheerful young baker in apron holding fresh warm cookies in a quaint pastel French bakery filled with artisan breads'
+  }
 ]
 
-export const ALL_CREATIVE_CATEGORIES = [
-  // 1. Tamil Vintage Houses & Architecture (விண்டேஜ் இல்லங்கள்)
-  {
-    id: 'cat-chettinad-house',
-    name: 'Chettinad Athangudi Heritage Palace',
-    field: 'Tamil Vintage Houses',
-    tag: 'Chettinad Heritage',
-    image: '/images/tamil/chettinad-mansion.jpg',
-    prompt: 'Majestic 19th-century Chettinad vintage heritage ancestral mansion with massive Burma teak carved pillars, handmade colorful Athangudi floor tiles, sunlit central courtyard thinnai, 8k photo'
-  },
-  {
-    id: 'cat-madras-agraharam-house',
-    name: 'Madras Agraharam Tiled House',
-    field: 'Tamil Vintage Houses',
-    tag: 'Traditional Agraharam',
-    image: '/images/tamil/agraharam-street.jpg',
-    prompt: 'Traditional Tamil Madras Agraharam street house with sloping red terracotta tile roof, white lime-washed walls with red stripes, wooden veranda thinnai with morning Kolam, 8k vintage photograph'
-  },
-  {
-    id: 'cat-antique-teak-door',
-    name: 'Antique Carved Teak Wooden Door',
-    field: 'Tamil Vintage Houses',
-    tag: 'Carved Woodwork',
-    image: '/images/tamil/chettinad-door.jpg',
-    prompt: 'Authentic antique Tamil wooden doorway hand-carved from solid Burma teak with intricate floral Gajalakshmi carvings, ornate heavy brass padlock and studs, vintage patina, 8k macro'
-  },
-  {
-    id: 'cat-ancestral-thinnai',
-    name: 'Ancestral Courtyard Thinnai Veranda',
-    field: 'Tamil Vintage Houses',
-    tag: 'Open Muttram',
-    image: '/images/tamil/chettinad-thinnai.jpg',
-    prompt: 'Sun-drenched open-air courtyard (muttram) inside vintage Tamil heritage home with rain pillars, swinging teak wooden oonjal swing, polished red oxide floor, brass filter coffee davarah, 8k'
-  },
-  {
-    id: 'cat-tanjore-palace-arch',
-    name: 'Thanjavur Nayak Palace Hall',
-    field: 'Tamil Vintage Houses',
-    tag: 'Royal Architecture',
-    image: '/images/tamil/chettinad-courtyard.jpg',
-    prompt: 'Historic Thanjavur Maratha and Nayak palace interior with grand stucco arches, vintage fresco ceiling paintings, huge granite courtyards, warm afternoon light filtering through corridors'
-  },
-  {
-    id: 'cat-vintage-kitchen-pots',
-    name: 'Chettinad Brass & Clay Pot Kitchen',
-    field: 'Tamil Vintage Houses',
-    tag: 'Rustic Kitchen',
-    image: '/images/tamil/chettinad-mansion.jpg',
-    prompt: 'Traditional vintage Chettinad village kitchen with wood-fired clay stoves (Aduppu), gleaming large brass water vessels (Anda), Kalchatti soapstone pots, and hanging uri baskets, 8k'
-  },
+export const ALL_CREATIVE_CATEGORIES = REFERENCE_CONCEPT_STYLES
 
-  // 2. Tamil Vintage Cars & Retro Streets (விண்டேஜ் கார்கள் & வீதிகள்)
-  {
-    id: 'cat-vintage-ambassador-car',
-    name: '1970s Vintage Ambassador on Madras Road',
-    field: 'Tamil Vintage Cars & Streets',
-    tag: 'Iconic Vintage Car',
-    image: '/images/tamil/vintage-ambassador-1.jpg',
-    prompt: 'Classic vintage 1970s cream-white Hindustan Ambassador car parked under banyan tree on nostalgic Madras heritage street, old Tamil typography road sign, soft morning golden sunlight, 35mm film'
-  },
-  {
-    id: 'cat-retro-premier-padmini',
-    name: 'Retro Premier Padmini Black-Yellow Taxi',
-    field: 'Tamil Vintage Cars & Streets',
-    tag: 'Vintage Taxi',
-    image: '/images/tamil/vintage-ambassador-2.jpg',
-    prompt: 'Retro black and yellow vintage Premier Padmini taxi cruising past historic colonial building on Mount Road Chennai in 1980s, bustling street with vintage scooters and nostalgic atmosphere, 8k'
-  },
-  {
-    id: 'cat-village-bullock-cart-street',
-    name: 'Village Bullock Cart (Maattu Vandi)',
-    field: 'Tamil Vintage Cars & Streets',
-    tag: 'Rustic Heritage',
-    image: '/images/tamil/bullock-cart-tamilnadu.jpg',
-    prompt: 'Traditional Tamil Nadu countryside village red dirt road with antique wooden bullock cart (Maattu Vandi), palmyra trees silhouetted against warm sunset, rustic vintage village lifestyle, 8k'
-  },
-  {
-    id: 'cat-madurai-bazaar-street-art',
-    name: 'Old Madurai Temple Street Bazaar',
-    field: 'Tamil Vintage Cars & Streets',
-    tag: 'Bazaar Street',
-    image: '/images/tamil/madurai-temple.jpg',
-    prompt: 'Lively vintage temple street bazaar outside Madurai Meenakshi Temple, flower vendors weaving fresh jasmine garlands, brass lamp shops, devotees in traditional silk veshti, nostalgic warm colors'
-  },
-  {
-    id: 'cat-vintage-chennai-central',
-    name: 'Historic Madras Central Station',
-    field: 'Tamil Vintage Cars & Streets',
-    tag: 'Madras Heritage',
-    image: '/images/tamil/vintage-ambassador-3.jpg',
-    prompt: '1970s vintage nostalgic shot of Chennai Central Railway Station Victorian red-brick facade, vintage cars and steam locomotives, bustling commuters in traditional attire, warm film tone'
-  },
-  {
-    id: 'cat-vintage-bicycle-street',
-    name: 'Vintage Hercules Bicycle in Old Town',
-    field: 'Tamil Vintage Cars & Streets',
-    tag: 'Retro Daily Life',
-    image: '/images/tamil/agraharam-street.jpg',
-    prompt: 'Vintage black roadster bicycle resting against a colorful painted heritage veranda wall, brass milk cans hanging from handlebar, morning newspaper vendor, warm sunrise light, 8k'
-  },
-
-  // 3. Tamil Pongal Harvest Festival (பொங்கல் திருவிழா)
-  {
-    id: 'cat-thai-pongal-pot-art',
-    name: 'Thai Pongal Earthen Pot on Fire',
-    field: 'Tamil Pongal Festival',
-    tag: 'Pongal Panai',
-    image: '/images/tamil/pongal-pot.jpg',
-    prompt: 'Traditional rural Thai Pongal ritual with decorated earthenware clay pot bubbling over with sweet milk on open firewood stove, turmeric leaf tied around neck, tall fresh sugarcane stalks in village house courtyard, 8k'
-  },
-  {
-    id: 'cat-pongal-kolam-sugarcane-art',
-    name: 'Sacred Rice Flour Kolam & Sugarcane',
-    field: 'Tamil Pongal Festival',
-    tag: 'Rangoli Kolam',
-    image: '/images/tamil/tamil-kolam.jpg',
-    prompt: 'Intricate white rice flour Pongal Kolam mandala drawn on damp red earth in front of ancestral house doorstep, flanked by fresh green sugarcane stalks and colorful flower petals, morning dew, 8k macro'
-  },
-  {
-    id: 'cat-mattu-pongal-bull-art',
-    name: 'Mattu Pongal Decorated Cattle',
-    field: 'Tamil Pongal Festival',
-    tag: 'Cattle Festival',
-    image: '/images/tamil/mattu-pongal-cow.jpg',
-    prompt: 'Majestic Tamil Kangayam bull celebrated during Mattu Pongal, horns painted with vibrant saffron and green bands, brass bell garland jingling around neck, floral marigold crown, village celebration'
-  },
-  {
-    id: 'cat-village-pongal-family',
-    name: 'Tamil Village Family Harvest Ritual',
-    field: 'Tamil Pongal Festival',
-    tag: 'Family Tradition',
-    image: '/images/tamil/pongal-cooking.jpg',
-    prompt: 'Tamil family dressed in traditional pattu pavada and silk veshti celebrating Thai Pongal festival together in ancestral village home courtyard, offering Sakkarai Pongal on fresh plantain leaf, 8k'
-  },
-  {
-    id: 'cat-paddy-harvest-kaveri',
-    name: 'Kaveri Delta Golden Paddy Harvest',
-    field: 'Tamil Pongal Festival',
-    tag: 'Golden Harvest',
-    image: '/images/tamil/pongal-girl.jpg',
-    prompt: 'Vast golden rice paddy fields ready for harvest in Kaveri delta Thanjavur, village farmers cutting golden sheaves in warm morning sunshine, stacks of hay, authentic rural Tamil Nadu, 8k'
-  },
-
-  // 4. Tamil Diwali & Deepam Celebrations (தீபாவளி & கார்த்திகை தீபம்)
-  {
-    id: 'cat-agal-vilakku-lamps-art',
-    name: 'Terracotta Agal Vilakku Oil Lamps',
-    field: 'Tamil Diwali Celebrations',
-    tag: 'Agal Vilakku',
-    image: '/images/tamil/diwali-diya.jpg',
-    prompt: 'Rows of traditional terracotta clay agal vilakku oil lamps glowing with warm golden flame on wooden steps of vintage heritage house, Karthigai Deepam & Diwali festival night, beautiful bokeh, 8k'
-  },
-  {
-    id: 'cat-brass-kuthuvilakku-art',
-    name: 'Ancestral Brass Kuthuvilakku Pooja',
-    field: 'Tamil Diwali Celebrations',
-    tag: 'Pooja Vilakku',
-    image: '/images/tamil/kuthuvilakku-brass.jpg',
-    prompt: 'Grand traditional five-wick brass Kuthuvilakku standing tall in antique Tamil pooja room, illuminated by fragrant sesame oil flames, decorated with fresh Madurai jasmine garland and vermillion kumkum, 8k'
-  },
-  {
-    id: 'cat-diwali-sparklers-night-art',
-    name: 'Diwali Sparklers (Kambi Mathappu)',
-    field: 'Tamil Diwali Celebrations',
-    tag: 'Night Sparklers',
-    image: '/images/tamil/diwali-sparklers.jpg',
-    prompt: 'Joyful traditional Tamil Diwali celebration at dusk in village courtyard, children waving glowing golden sparklers (Kambi Mathappu) dressed in bright silk pavada, flower pots showering golden sparks, 8k'
-  },
-  {
-    id: 'cat-karthigai-deepam-steps',
-    name: 'Karthigai Deepam Temple Steps',
-    field: 'Tamil Diwali Celebrations',
-    tag: 'Sacred Deepam',
-    image: '/images/tamil/diwali-diyas-night.jpg',
-    prompt: 'Historic stone temple steps and ancestral thinnai completely illuminated with hundreds of glowing terracotta oil lamps during auspicious Karthigai Deepam festival night, sacred golden aura, 8k photo'
-  },
-  {
-    id: 'cat-diwali-morning-silk',
-    name: 'Diwali Morning Silk & Ganga Snanam',
-    field: 'Tamil Diwali Celebrations',
-    tag: 'Diwali Morning',
-    image: '/images/tamil/nilavilakku-brass.jpg',
-    prompt: 'Traditional early morning Diwali setup in heritage house: brand new Kanchipuram silk saree with turmeric mark, homemade Diwali legiyam sweet in silver bowl, brass oil lamp lit at dawn, 8k'
-  },
-
-  // 5. Tamil Jallikattu Heritage (ஜல்லிக்கட்டு & மாடு)
-  {
-    id: 'cat-alanganallur-jallikattu-art',
-    name: 'Alanganallur Jallikattu Kangayam Bull',
-    field: 'Tamil Jallikattu Heritage',
-    tag: 'Heroic Jallikattu',
-    image: '/images/tamil/alanganallur-jallikattu.jpg',
-    prompt: 'High-speed action photograph of the iconic Alanganallur Jallikattu bull charging into the sandy arena, sharp painted horns, powerful muscular Kangayam breed, cheering crowd in golden afternoon sun, 8k'
-  },
-  {
-    id: 'cat-jallikattu-veera-tamer-art',
-    name: 'Palamedu Bull Taming Arena Action',
-    field: 'Tamil Jallikattu Heritage',
-    tag: 'Bravery Action',
-    image: '/images/tamil/bull-taming-1.jpg',
-    prompt: 'Dynamic cultural photograph of brave Tamil youth embracing the muscular hump of the charging native bull at Palamedu Jallikattu arena, billowing golden sand dust, intense bravery, National Geographic'
-  },
-  {
-    id: 'cat-decorated-temple-bull-art',
-    name: 'Festive Temple Kovil Kaalai',
-    field: 'Tamil Jallikattu Heritage',
-    tag: 'Sacred Bull',
-    image: '/images/tamil/bull-taming-2.jpg',
-    prompt: 'Magnificent Tamil native temple bull (Kovil Kaalai) adorned with silk shawl, golden horn caps, floral jasmine and marigold garlands, standing proudly in temple courtyard, authentic heritage'
-  },
-  {
-    id: 'cat-rekla-race-chariot-art',
-    name: 'Rural Rekla Race Chariot Sprint',
-    field: 'Tamil Jallikattu Heritage',
-    tag: 'Rekla Race',
-    image: '/images/tamil/jallikattu-action.jpg',
-    prompt: 'High-speed action shot of traditional Tamil Rekla race, wooden two-wheeled racing cart driven by skilled rider pulled by two sprint-trained Kangayam prize bulls, dirt flying, golden dust storm, 8k'
-  },
-  {
-    id: 'cat-vadivasal-entry',
-    name: 'Historic Vadivasal Gate Entry',
-    field: 'Tamil Jallikattu Heritage',
-    tag: 'Vadivasal Entry',
-    image: '/images/tamil/alanganallur-jallikattu.jpg',
-    prompt: 'Dramatic cinematic view of the ancient wooden Vadivasal gate opening as a majestic black Kangayam bull charges through with coconut fiber ropes flying, sun rays through arena dust, 8k'
-  }
+const REFERENCE_TEMPLATE_SLOTS = [
+  // Slot 0
+  [
+    REFERENCE_CONCEPT_STYLES[0], // Paint
+    REFERENCE_CONCEPT_STYLES[6], // Bloom
+    REFERENCE_CONCEPT_STYLES[12], // Pin
+    REFERENCE_CONCEPT_STYLES[18], // Hollywood
+    REFERENCE_CONCEPT_STYLES[29] // Chibi
+  ],
+  // Slot 1
+  [
+    REFERENCE_CONCEPT_STYLES[1], // Mural
+    REFERENCE_CONCEPT_STYLES[7], // Dappled
+    REFERENCE_CONCEPT_STYLES[13], // Monstera
+    REFERENCE_CONCEPT_STYLES[19], // Jump
+    REFERENCE_CONCEPT_STYLES[30] // Bronze
+  ],
+  // Slot 2
+  [
+    REFERENCE_CONCEPT_STYLES[2], // Mug
+    REFERENCE_CONCEPT_STYLES[8], // Clay
+    REFERENCE_CONCEPT_STYLES[14], // Elven
+    REFERENCE_CONCEPT_STYLES[20], // Marble
+    REFERENCE_CONCEPT_STYLES[31] // Sitcom
+  ],
+  // Slot 3
+  [
+    REFERENCE_CONCEPT_STYLES[3], // Plushie
+    REFERENCE_CONCEPT_STYLES[9], // Pop up
+    REFERENCE_CONCEPT_STYLES[15], // Studio
+    REFERENCE_CONCEPT_STYLES[21], // Pulp
+    REFERENCE_CONCEPT_STYLES[32] // Front row
+  ],
+  // Slot 4
+  [
+    REFERENCE_CONCEPT_STYLES[4], // Arcade
+    REFERENCE_CONCEPT_STYLES[10], // Theme park
+    REFERENCE_CONCEPT_STYLES[16], // Yogi
+    REFERENCE_CONCEPT_STYLES[17], // Neon
+    REFERENCE_CONCEPT_STYLES[28], // Zen
+    REFERENCE_CONCEPT_STYLES[33] // Pastel
+  ]
 ]
 
 const IMAGE_TEMPLATES = REFERENCE_TEMPLATE_SLOTS.map((slot) => slot[0])
 
 const INITIAL_IMAGES = [
+  {
+    id: 'sample-flower-1',
+    originalIdea: 'Vibrant pink blooming lotus in water pond',
+    prompt: 'Close-up photograph of a vibrant pink blooming lotus flower in a serene water pond with crystal clear dew drops on petals, warm soft morning sunlight, 8k resolution',
+    domain: 'Floral & Botanical Art',
+    ratio: '4:3',
+    url: '/images/basic/flower-lotus.jpg',
+    saved: true,
+    createdAt: 'Just now'
+  },
+  {
+    id: 'sample-car-1',
+    originalIdea: 'Futuristic blue cyber supercar in neon city street',
+    prompt: 'Futuristic sleek modern blue and cyan supercar parked in an aesthetic neon-lit city street at dusk, gleaming reflections, ultra high detail, 8k render',
+    domain: 'Automobiles & Supercars',
+    ratio: '4:3',
+    url: '/images/basic/car-supercar.jpg',
+    saved: true,
+    createdAt: 'Just now'
+  },
+  {
+    id: 'sample-bike-1',
+    originalIdea: 'Royal Enfield Bullet cruiser on scenic Ooty mountain road',
+    prompt: 'Classic vintage Royal Enfield Bullet cruiser motorcycle parked on a picturesque green mountain road in Ooty, gleaming chrome tank, golden sunrise mist, 8k photography',
+    domain: 'Motorcycles & Superbikes',
+    ratio: '4:3',
+    url: '/images/basic/bike-bullet.jpg',
+    saved: false,
+    createdAt: 'Just now'
+  },
+  {
+    id: 'sample-nature-1',
+    originalIdea: 'Scenic Courtallam cascading waterfall in rainforest',
+    prompt: 'Breathtaking scenic cascading Courtallam waterfall surrounded by lush green tropical rainforest, misty water spray with gentle rainbow, 8k landscape photography',
+    domain: 'Scenic Nature & Landscapes',
+    ratio: '4:3',
+    url: '/images/basic/nature-waterfall.jpg',
+    saved: true,
+    createdAt: 'Just now'
+  },
   {
     id: 'sample-1',
     originalIdea: 'Chettinad vintage house with teak pillars and Athangudi tiles',
@@ -1135,15 +1170,130 @@ export function getFolderTheme(folderName = '') {
   return dynamicPalettes[Math.abs(hash) % dynamicPalettes.length]
 }
 
-// AI Idea-to-Prompt Expansion Engine & Domain Classifier (With Native Tamil Culture Intelligence)
+// AI Idea-to-Prompt Expansion Engine & Domain Classifier (With Smart Reference Concepts & Culture Intelligence)
 function analyzeAndExpandIdea(rawIdea) {
   const idea = rawIdea.trim()
   const lower = idea.toLowerCase()
 
-  let detectedDomain = 'Tamil Vintage Culture'
+  let detectedDomain = 'Thamili Creative Art'
   let samplePool = []
 
-  if (
+  // Check against specific Reference Concept Styles first
+  const matchedConcept = REFERENCE_CONCEPT_STYLES.find((c) => {
+    const cName = c.name.toLowerCase()
+    const regex = new RegExp(`\\b${cName}\\b`, 'i')
+    return regex.test(lower)
+  })
+
+  if (matchedConcept) {
+    detectedDomain = matchedConcept.field || `${matchedConcept.name} Style`
+    samplePool = [matchedConcept.image]
+  }
+  // 1. Flowers & Floral Art (Lotus, Rose, Jasmine, Sunflower, Marigold, Gardens, Bouquets)
+  else if (
+    /(flower|flowers|rose|roses|lotus|thamarai|jasmine|malli|malligai|sunflower|sunflowers|suriyagandhi|marigold|sammanthi|genda|bouquet|blossom|blossoms|petal|petals|hibiscus|floral|garden|botanical|orchid|tulip|daisy|poo|malar)/i.test(
+      lower
+    )
+  ) {
+    detectedDomain = 'Floral & Botanical Art'
+    if (/lotus|thamarai|water lily/i.test(lower)) {
+      samplePool = ['/images/basic/flower-lotus.jpg']
+    } else if (/rose|roses|red rose|roja/i.test(lower)) {
+      samplePool = ['/images/basic/flower-rose.jpg']
+    } else if (/jasmine|malli|malligai|garland|gajra/i.test(lower)) {
+      samplePool = ['/images/basic/flower-jasmine.jpg']
+    } else if (/sunflower|sunflowers|suriyagandhi/i.test(lower)) {
+      samplePool = ['/images/basic/flower-sunflower.jpg']
+    } else if (/marigold|sammanthi|genda|yellow flower|orange flower/i.test(lower)) {
+      samplePool = ['/images/basic/flower-marigold.jpg']
+    } else {
+      samplePool = [
+        '/images/basic/flower-lotus.jpg',
+        '/images/basic/flower-rose.jpg',
+        '/images/basic/flower-jasmine.jpg',
+        '/images/basic/flower-sunflower.jpg',
+        '/images/basic/flower-marigold.jpg'
+      ]
+    }
+  }
+  // 2. Cars, Supercars & Modern/Vintage Automobiles
+  else if (
+    /(car|cars|supercar|supercars|sports car|sportscar|ferrari|lamborghini|porsche|bmw|audi|mercedes|automobile|automobiles|hypercar|racing car|sedan|convertible|vintage car|ambassador|padmini|taxi)/i.test(
+      lower
+    )
+  ) {
+    detectedDomain = 'Automobiles & Supercars'
+    if (/supercar|cyber|futuristic|neon|hypercar|lamborghini|porsche|racing/i.test(lower)) {
+      samplePool = ['/images/basic/car-supercar.jpg']
+    } else if (/sports car|red car|convertible|ferrari|luxury car|coastal/i.test(lower)) {
+      samplePool = ['/images/basic/car-sports-red.jpg']
+    } else if (/ambassador|padmini|taxi|vintage car|retro car|old car/i.test(lower)) {
+      samplePool = [
+        '/images/tamil/vintage-ambassador-1.jpg',
+        '/images/tamil/vintage-ambassador-2.jpg',
+        '/images/tamil/vintage-ambassador-3.jpg'
+      ]
+    } else {
+      samplePool = [
+        '/images/basic/car-supercar.jpg',
+        '/images/basic/car-sports-red.jpg',
+        '/images/tamil/vintage-ambassador-1.jpg',
+        '/images/tamil/vintage-ambassador-2.jpg'
+      ]
+    }
+  }
+  // 3. Bikes, Motorcycles, Cruisers & Scooters
+  else if (
+    /(bike|bikes|motorcycle|motorcycles|superbike|superbikes|bullet|royal enfield|scooter|scooters|vespa|ev scooter|dirt bike|ducati|harley|yamaha|honda|two wheeler|twowheeler|bicycle|cycle)/i.test(
+      lower
+    )
+  ) {
+    detectedDomain = 'Motorcycles & Superbikes'
+    if (/superbike|racing bike|sports bike|ducati|ninja|yamaha|fast bike/i.test(lower)) {
+      samplePool = ['/images/basic/bike-superbike.jpg']
+    } else if (/bullet|royal enfield|cruiser|classic bike|vintage bike|enfield/i.test(lower)) {
+      samplePool = ['/images/basic/bike-bullet.jpg']
+    } else if (/scooter|electric|ev|vespa|moped/i.test(lower)) {
+      samplePool = ['/images/basic/bike-scooter.jpg']
+    } else if (/bicycle|cycle|roadster/i.test(lower)) {
+      samplePool = ['/images/tamil/agraharam-street.jpg']
+    } else {
+      samplePool = [
+        '/images/basic/bike-bullet.jpg',
+        '/images/basic/bike-superbike.jpg',
+        '/images/basic/bike-scooter.jpg'
+      ]
+    }
+  }
+  // 4. Scenic Nature, Waterfalls & Mountain Landscapes
+  else if (
+    /(nature|waterfall|waterfalls|falls|cascade|courtallam|hogenakkal|mountain|mountains|hill|hills|tea estate|tea plantation|munnar|ooty|kodaikanal|forest|river|valley|landscape|scenic|greenery)/i.test(
+      lower
+    )
+  ) {
+    detectedDomain = 'Scenic Nature & Landscapes'
+    if (/waterfall|waterfalls|falls|cascade|courtallam|hogenakkal/i.test(lower)) {
+      samplePool = ['/images/basic/nature-waterfall.jpg']
+    } else if (/tea|plantation|mountain|mountains|hill|hills|munnar|ooty|kodaikanal|valley/i.test(lower)) {
+      samplePool = ['/images/basic/nature-mountains.jpg']
+    } else {
+      samplePool = [
+        '/images/basic/nature-waterfall.jpg',
+        '/images/basic/nature-mountains.jpg'
+      ]
+    }
+  }
+  // 5. Wildlife, Birds & Animals (Peacock, Bull, etc.)
+  else if (
+    /(peacock|peacocks|mayil|bird|birds|animal|animals|wildlife|tiger|elephant|deer)/i.test(
+      lower
+    )
+  ) {
+    detectedDomain = 'Wildlife & Birds'
+    samplePool = ['/images/basic/animal-peacock.jpg']
+  }
+  // 6. Tamil Vintage Houses & Mansions
+  else if (
     /(house|home|mansion|chettinad|agraharam|thinnai|muttram|courtyard|veranda|teak door|door|wooden door|athangudi|palace|vintage house|antique house|village house)/i.test(
       lower
     )
@@ -1155,19 +1305,9 @@ function analyzeAndExpandIdea(rawIdea) {
       '/images/tamil/chettinad-door.jpg',
       '/images/tamil/chettinad-thinnai.jpg'
     ]
-  } else if (
-    /(car|vintage car|ambassador|padmini|taxi|street|streets|road|madras street|chennai street|bullock cart|maattu vandi|bicycle|bazaar|market)/i.test(
-      lower
-    )
-  ) {
-    detectedDomain = 'Tamil Vintage Cars & Streets'
-    samplePool = [
-      '/images/tamil/vintage-ambassador-1.jpg',
-      '/images/tamil/vintage-ambassador-2.jpg',
-      '/images/tamil/bullock-cart-tamilnadu.jpg',
-      '/images/tamil/madurai-temple.jpg'
-    ]
-  } else if (
+  }
+  // 7. Tamil Pongal Harvest Festival
+  else if (
     /(pongal|thai pongal|pot|clay pot|pongal panai|harvest|kolam|sugarcane|mattu pongal|paddy|kaveri)/i.test(
       lower
     )
@@ -1179,7 +1319,9 @@ function analyzeAndExpandIdea(rawIdea) {
       '/images/tamil/mattu-pongal-cow.jpg',
       '/images/tamil/pongal-cooking.jpg'
     ]
-  } else if (
+  }
+  // 8. Tamil Diwali & Deepam Celebrations
+  else if (
     /(diwali|deepam|deepavali|lamp|vilakku|agal vilakku|kuthuvilakku|sparkler|sparklers|mathappu|karthigai|ganga snanam)/i.test(
       lower
     )
@@ -1191,7 +1333,9 @@ function analyzeAndExpandIdea(rawIdea) {
       '/images/tamil/diwali-sparklers.jpg',
       '/images/tamil/diwali-diyas-night.jpg'
     ]
-  } else if (
+  }
+  // 9. Tamil Jallikattu Heritage & Brave Bulls
+  else if (
     /(jallikattu|bull|bulls|kangayam|alanganallur|palamedu|rekla|vadivasal|kovil kaalai|manju virattu)/i.test(
       lower
     )
@@ -1203,24 +1347,41 @@ function analyzeAndExpandIdea(rawIdea) {
       '/images/tamil/bull-taming-2.jpg',
       '/images/tamil/jallikattu-action.jpg'
     ]
-  } else {
+  }
+  // 10. Universal Studio Creative Fallback
+  else {
+    detectedDomain = 'Thamili Studio Creation'
     samplePool = [
+      '/images/basic/flower-lotus.jpg',
+      '/images/basic/car-supercar.jpg',
+      '/images/basic/bike-bullet.jpg',
+      '/images/basic/nature-waterfall.jpg',
+      '/images/basic/flower-rose.jpg',
+      '/images/basic/animal-peacock.jpg',
       '/images/tamil/chettinad-mansion.jpg',
-      '/images/tamil/vintage-ambassador-1.jpg',
-      '/images/tamil/pongal-pot.jpg',
-      '/images/tamil/alanganallur-jallikattu.jpg'
+      '/images/tamil/vintage-ambassador-1.jpg'
     ]
   }
 
   const cleanIdea = idea
     .replace(/^(make|create|generate|design|draw|show|render|a photo of|an image of|picture of)\s+/i, '')
-    .trim()
+    .trim() || 'Visual masterpiece'
 
   let enhancedPrompt = ''
-  if (detectedDomain === 'Tamil Vintage Houses') {
+  if (matchedConcept) {
+    enhancedPrompt = `${matchedConcept.prompt} with creative elements of ${cleanIdea}, masterpiece 8k resolution octane render.`
+  } else if (detectedDomain === 'Floral & Botanical Art') {
+    enhancedPrompt = `Breathtaking fine-art botanical photograph of ${cleanIdea}, delicate blooming petals with crystalline morning dew drops, soft golden hour sunlight, natural garden bokeh, 8k Hasselblad master photography.`
+  } else if (detectedDomain === 'Automobiles & Supercars') {
+    enhancedPrompt = `Ultra-modern automotive masterpiece showcasing ${cleanIdea}, gleaming aerodynamic body lines, flawless metallic paint reflections, dynamic cinematic lighting, 8k raytracing render.`
+  } else if (detectedDomain === 'Motorcycles & Superbikes') {
+    enhancedPrompt = `High-performance dynamic photograph of ${cleanIdea}, immaculate craftsmanship and chrome detailing, scenic open road backdrop, warm cinematic lighting, 8k resolution.`
+  } else if (detectedDomain === 'Scenic Nature & Landscapes') {
+    enhancedPrompt = `Epic National Geographic landscape photograph of ${cleanIdea}, sweeping panoramic natural vista, lush emerald greens, golden sun rays breaking through morning mist, 8k ultra realism.`
+  } else if (detectedDomain === 'Wildlife & Birds') {
+    enhancedPrompt = `Magnificent high-detail wildlife photograph of ${cleanIdea}, vibrant iridescent plumage colors, crystalline eye detail, natural sanctuary environment, soft depth of field, 8k.`
+  } else if (detectedDomain === 'Tamil Vintage Houses') {
     enhancedPrompt = `Authentic 19th-century vintage Tamil heritage architecture of ${cleanIdea}, ornate Burma teak pillars, Athangudi geometric floor tiles, sunlit central courtyard thinnai, antique brass urns, master 8k Hasselblad architectural photo.`
-  } else if (detectedDomain === 'Tamil Vintage Cars & Streets') {
-    enhancedPrompt = `Nostalgic 1970s vintage Tamil streetscape featuring ${cleanIdea}, old Madras road, retro typography Tamil signboards, warm morning Kodachrome film tone, authentic atmosphere, 8k resolution.`
   } else if (detectedDomain === 'Tamil Pongal Festival') {
     enhancedPrompt = `Traditional rural Tamil Thai Pongal festival celebration of ${cleanIdea}, decorated earthen clay pot with overflowing sweet milk over open firewood, fresh green sugarcane, colorful rice Kolam, 8k National Geographic photo.`
   } else if (detectedDomain === 'Tamil Diwali Celebrations') {
@@ -1228,7 +1389,7 @@ function analyzeAndExpandIdea(rawIdea) {
   } else if (detectedDomain === 'Tamil Jallikattu Heritage') {
     enhancedPrompt = `High-speed heroic cultural action photograph of ${cleanIdea}, powerful muscular Kangayam bull in Alanganallur Jallikattu arena with sharp painted horns, billowing golden dust clouds, authentic Tamil bravery, 8k.`
   } else {
-    enhancedPrompt = `A stunning, hyper-detailed authentic Tamil vintage cultural representation of ${cleanIdea}, master cinematic lighting, rich lifelike textures, atmospheric depth, perfectly balanced composition, 8k resolution octane render.`
+    enhancedPrompt = `A stunning, hyper-detailed creative representation of ${cleanIdea}, master cinematic lighting, rich lifelike textures, atmospheric depth, perfectly balanced composition, 8k resolution octane render.`
   }
 
   return {
@@ -1236,6 +1397,67 @@ function analyzeAndExpandIdea(rawIdea) {
     enhancedPrompt,
     imageUrl: samplePool[Math.floor(Math.random() * samplePool.length)]
   }
+}
+
+// Conversational Intent Detector (Handles Greetings & FAQs politely without generating random images)
+function detectConversationalIntent(rawText) {
+  if (!rawText) return null
+  const clean = rawText.trim().toLowerCase().replace(/[!?.,:;]/g, '')
+  if (!clean) return null
+
+  // 1. Greetings (hello, hi, hey, vanakkam, namaste, good morning, casual greeting...)
+  if (/^(hello|hi|hey|heyy|heyyy|hii|hiii|howdy|hola|vanakkam|namaste|namaskaram|greetings|greeting|casual\s*greeting|conversation|good\s*(morning|afternoon|evening|day))(\s+there|\s+thamili|\s+ai|\s+bot|\s+and\s+friendly\s+conversation)?$/i.test(clean)) {
+    return {
+      text: "Hi there! 👋 What would you like to create today? Describe any visual idea, scene, character, or cultural style!",
+      suggestions: [
+        'Cyberpunk sports car in neon rain',
+        'Traditional Tamil temple wedding',
+        'Nilgiris misty tea garden sunrise',
+        'Cute soft plushie on cozy bed'
+      ]
+    }
+  }
+
+  // 2. How are you / What's up
+  if (/^(how\s*are\s*you|how\s*r\s*u|how\s*is\s*it\s*going|whats\s*up|what's\s*up|wassup|sup)(\s+today)?$/i.test(clean)) {
+    return {
+      text: "I'm doing great and ready to create! ✨ What imaginative scene or artwork can I generate for you?",
+      suggestions: [
+        'Futuristic Tokyo night street',
+        'Ancient Dravidian temple mandapam',
+        'Vintage 1970s Ambassador car',
+        'Royal Enfield on mountain road'
+      ]
+    }
+  }
+
+  // 3. Who are you / What are you / What can you do / Help
+  if (/^(who\s*are\s*you|what\s*are\s*you|what\s*can\s*you\s*do|help|help\s*me|how\s*to\s*use|how\s*does\s*this\s*work|what\s*is\s*this|tell\s*me\s*about\s*yourself)$/i.test(clean)) {
+    return {
+      text: "I'm **Thamili AI**, your creative visual studio. I can generate photorealistic images, sci-fi concepts, Tamil cultural heritage art, anime illustrations, and more. Just type any prompt below!",
+      suggestions: [
+        'Chettinad mansion central courtyard',
+        'Lotus flower with dew drops at sunrise',
+        'Fast red supercar on coastal highway',
+        '3D Octane render of glowing crystals'
+      ]
+    }
+  }
+
+  // 4. Thank you / Appreciation
+  if (/^(thanks|thank\s*you|thank\s*u|thx|awesome|cool|great\s*job|nice|perfect)$/i.test(clean)) {
+    return {
+      text: "You're very welcome! 😊 What would you like to design or create next?",
+      suggestions: [
+        'Cyberpunk Tanjore Gopuram 2099',
+        'Vibrant blooming rose bouquet',
+        'Superbike cruising at golden hour',
+        'Cute kawaii chibi character'
+      ]
+    }
+  }
+
+  return null
 }
 
 function createId(prefix = 'id') {
@@ -1405,6 +1627,21 @@ export default function App() {
   // Attached Reference Images List (ChatGPT-style image attachments)
   const [attachedReferences, setAttachedReferences] = useState([])
   const [flyingImage, setFlyingImage] = useState(null)
+  const [chatMessages, setChatMessages] = useState([])
+  const [activeChatId, setActiveChatId] = useState(null)
+  const [fullscreenImageModal, setFullscreenImageModal] = useState(null)
+  const chatScrollRef = useRef(null)
+
+  // ESC key listener to close fullscreen image modal
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setFullscreenImageModal(null)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   // Progressive Disclosure Plus Menu & Ratio Submenu
   const [isPlusMenuOpen, setIsPlusMenuOpen] = useState(false)
@@ -1428,6 +1665,52 @@ export default function App() {
   // Sub-Tabs inside Images workspace
   const [imagesSubTab, setImagesSubTab] = useState('studio') // 'studio' | 'marketplace' | 'library' | 'earnings'
   const [isImagesNavExpanded, setIsImagesNavExpanded] = useState(true)
+  const [isImagesDropdownOpen, setIsImagesDropdownOpen] = useState(true)
+
+  // Authentication & User Session State
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [currentUser, setCurrentUser] = useState(null)
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+  const [authMode, setAuthMode] = useState('signin') // 'signin' | 'signup'
+  const [authFormData, setAuthFormData] = useState({ name: '', email: '', password: '' })
+
+  // Google Gemini-Style Search Chats Modal & History States
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false)
+  const [searchChatsQuery, setSearchChatsQuery] = useState('')
+  const [searchChatsFilter, setSearchChatsFilter] = useState('all') // 'all' | 'today' | 'older'
+  const [userHistoryList, setUserHistoryList] = useState(INITIAL_LOGGED_IN_HISTORY)
+  const [guestHistoryList, setGuestHistoryList] = useState(INITIAL_GUEST_HISTORY)
+
+  // Active History computed based on Auth state & Search query / filter
+  const activeHistory = useMemo(() => {
+    const list = isLoggedIn ? userHistoryList : guestHistoryList
+    return list.filter((item) => {
+      const matchesFilter =
+        searchChatsFilter === 'all' ||
+        (searchChatsFilter === 'today' && item.dateBucket === 'today') ||
+        (searchChatsFilter === 'older' && item.dateBucket === 'older')
+
+      const q = searchChatsQuery.trim().toLowerCase()
+      if (!q) return matchesFilter
+      const title = (item.title || '').toLowerCase()
+      const query = (item.query || '').toLowerCase()
+      return matchesFilter && (title.includes(q) || query.includes(q))
+    })
+  }, [isLoggedIn, userHistoryList, guestHistoryList, searchChatsFilter, searchChatsQuery])
+
+  // Backward compatibility searchHistory for sidebar dropdown
+  const searchHistory = useMemo(() => {
+    return (isLoggedIn ? userHistoryList : guestHistoryList).map((item) => ({
+      id: item.id,
+      query: item.query,
+      title: item.title || item.query,
+      time: item.timeTag || item.createdAt || 'Recent',
+      image: item.image || item.url,
+      messages: item.messages,
+      generation: item.generation,
+      createdAt: item.createdAt || 'Today'
+    }))
+  }, [isLoggedIn, userHistoryList, guestHistoryList])
   const [isCreatorStudioExpanded, setIsCreatorStudioExpanded] = useState(true)
   const [userCredits, setUserCredits] = useState(250)
   const [marketplaceAssets, setMarketplaceAssets] = useState(INITIAL_MARKETPLACE_ASSETS)
@@ -1477,6 +1760,17 @@ export default function App() {
   const [payoutAddress, setPayoutAddress] = useState('')
   const [isAddCreditsModalOpen, setIsAddCreditsModalOpen] = useState(false)
   const [licenseCertificateAsset, setLicenseCertificateAsset] = useState(null)
+  const [showUpgradeCard, setShowUpgradeCard] = useState(true)
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const userMenuRef = useRef(null)
+
+  // Auto-vanish Upgrade to Pro card after 10 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowUpgradeCard(false)
+    }, 10000)
+    return () => clearTimeout(timer)
+  }, [])
 
   // Prompt-Aware Automatic Marketplace Search (e.g. typing "Tamil wedding", "temple", "cyberpunk")
   const matchedMarketplaceAssets = useMemo(() => {
@@ -1835,31 +2129,41 @@ export default function App() {
   // Filtered categories for Explorer Modal
   const filteredCategories = useMemo(() => {
     return ALL_CREATIVE_CATEGORIES.filter((cat) => {
-      const matchesField = selectedCategoryField === 'All' || cat.field === selectedCategoryField
-      const matchesQuery = !categorySearchQuery.trim() ||
+      const matchesField =
+        selectedCategoryField === 'All' ||
+        cat.field === selectedCategoryField ||
+        cat.categoryGroup === selectedCategoryField
+      const matchesQuery =
+        !categorySearchQuery.trim() ||
         cat.name.toLowerCase().includes(categorySearchQuery.toLowerCase()) ||
         cat.prompt.toLowerCase().includes(categorySearchQuery.toLowerCase()) ||
         cat.field.toLowerCase().includes(categorySearchQuery.toLowerCase()) ||
-        cat.tag.toLowerCase().includes(categorySearchQuery.toLowerCase())
+        cat.tag.toLowerCase().includes(categorySearchQuery.toLowerCase()) ||
+        (cat.categoryGroup && cat.categoryGroup.toLowerCase().includes(categorySearchQuery.toLowerCase()))
       return matchesField && matchesQuery
     })
   }, [selectedCategoryField, categorySearchQuery])
 
-  // Handle applying category prompt directly into composer on main page
+  // Handle applying reference concept directly into composer on main page
   const handleApplyCategoryPrompt = (cat) => {
     setActiveTab('AI Image')
     setImagesSubTab('studio')
-    setIdeaText(cat.prompt)
+    // Keep search bar clean - do not show preset prompt in search box
     setAttachedReferences([
       {
-        id: createId('ref-cat'),
+        id: createId('ref-concept'),
         name: cat.name,
         preview: cat.image,
-        isTemplate: true
+        domain: cat.field || 'Reference Concept',
+        isTemplate: true,
+        isReferenceConcept: true,
+        type: 'reference',
+        conceptName: cat.name,
+        conceptPrompt: cat.prompt
       }
     ])
     setIsCategoriesModalOpen(false)
-    showToast(`Added "${cat.name}" style to search bar ✨`)
+    showToast(`Attached "${cat.name}" as Reference Image ✨`)
     setTimeout(() => {
       searchInputRef.current?.focus()
     }, 80)
@@ -1868,13 +2172,18 @@ export default function App() {
   // Handle attaching category image as reference
   const handleAttachCategoryReference = (cat) => {
     const newRef = {
-      id: createId('ref-cat'),
+      id: createId('ref-concept'),
       name: cat.name,
       preview: cat.image,
-      isTemplate: true
+      domain: cat.field || 'Reference Concept',
+      isTemplate: true,
+      isReferenceConcept: true,
+      type: 'reference',
+      conceptName: cat.name,
+      conceptPrompt: cat.prompt
     }
     setAttachedReferences([newRef])
-    showToast(`Added "${cat.name}" as Reference 🖼️`)
+    showToast(`Attached "${cat.name}" as Reference Image ✨`)
   }
 
   // Model & Voice state
@@ -1903,6 +2212,9 @@ export default function App() {
       if (downloadMenuRef.current && !downloadMenuRef.current.contains(e.target) && !e.target.closest('.btn-download-trigger')) {
         setIsDownloadMenuOpen(false)
       }
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setIsUserMenuOpen(false)
+      }
     }
     document.addEventListener('click', handleClickOutside)
     return () => document.removeEventListener('click', handleClickOutside)
@@ -1912,6 +2224,16 @@ export default function App() {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
   }, [theme])
+
+  // Auto-scroll chat stream to bottom
+  useEffect(() => {
+    if (chatScrollRef.current) {
+      chatScrollRef.current.scrollTo({
+        top: chatScrollRef.current.scrollHeight,
+        behavior: 'smooth'
+      })
+    }
+  }, [chatMessages, isGenerating, generationStep])
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'))
@@ -1923,7 +2245,7 @@ export default function App() {
   }
 
   // Voice Prompt Recognition
-  const handleToggleVoicePrompt = () => {
+  const handleVoiceInput = () => {
     if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
       showToast('Voice prompt simulated: "A futuristic sports car driving through Tokyo at night"')
       setIdeaText('A futuristic sports car driving through Tokyo at night')
@@ -1964,6 +2286,8 @@ export default function App() {
       showToast('Voice prompt ready')
     }
   }
+  const handleToggleVoicePrompt = handleVoiceInput
+
 
   // Reference Image Upload Handler (Max 3 files from system at a single time)
   const handleReferenceUpload = (e) => {
@@ -1995,7 +2319,11 @@ export default function App() {
             id: createId('ref-upload'),
             name: file.name,
             preview: event.target?.result,
-            domain: 'Uploaded Reference'
+            domain: 'Uploaded Image',
+            isUploaded: true,
+            isTemplate: false,
+            isReferenceConcept: false,
+            type: 'upload'
           })
         }
         reader.readAsDataURL(file)
@@ -2009,8 +2337,8 @@ export default function App() {
       })
       showToast(
         newRefs.length === 1
-          ? `Attached reference "${newRefs[0].name}" ✨`
-          : `Attached ${newRefs.length} reference images ✨`
+          ? `Attached uploaded image "${newRefs[0].name}" 🖼️`
+          : `Attached ${newRefs.length} uploaded images 🖼️`
       )
       setIsPlusMenuOpen(false)
       setTimeout(() => searchInputRef.current?.focus(), 50)
@@ -2056,15 +2384,19 @@ export default function App() {
       id: createId('ref-tmpl'),
       name: tmpl.name,
       preview: tmpl.image,
-      domain: tmpl.domain,
-      isTemplate: true
+      domain: tmpl.domain || 'Reference Concept',
+      isTemplate: true,
+      isReferenceConcept: true,
+      type: 'reference',
+      conceptName: tmpl.name,
+      conceptPrompt: tmpl.prompt
     }
 
     // Settle into composer as single reference image
     setTimeout(() => {
       setAttachedReferences([newRef])
       setFlyingImage(null)
-      showToast(`Set "${tmpl.name}" as reference image ✨`)
+      showToast(`Attached "${tmpl.name}" as Reference Image ✨`)
       setTimeout(() => searchInputRef.current?.focus(), 50)
     }, 450)
   }
@@ -2170,18 +2502,24 @@ export default function App() {
   // Stop / Cancel Generating
   const handleStopGenerating = () => {
     clearGenerationTimers()
+    const cancelledId = activeGenerationIdRef.current
     activeGenerationIdRef.current = null
     setIsGenerating(false)
     setCurrentGeneration(null)
+    if (cancelledId) {
+      setChatMessages((prev) => prev.filter((msg) => msg.id !== cancelledId))
+    }
     showToast('Generation safely stopped.')
     setTimeout(() => searchInputRef.current?.focus(), 50)
   }
 
-  // Main AI Idea-to-Image Generation Trigger
-  const handleGenerateFromIdea = () => {
+  // Main AI Idea-to-Image Generation Trigger with Real Asynchronous Backend API Pipeline
+  const handleGenerateFromIdea = async (customPromptText = null) => {
     if (isGenerating) return
 
-    if (!ideaText.trim() && attachedReferences.length === 0) {
+    const effectiveText = typeof customPromptText === 'string' ? customPromptText : ideaText.trim()
+
+    if (!effectiveText && attachedReferences.length === 0) {
       showToast('Please enter your prompt or attach a reference image.')
       searchInputRef.current?.focus()
       return
@@ -2193,54 +2531,173 @@ export default function App() {
     setIsModelDropdownOpen(false)
     setIsDownloadMenuOpen(false)
 
+    const effectiveChatId = activeChatId || createId('chat')
+    if (!activeChatId) {
+      setActiveChatId(effectiveChatId)
+    }
+
+    // Check for conversational greetings & FAQs (respond politely without generating a random image)
+    if (attachedReferences.length === 0 && effectiveText) {
+      const conv = detectConversationalIntent(effectiveText)
+      if (conv) {
+        const userMsgId = createId('msg-user')
+        const userMessage = {
+          id: userMsgId,
+          role: 'user',
+          text: effectiveText,
+          createdAt: 'Just now'
+        }
+        const assistantMessage = {
+          id: createId('msg-ai-conv'),
+          role: 'assistant',
+          isTextResponse: true,
+          type: 'text',
+          text: conv.text,
+          suggestions: conv.suggestions,
+          createdAt: 'Just now'
+        }
+        const updatedMessages = [...chatMessages, userMessage, assistantMessage]
+        setChatMessages(updatedMessages)
+        upsertChatToHistory(effectiveChatId, effectiveText, effectiveText, updatedMessages, null)
+        setIdeaText('')
+        setTimeout(() => searchInputRef.current?.focus(), 50)
+        return
+      }
+    }
+
     const generationId = createId('gen')
     activeGenerationIdRef.current = generationId
     clearGenerationTimers()
 
-    const rawPromptText = ideaText.trim() || (attachedReferences[0] ? `Creative artwork inspired by ${attachedReferences[0].name}` : 'Creative artwork')
-    const { detectedDomain, enhancedPrompt, imageUrl } = analyzeAndExpandIdea(rawPromptText)
+    let rawPromptText = effectiveText
+    if (!rawPromptText) {
+      if (attachedReferences[0]?.conceptPrompt) {
+        rawPromptText = attachedReferences[0].conceptPrompt
+      } else if (attachedReferences[0]?.name) {
+        rawPromptText = `Creative artwork inspired by ${attachedReferences[0].name}`
+      } else {
+        rawPromptText = 'Creative artwork'
+      }
+    } else if (attachedReferences[0]?.isReferenceConcept && attachedReferences[0]?.name) {
+      rawPromptText = `${effectiveText}, in ${attachedReferences[0].name} style`
+    }
+
+    const currentAttachedRefs = [...attachedReferences]
+    const backendReferences = currentAttachedRefs.map((r) => ({
+      name: r.name,
+      data: r.preview,
+      type: r.type || 'reference'
+    }))
+
+    const userMsgId = createId('msg-user')
+    const userMessage = {
+      id: userMsgId,
+      role: 'user',
+      text: effectiveText || (currentAttachedRefs[0] ? `Creative artwork inspired by ${currentAttachedRefs[0].name}` : 'Creative artwork'),
+      references: currentAttachedRefs,
+      createdAt: 'Just now'
+    }
+
+    const assistantMessage = {
+      id: generationId,
+      role: 'assistant',
+      originalIdea: rawPromptText,
+      prompt: rawPromptText,
+      domain: `${selectedModel} Generation`,
+      ratio: aspectRatio,
+      url: '',
+      isGenerating: true,
+      generationStep: 0,
+      saved: false,
+      liked: false,
+      disliked: false,
+      createdAt: 'Just now'
+    }
+
+    // Append user query and assistant placeholder to chat stream
+    const updatedMessages = [...chatMessages, userMessage, assistantMessage]
+    setChatMessages(updatedMessages)
+    upsertChatToHistory(effectiveChatId, rawPromptText, rawPromptText, updatedMessages, assistantMessage)
+    setIdeaText('')
+    setAttachedReferences([])
 
     setIsGenerating(true)
     setGenerationStep(0)
     setCurrentGeneration({
       id: generationId,
       originalIdea: rawPromptText,
-      enhancedPrompt,
-      domain: detectedDomain,
+      enhancedPrompt: rawPromptText,
+      domain: `${selectedModel} Generation`,
       ratio: aspectRatio,
-      url: imageUrl,
+      url: '',
       isRendering: true,
       isRevealing: false,
       saved: false
     })
 
-    // Rotating Status Steps (5.3s progression)
-    const stepIntervals = [1050, 2150, 3250, 4350]
+    // Rotating Status Steps during generation
+    const stepIntervals = [800, 1600, 2500, 3400]
     stepIntervals.forEach((delay, idx) => {
       const t = setTimeout(() => {
         if (activeGenerationIdRef.current === generationId) {
           setGenerationStep(idx + 1)
+          setChatMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === generationId ? { ...msg, generationStep: idx + 1 } : msg
+            )
+          )
         }
       }, delay)
       generationTimersRef.current.push(t)
     })
 
-    // Final Completion & Smooth Reveal
-    const completionTimer = setTimeout(() => {
+    // Asynchronous Real Backend API Call
+    try {
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          prompt: rawPromptText,
+          aspectRatio: aspectRatio,
+          selectedModel: selectedModel,
+          referenceImages: backendReferences
+        })
+      })
+
+      const responsePayload = await response.json()
+
+      if (!response.ok || !responsePayload.success) {
+        throw new Error(responsePayload.error || `Generation failed with status ${response.status}`)
+      }
+
+      const generatedData = responsePayload.data
+
+      // Check if user navigated away or cancelled
       if (activeGenerationIdRef.current !== generationId) return
 
       const newImg = {
         id: generationId,
         folderId: activeFolder && activeFolder.isManual ? activeFolder.id : null,
         originalIdea: rawPromptText,
-        prompt: enhancedPrompt,
-        domain: detectedDomain, // Automatically mapped to domain folder (e.g. Automobiles, Flowers, etc.)
-        ratio: aspectRatio,
-        url: imageUrl,
+        prompt: generatedData.enhancedPrompt || rawPromptText,
+        domain: `${selectedModel} Engine`,
+        ratio: generatedData.aspectRatio || aspectRatio,
+        dimensions: generatedData.dimensions,
+        url: generatedData.imageUrl,
         saved: false,
+        liked: false,
+        disliked: false,
         createdAt: 'Just now',
         isNew: true,
-        referencePreviews: attachedReferences.map((r) => r.preview)
+        referencePreviews: currentAttachedRefs.map((r) => r.preview)
+      }
+
+      const completedAssistant = {
+        ...assistantMessage,
+        ...newImg,
+        isGenerating: false
       }
 
       setCurrentGeneration({
@@ -2248,19 +2705,45 @@ export default function App() {
         isRendering: false,
         isRevealing: true
       })
+
+      setChatMessages((prev) => {
+        const finalMsgs = prev.map((msg) =>
+          msg.id === generationId ? completedAssistant : msg
+        )
+        upsertChatToHistory(effectiveChatId, rawPromptText, rawPromptText, finalMsgs, completedAssistant)
+        return finalMsgs
+      })
+
       setGalleryImages((prev) => [newImg, ...prev])
       setIsGenerating(false)
-      showToast(`✨ Image generated in [${detectedDomain}]!`)
+      showToast(`✨ Generated with ${selectedModel} Engine (${newImg.ratio})!`)
 
       const revealTimer = setTimeout(() => {
         if (activeGenerationIdRef.current === generationId) {
           setCurrentGeneration((prev) => (prev ? { ...prev, isRevealing: false } : null))
         }
-      }, 950)
+      }, 850)
       generationTimersRef.current.push(revealTimer)
-    }, 5350)
-
-    generationTimersRef.current.push(completionTimer)
+    } catch (err) {
+      if (activeGenerationIdRef.current !== generationId) return
+      console.error('[Generate API Error]:', err)
+      setIsGenerating(false)
+      clearGenerationTimers()
+      setCurrentGeneration(null)
+      setChatMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === generationId
+            ? {
+                ...msg,
+                isGenerating: false,
+                error: true,
+                errorMessage: err.message
+              }
+            : msg
+        )
+      )
+      showToast(`Generation error: ${err.message} ⚠️`)
+    }
   }
 
   // Toggle Save image
@@ -2271,7 +2754,381 @@ export default function App() {
     if (currentGeneration && currentGeneration.id === imgId) {
       setCurrentGeneration((prev) => ({ ...prev, saved: !prev.saved }))
     }
+    setChatMessages((prev) =>
+      prev.map((msg) => (msg.id === imgId ? { ...msg, saved: !msg.saved } : msg))
+    )
     showToast('Saved state updated.')
+  }
+
+  // Reaction Handlers (Thumbs Up / Down)
+  const handleToggleLike = (msgId) => {
+    setChatMessages((prev) =>
+      prev.map((msg) => {
+        if (msg.id === msgId) {
+          const nextLiked = !msg.liked
+          if (nextLiked) showToast('Thanks for the feedback! 👍')
+          return { ...msg, liked: nextLiked, disliked: false }
+        }
+        return msg
+      })
+    )
+  }
+
+  const handleToggleDislike = (msgId) => {
+    setChatMessages((prev) =>
+      prev.map((msg) => {
+        if (msg.id === msgId) {
+          const nextDisliked = !msg.disliked
+          if (nextDisliked) showToast('Thanks for the feedback! We will improve. 👎')
+          return { ...msg, disliked: nextDisliked, liked: false }
+        }
+        return msg
+      })
+    )
+  }
+
+  // Regenerate image
+  const handleRegenerateMessage = (msg) => {
+    handleGenerateFromIdea(msg.originalIdea || msg.prompt)
+    showToast('Regenerating image... ✨')
+  }
+
+  // Direct High-Res Image Download
+  const handleDirectDownload = async (imageUrl, title = 'thamili_image') => {
+    try {
+      showToast('Downloading image... 📥')
+      const img = new Image()
+      img.crossOrigin = 'anonymous'
+      img.src = imageUrl
+      await new Promise((resolve, reject) => {
+        img.onload = resolve
+        img.onerror = reject
+      })
+      const canvas = document.createElement('canvas')
+      canvas.width = img.naturalWidth || 1024
+      canvas.height = img.naturalHeight || 1024
+      const ctx = canvas.getContext('2d')
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+      canvas.toBlob((blob) => {
+        if (!blob) return
+        const downloadUrl = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        const cleanName = (title || 'thamili_image').slice(0, 24).replace(/[^a-zA-Z0-9]/g, '_')
+        link.href = downloadUrl
+        link.download = `thamili-${cleanName}.png`
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        URL.revokeObjectURL(downloadUrl)
+        showToast('Image downloaded successfully! ✓')
+      }, 'image/png')
+    } catch {
+      const link = document.createElement('a')
+      link.href = imageUrl
+      link.download = `thamili-image.png`
+      link.target = '_blank'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      showToast('Image opened for download! 📥')
+    }
+  }
+
+  // Copy Image / Prompt to Clipboard
+  const handleCopyImageOrPrompt = async (imageUrl, promptText) => {
+    try {
+      if (promptText) {
+        await navigator.clipboard.writeText(promptText)
+        showToast('Prompt copied to clipboard! 📋')
+      } else {
+        await navigator.clipboard.writeText(imageUrl)
+        showToast('Image link copied! 📋')
+      }
+    } catch {
+      showToast('Copied to clipboard! 📋')
+    }
+  }
+
+  // Share Image
+  const handleShareImage = async (imageUrl, title = 'Thamili AI Creation') => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Thamili AI Creation',
+          text: title,
+          url: imageUrl
+        })
+        showToast('Shared successfully! 🚀')
+        return
+      } catch (err) {
+        // Ignored if user cancels share dialog
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(imageUrl)
+      showToast('Image link copied to clipboard! 🔗')
+    } catch {
+      showToast('Share link copied! 🔗')
+    }
+  }
+
+  // Save or update a chat session in persistent or session history with its full messages and image
+  const upsertChatToHistory = (chatId, titleText, queryText, messagesList, genObj = null) => {
+    const trimmed = (queryText || titleText || '').trim()
+    if (!trimmed && (!messagesList || messagesList.length === 0)) return
+
+    const now = new Date()
+    const timeStr = 'Today, ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    const title = titleText || (trimmed.length > 36 ? trimmed.slice(0, 36) + '...' : trimmed)
+    const previewImg = genObj?.url || messagesList?.find((m) => m.url)?.url || null
+
+    const chatItem = {
+      id: chatId,
+      title: title,
+      query: trimmed,
+      timeTag: 'Today',
+      dateBucket: 'today',
+      createdAt: timeStr,
+      image: previewImg,
+      ratio: genObj?.ratio || aspectRatio,
+      messages: messagesList,
+      generation: genObj
+    }
+
+    if (isLoggedIn) {
+      setUserHistoryList((prev) => {
+        const filtered = prev.filter((c) => c.id !== chatId)
+        return [chatItem, ...filtered].slice(0, 50)
+      })
+    } else {
+      setGuestHistoryList((prev) => {
+        const filtered = prev.filter((c) => c.id !== chatId)
+        return [chatItem, ...filtered].slice(0, 20)
+      })
+    }
+  }
+
+  // Record query to appropriate history tier (Legacy fallback wrapper)
+  const savePromptToHistory = (text) => {
+    upsertChatToHistory(activeChatId || createId('chat'), text, text, chatMessages, currentGeneration)
+  }
+
+  // Handle Login (Sample Demo / Google / Form)
+  const handlePerformLogin = (customUser = null) => {
+    const userToSet = customUser || {
+      name: authFormData.name.trim() || 'Adrin',
+      email: authFormData.email.trim() || 'adrin@thamili.ai',
+      avatar: (authFormData.name.trim() || 'Adrin')[0].toUpperCase(),
+      role: 'Pro Creator',
+      credits: userCredits
+    }
+    setCurrentUser(userToSet)
+    setIsLoggedIn(true)
+    setIsAuthModalOpen(false)
+    setAuthFormData({ name: '', email: '', password: '' })
+    showToast(`Welcome back, ${userToSet.name}! History synced by date ☁️`)
+  }
+
+  // Handle Logout
+  const handleSignOut = () => {
+    setIsLoggedIn(false)
+    setCurrentUser(null)
+    showToast('Signed out. Switched to guest session mode.')
+  }
+
+  // Select and load chat session from history item (opens full interactive chat thread)
+  const handleLoadChatFromHistory = (item) => {
+    if (!item) return
+    const queryText = (item.query || item.title || '').trim()
+    if (!queryText && (!item.messages || item.messages.length === 0)) return
+
+    const allHistory = isLoggedIn ? userHistoryList : guestHistoryList
+    const existingChat = allHistory.find((c) => c.id === item.id) || item
+
+    const chatIdToSet = existingChat.id || createId('chat')
+    setActiveChatId(chatIdToSet)
+    setActiveTab('AI Image')
+    setImagesSubTab('studio')
+    setIsImagesDropdownOpen(true)
+    setIsSearchModalOpen(false)
+    setIsGalleryOpen(false)
+    setIsFolderModalOpen(false)
+    setIsCategoriesModalOpen(false)
+    setIsAddCreditsModalOpen(false)
+    setIsLicenseModalOpen(false)
+    setIsSellModalOpen(false)
+    setIsUserMenuOpen(false)
+    setIsPlusMenuOpen(false)
+    setIsRatioExpanded(false)
+
+    clearGenerationTimers()
+    setIsGenerating(false)
+    setIdeaText('')
+    setAttachedReferences([])
+
+    // If chat already has stored messages, load them directly
+    if (existingChat.messages && existingChat.messages.length > 0) {
+      setChatMessages(existingChat.messages)
+      setCurrentGeneration(existingChat.generation || null)
+    } else {
+      // Otherwise construct rich message stream from query/image
+      const conv = detectConversationalIntent(queryText)
+      if (conv) {
+        const userMessage = {
+          id: createId('msg-user'),
+          role: 'user',
+          text: queryText,
+          references: [],
+          createdAt: existingChat.createdAt || 'Today'
+        }
+        const assistantMessage = {
+          id: createId('msg-ai-conv'),
+          role: 'assistant',
+          isTextResponse: true,
+          type: 'text',
+          text: conv.text,
+          suggestions: conv.suggestions,
+          createdAt: existingChat.createdAt || 'Today'
+        }
+        const newMsgs = [userMessage, assistantMessage]
+        setChatMessages(newMsgs)
+        setCurrentGeneration(null)
+        upsertChatToHistory(chatIdToSet, existingChat.title || queryText, queryText, newMsgs, null)
+      } else {
+        const { detectedDomain, enhancedPrompt, imageUrl } = analyzeAndExpandIdea(queryText)
+        const genId = createId('gen-hist')
+        const targetUrl = existingChat.image || existingChat.url || imageUrl || '/images/basic/flower-lotus.jpg'
+        const userMessage = {
+          id: createId('msg-user'),
+          role: 'user',
+          text: queryText,
+          references: [],
+          createdAt: existingChat.createdAt || 'Today'
+        }
+        const assistantMessage = {
+          id: genId,
+          role: 'assistant',
+          originalIdea: queryText,
+          prompt: enhancedPrompt,
+          domain: detectedDomain,
+          ratio: existingChat.ratio || '16:9',
+          url: targetUrl,
+          isGenerating: false,
+          generationStep: 4,
+          saved: false,
+          liked: false,
+          disliked: false,
+          createdAt: existingChat.createdAt || 'Today'
+        }
+
+        const newMsgs = [userMessage, assistantMessage]
+        const genData = {
+          id: genId,
+          originalIdea: queryText,
+          enhancedPrompt,
+          domain: detectedDomain,
+          ratio: existingChat.ratio || '16:9',
+          url: targetUrl,
+          saved: false,
+          liked: false,
+          disliked: false,
+          createdAt: existingChat.createdAt || 'Today'
+        }
+        setChatMessages(newMsgs)
+        setCurrentGeneration(genData)
+        upsertChatToHistory(chatIdToSet, existingChat.title || queryText, queryText, newMsgs, genData)
+      }
+    }
+
+    showToast(`Switched to chat: "${existingChat.title || queryText}" ✨`)
+    setTimeout(() => {
+      chatScrollRef.current?.scrollTo({ top: 99999, behavior: 'smooth' })
+      searchInputRef.current?.focus()
+    }, 80)
+  }
+
+  // Alias for search modal and history dropdown
+  const handleSelectHistoryChat = (item) => handleLoadChatFromHistory(item)
+  const handleSelectSearchHistory = (histItem) => handleLoadChatFromHistory(histItem)
+
+  // Start fresh new chat session
+  const handleResetToNewChat = () => {
+    setActiveChatId(null)
+    setChatMessages([])
+    setCurrentGeneration(null)
+    setIdeaText('')
+    setAttachedReferences([])
+    showToast('Started new image chat session ✨')
+  }
+
+  // Navigate to Home Page / Studio from any tab or view
+  const handleNavigateHome = () => {
+    setActiveTab('AI Image')
+    setImagesSubTab('studio')
+    setIsImagesDropdownOpen(true)
+    setIsGalleryOpen(false)
+    setIsFolderModalOpen(false)
+    setIsCategoriesModalOpen(false)
+    setIsSearchModalOpen(false)
+    setIsAddCreditsModalOpen(false)
+    setIsLicenseModalOpen(false)
+    setIsSellModalOpen(false)
+    setIsUserMenuOpen(false)
+    setIsPlusMenuOpen(false)
+    setIsRatioExpanded(false)
+  }
+
+  // Delete item from history modal
+  const handleDeleteHistoryChat = (e, id) => {
+    e.stopPropagation()
+    if (activeChatId === id) {
+      handleResetToNewChat()
+    }
+    if (isLoggedIn) {
+      setUserHistoryList((prev) => prev.filter((i) => i.id !== id))
+    } else {
+      setGuestHistoryList((prev) => prev.filter((i) => i.id !== id))
+    }
+    showToast('Removed from history')
+  }
+
+  // Clear all history in current view
+  const handleClearHistoryList = (e) => {
+    e.stopPropagation()
+    setActiveChatId(null)
+    setChatMessages([])
+    setCurrentGeneration(null)
+    if (isLoggedIn) {
+      setUserHistoryList([])
+    } else {
+      setGuestHistoryList([])
+    }
+    showToast('History cleared')
+  }
+
+  // Remove single search item
+  const handleDeleteHistoryItem = (e, id) => {
+    e.stopPropagation()
+    if (activeChatId === id) {
+      handleResetToNewChat()
+    }
+    if (isLoggedIn) {
+      setUserHistoryList((prev) => prev.filter((item) => item.id !== id))
+    } else {
+      setGuestHistoryList((prev) => prev.filter((item) => item.id !== id))
+    }
+    showToast('Search item removed')
+  }
+
+  // Clear all recent history
+  const handleClearAllHistory = (e) => {
+    e.stopPropagation()
+    if (isLoggedIn) {
+      setUserHistoryList([])
+    } else {
+      setGuestHistoryList([])
+    }
+    showToast('Search history cleared')
   }
 
   // Copy prompt helper
@@ -2397,7 +3254,7 @@ export default function App() {
 
       {/* ================= SIDEBAR (Stable Structural Anchor) ================= */}
       <aside className="sidebar">
-        <div className="brand-logo" onClick={() => setActiveTab('AI Image')} title="THAMILI">
+        <div className="brand-logo" onClick={handleNavigateHome} title="THAMILI">
           <img
             src={sidebarLogoImg}
             alt="THAMILI"
@@ -2406,16 +3263,16 @@ export default function App() {
         </div>
 
         <nav className="nav-section">
-          {/* Collapsible Images Group with Small Arrow */}
-          <div className="nav-group-parent">
+          {/* Images Accordion / Dropdown */}
+          <div className="nav-group-parent images-nav-group">
+            {/* Images Main Nav Dropdown Trigger */}
             <button
-              className={`nav-item ${
+              type="button"
+              className={`nav-item nav-item-images-trigger ${
                 activeTab === 'AI Image' && imagesSubTab === 'studio' ? 'active' : ''
               }`}
-              onClick={() => {
-                setActiveTab('AI Image')
-                setImagesSubTab('studio')
-              }}
+              onClick={handleNavigateHome}
+              title="Images Home"
             >
               <div className="nav-item-left">
                 <ImageIcon size={18} className="nav-icon" />
@@ -2423,133 +3280,224 @@ export default function App() {
               </div>
               <ChevronDown
                 size={14}
-                className={`nav-expand-chevron ${isImagesNavExpanded ? 'expanded' : ''}`}
+                className={`nav-expand-chevron ${isImagesDropdownOpen ? 'expanded' : ''}`}
                 onClick={(e) => {
                   e.stopPropagation()
-                  setIsImagesNavExpanded((prev) => !prev)
+                  setIsImagesDropdownOpen((prev) => !prev)
                 }}
               />
             </button>
 
-            {/* Level 2: Creator Studio inside Images */}
-            {isImagesNavExpanded && (
-              <div className="nav-sub-items-container">
+            {/* Images Dropdown Sub-Menu */}
+            {isImagesDropdownOpen && (
+              <div className="images-nav-dropdown">
+                {/* 1. New Chat Sub-Button */}
                 <button
                   type="button"
-                  className={`nav-sub-item sub-btn-creator-studio ${
-                    activeTab === 'AI Image' &&
-                    (imagesSubTab === 'marketplace' || imagesSubTab === 'earnings')
-                      ? 'active'
-                      : ''
-                  }`}
+                  className="images-sub-btn btn-images-new-chat"
                   onClick={() => {
-                    setIsCreatorStudioExpanded((prev) => !prev)
+                    setActiveTab('AI Image')
+                    setImagesSubTab('studio')
+                    handleResetToNewChat()
                   }}
+                  title="Start a fresh new image chat"
                 >
-                  <div className="nav-sub-item-left">
-                    <Sparkles size={15} className="sub-item-icon" />
-                    <span className="sub-item-title">Creator Studio</span>
+                  <div className="sub-btn-left">
+                    <Plus size={15} className="sub-btn-icon sub-icon-plus" />
+                    <span>New Chat</span>
                   </div>
-                  <ChevronDown
-                    size={13}
-                    className={`creator-expand-chevron ${
-                      isCreatorStudioExpanded ? 'expanded' : ''
-                    }`}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setIsCreatorStudioExpanded((prev) => !prev)
-                    }}
-                  />
+                  <span className="sub-btn-pill-tag">New</span>
                 </button>
 
-                {/* Level 3: Marketplace, Creator Earnings & Credits inside Creator Studio */}
-                {isCreatorStudioExpanded && (
-                  <div className="nav-nested-items-container">
-                    <button
-                      type="button"
-                      className={`nav-sub-item sub-btn-marketplace ${
-                        activeTab === 'AI Image' && imagesSubTab === 'marketplace' ? 'active' : ''
-                      }`}
-                      onClick={() => {
-                        setActiveTab('AI Image')
-                        setImagesSubTab('marketplace')
-                      }}
-                    >
-                      <div className="nav-sub-item-left">
-                        <ShoppingBag size={15} className="sub-item-icon" />
-                        <span className="sub-item-title">Marketplace</span>
-                      </div>
-                      <span className="sub-nav-count">{marketplaceAssets.length}</span>
-                    </button>
+                {/* 2. Gallery & Folders Sub-Button (Moved from hero search bar below to here) */}
+                <button
+                  type="button"
+                  className="images-sub-btn btn-images-gallery"
+                  onClick={() => {
+                    setIsGalleryOpen(true)
+                  }}
+                  title="Open Saved Gallery & Folders"
+                >
+                  <div className="sub-btn-left">
+                    <Layers size={14} className="sub-btn-icon sub-icon-layers" />
+                    <span>Gallery & Folders</span>
+                  </div>
+                  <span className="sub-count-badge">{galleryImages.length}</span>
+                </button>
 
-                    <button
-                      type="button"
-                      className={`nav-sub-item sub-btn-earnings ${
-                        activeTab === 'AI Image' && imagesSubTab === 'earnings' ? 'active' : ''
-                      }`}
-                      onClick={() => {
-                        setActiveTab('AI Image')
-                        setImagesSubTab('earnings')
-                      }}
-                    >
-                      <div className="nav-sub-item-left">
-                        <TrendingUp size={15} className="sub-item-icon" />
-                        <span className="sub-item-title">Creator Earnings</span>
-                      </div>
-                      <span className="sub-nav-earning-pill">80%</span>
-                    </button>
-
-                    {/* Sidebar Credits Box inside Creator Studio */}
-                    <div
-                      className="sidebar-credits-box"
-                      onClick={() => setIsAddCreditsModalOpen(true)}
-                      title="Click to add credits"
-                    >
-                      <div className="sidebar-credits-left">
-                        <Coins size={15} className="credits-coin-icon" />
-                        <div className="sidebar-credits-details">
-                          <span className="sidebar-credits-val">{userCredits}</span>
-                          <span className="sidebar-credits-sub">Credits</span>
-                        </div>
-                      </div>
+                {/* 3. Recent Searches & Chat History Section */}
+                <div className="sidebar-history-section">
+                  <div className="sidebar-history-header">
+                    <div className="history-header-left">
+                      <Clock size={12} className="history-header-icon" />
+                      <span>{isLoggedIn ? 'Recent Chats' : 'Recent Searches'}</span>
+                    </div>
+                    <div className="history-header-actions">
                       <button
                         type="button"
-                        className="btn-sidebar-add-credit"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setIsAddCreditsModalOpen(true)
-                        }}
-                        title="Top Up Credits"
+                        className="btn-history-search-icon"
+                        onClick={() => setIsSearchModalOpen(true)}
+                        title="Search chats (Ctrl+K)"
+                        aria-label="Search chats"
                       >
-                        +
+                        <Search size={13} className="btn-search-symbol" />
                       </button>
                     </div>
                   </div>
-                )}
+
+                  <div className="sidebar-history-list">
+                    {searchHistory.length === 0 ? (
+                      <div className="history-empty-state">No recent searches</div>
+                    ) : (
+                      searchHistory.map((item) => (
+                        <div
+                          key={item.id}
+                          className={`sidebar-history-item ${activeChatId === item.id ? 'active-chat-item' : ''}`}
+                          onClick={() => handleSelectSearchHistory(item)}
+                          title={`Click to open chat: "${item.title || item.query}"`}
+                          role="button"
+                          tabIndex={0}
+                        >
+                          <Search size={12} className="history-item-search-icon" />
+                          <span className="history-item-text">{item.title || item.query}</span>
+                          <span className="history-item-time-pill">{item.time}</span>
+                          <button
+                            type="button"
+                            className="btn-del-history-item"
+                            onClick={(e) => handleDeleteHistoryItem(e, item.id)}
+                            title="Remove chat"
+                          >
+                            <X size={11} />
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
               </div>
             )}
           </div>
         </nav>
 
-        <div className="pro-card">
-          <div className="pro-card-title">
-            <span>Upgrade to Pro</span>
-            <Sparkles size={14} className="sparkle-accent" />
-          </div>
-          <p className="pro-card-desc">
-            Unlock more power, more models, and more possibilities.
-          </p>
-          <button className="pro-btn">Upgrade Now</button>
-        </div>
-
-        <div className="user-profile">
-          <div className="user-info">
-            <div className="avatar">U</div>
-            <div className="user-details">
-              <span className="user-name">User</span>
+        {showUpgradeCard && (
+          <div className="pro-card pro-card-auto-fade">
+            <div className="pro-card-title">
+              <span>Upgrade to Pro</span>
+              <Sparkles size={14} className="sparkle-accent" />
             </div>
+            <p className="pro-card-desc">
+              Unlock more power, more models, and more possibilities.
+            </p>
+            <button
+              className="pro-btn"
+              onClick={() => setIsAddCreditsModalOpen(true)}
+            >
+              Upgrade Now
+            </button>
           </div>
-          <ChevronDown size={15} className="user-chevron" />
+        )}
+
+        {/* USER PROFILE & CREATOR STUDIO DROP-UP BOX */}
+        <div className="user-profile-container" ref={userMenuRef}>
+          {isUserMenuOpen && (
+            <div className="user-dropup-box">
+              {/* Creator Studio Dropup Header */}
+              <div className="user-dropup-header">
+                <div className="dropup-creator-title">
+                  <Sparkles size={15} className="creator-sparkle" />
+                  <span>Creator Studio</span>
+                </div>
+              </div>
+
+              {/* Creator Studio Options */}
+              <div className="user-dropup-items">
+                <button
+                  type="button"
+                  className={`user-dropup-item item-marketplace ${
+                    activeTab === 'AI Image' && imagesSubTab === 'marketplace' ? 'active' : ''
+                  }`}
+                  onClick={() => {
+                    setActiveTab('AI Image')
+                    setImagesSubTab('marketplace')
+                    setIsUserMenuOpen(false)
+                  }}
+                >
+                  <div className="dropup-item-left">
+                    <ShoppingBag size={15} className="dropup-item-icon" />
+                    <span>Marketplace</span>
+                  </div>
+                  <span className="dropup-count-tag">{marketplaceAssets.length}</span>
+                </button>
+
+                <button
+                  type="button"
+                  className={`user-dropup-item item-earnings ${
+                    activeTab === 'AI Image' && imagesSubTab === 'earnings' ? 'active' : ''
+                  }`}
+                  onClick={() => {
+                    setActiveTab('AI Image')
+                    setImagesSubTab('earnings')
+                    setIsUserMenuOpen(false)
+                  }}
+                >
+                  <div className="dropup-item-left">
+                    <TrendingUp size={15} className="dropup-item-icon" />
+                    <span>Creator Earnings</span>
+                  </div>
+                  <span className="dropup-earning-pill">80%</span>
+                </button>
+
+                {/* Dropup Credits Balance Box */}
+                <div
+                  className="user-dropup-credits-card"
+                  onClick={() => {
+                    setIsAddCreditsModalOpen(true)
+                    setIsUserMenuOpen(false)
+                  }}
+                  title="Click to add credits"
+                >
+                  <div className="dropup-credits-left">
+                    <Coins size={15} className="credits-coin-icon" />
+                    <div className="dropup-credits-info">
+                      <span className="dropup-credits-val">{userCredits}</span>
+                      <span className="dropup-credits-label">Credits</span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn-dropup-add-credit"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setIsAddCreditsModalOpen(true)
+                      setIsUserMenuOpen(false)
+                    }}
+                    title="Top Up Credits"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* User Profile Bar / Trigger */}
+          <div
+            className={`user-profile ${isUserMenuOpen ? 'menu-open' : ''} ${isLoggedIn ? 'is-logged-in' : ''}`}
+            onClick={() => setIsUserMenuOpen((prev) => !prev)}
+            title={isLoggedIn ? `Signed in as ${currentUser?.name}` : 'Click to open Creator Studio'}
+          >
+            <div className="user-info">
+              <div className="avatar">{isLoggedIn ? (currentUser?.avatar || 'A') : 'U'}</div>
+              <div className="user-details">
+                <span className="user-name">{isLoggedIn ? (currentUser?.name || 'Adrin') : 'User'}</span>
+                <span className="user-role-label">{isLoggedIn ? 'Pro Creator' : 'Guest Mode'}</span>
+              </div>
+            </div>
+            <ChevronDown
+              size={15}
+              className={`user-chevron ${isUserMenuOpen ? 'arrow-up' : ''}`}
+            />
+          </div>
         </div>
       </aside>
 
@@ -2564,13 +3512,56 @@ export default function App() {
             aria-label="Toggle theme"
           >
             {theme === 'light' ? (
-              <MoonStar size={16} className="theme-toggle-icon" />
+              <MoonStar size={18} className="theme-toggle-icon" />
             ) : (
-              <SunMedium size={16} className="theme-toggle-icon" />
+              <SunMedium size={18} className="theme-toggle-icon" />
             )}
           </button>
-          <button className="floating-glass-btn btn-signin">Sign In</button>
-          <button className="floating-glass-btn btn-getstarted">Get Started</button>
+
+          {isLoggedIn ? (
+            <div className="top-logged-in-group">
+              <div
+                className="top-user-pill"
+                onClick={() => setIsUserMenuOpen((prev) => !prev)}
+                title={currentUser?.email || 'Logged in as Adrin'}
+              >
+                <div className="top-user-avatar">{currentUser?.avatar || 'A'}</div>
+                <span className="top-user-name">{currentUser?.name || 'Adrin'}</span>
+                <span className="top-pro-badge">PRO</span>
+              </div>
+              <button
+                type="button"
+                className="floating-glass-btn btn-signout"
+                onClick={handleSignOut}
+                title="Sign out of account"
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <>
+              <button
+                type="button"
+                className="floating-glass-btn btn-signin"
+                onClick={() => {
+                  setAuthMode('signin')
+                  setIsAuthModalOpen(true)
+                }}
+              >
+                Sign In
+              </button>
+              <button
+                type="button"
+                className="floating-glass-btn btn-getstarted"
+                onClick={() => {
+                  setAuthMode('signup')
+                  setIsAuthModalOpen(true)
+                }}
+              >
+                Get Started
+              </button>
+            </>
+          )}
         </div>
 
         {/* ================= HOME VIEW ================= */}
@@ -2627,7 +3618,7 @@ export default function App() {
                 <Code size={16} color="#8b5cf6" />
                 <span>AI Code</span>
               </button>
-              <button className="tool-pill" onClick={() => setActiveTab('AI Image')}>
+              <button className="tool-pill" onClick={handleNavigateHome}>
                 <ImageIcon size={16} color="#d946ef" />
                 <span>AI Image</span>
               </button>
@@ -2649,59 +3640,88 @@ export default function App() {
 
         {/* ================= COMPLETE LIGHT iOS AI IMAGE WORKSPACE ================= */}
         {activeTab === 'AI Image' && (
-          <main className="image-studio-container">
-            {/* 1. HEADER */}
-            <div className="create-images-header">
-              <img
-                src={thamiliLogoImg}
-                alt="THAMILI Logo"
-                className="create-images-standalone-logo"
-              />
-              <h1 className="create-images-title">
-                Create images with <span className="title-brand-accent">Thamili AI</span>
-              </h1>
-              <p className="create-images-subtitle">
-                Try a template or describe an idea in chat.
-              </p>
-            </div>
-
+          <main className={`image-studio-container ${chatMessages.length > 0 || isGenerating ? 'is-chat-mode' : ''}`}>
             {/* ================= VIEW 1: STUDIO (AI GENERATION) ================= */}
             {imagesSubTab === 'studio' && (
               <>
-                {/* 2. TRANSFORMING SEARCH BOX GENERATION WORKSPACE */}
-                <div className="workspace-stage-wrapper">
-                  <div
-                    className={`prompt-composer-glass-card ${
-                      isGenerating ? 'is-generating-mode' : currentGeneration ? 'is-completed-mode' : 'is-ready-mode'
-                    }`}
-                    data-ratio={currentGeneration?.ratio || aspectRatio}
-                  >
-                    {/* 2A. READY STATE: PROMPT COMPOSER INSIDE SEARCH BOX */}
-                    {!isGenerating && !currentGeneration && (
-                      <div className="composer-ready-view">
-                        {/* ChatGPT-Style Attached Reference Image Thumbnails */}
-                        <div className="attached-references-dropzone">
-                          {attachedReferences.map((ref) => (
-                            <div key={ref.id} className="attached-ref-thumbnail-card">
-                              <img
-                                src={ref.preview}
-                                alt={ref.name || 'Reference'}
-                                className="attached-ref-thumb-img"
-                              />
-                              <button
-                                type="button"
-                                className="attached-ref-remove-btn"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  handleRemoveReference(ref.id)
-                                }}
-                                title="Remove reference"
-                              >
-                                <X size={11} />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
+                {/* 2A. INITIAL WELCOME / HERO VIEW (Shown when no chat messages yet) */}
+                {chatMessages.length === 0 && !isGenerating && (
+                  <>
+                    {/* 1. HEADER */}
+                    <div className="create-images-header">
+                      <img
+                        src={thamiliLogoImg}
+                        alt="THAMILI Logo"
+                        className="create-images-standalone-logo"
+                      />
+                      <h1 className="create-images-title">
+                        Create images with <span className="title-brand-accent">Thamili AI</span>
+                      </h1>
+                      <p className="create-images-subtitle">
+                        Try a template or describe an idea in chat.
+                      </p>
+                    </div>
+
+                    <div className="workspace-stage-wrapper">
+                      <div className="prompt-composer-glass-card is-ready-mode">
+                        {/* Attached Reference & Uploaded Image Thumbnails */}
+                        {attachedReferences.length > 0 && (
+                          <div className="attached-references-dropzone">
+                            {attachedReferences.map((ref) => {
+                              const isRefConcept = ref.isTemplate || ref.isReferenceConcept || ref.type === 'reference'
+                              return (
+                                <div
+                                  key={ref.id}
+                                  className={`attached-ref-thumbnail-card ${
+                                    isRefConcept ? 'is-concept-ref' : 'is-user-upload'
+                                  }`}
+                                  title={
+                                    isRefConcept
+                                      ? `Reference Concept: ${ref.name || 'Style'}`
+                                      : `Uploaded Image: ${ref.name || 'Image'}`
+                                  }
+                                >
+                                  <img
+                                    src={ref.preview}
+                                    alt={ref.name || 'Reference'}
+                                    className="attached-ref-thumb-img"
+                                  />
+                                  <div className="attached-ref-overlay-gradient" />
+
+                                  <div
+                                    className={`attached-ref-tag-pill ${
+                                      isRefConcept ? 'tag-concept' : 'tag-upload'
+                                    }`}
+                                  >
+                                    {isRefConcept ? (
+                                      <>
+                                        <Sparkles size={8} className="ref-tag-sparkle" />
+                                        <span>Ref Img</span>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Upload size={8} className="ref-tag-upload-icon" />
+                                        <span>User Img</span>
+                                      </>
+                                    )}
+                                  </div>
+
+                                  <button
+                                    type="button"
+                                    className="attached-ref-remove-btn"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      handleRemoveReference(ref.id)
+                                    }}
+                                    title={isRefConcept ? 'Remove reference style' : 'Remove uploaded image'}
+                                  >
+                                    <X size={10} />
+                                  </button>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        )}
 
                         <textarea
                           ref={searchInputRef}
@@ -2765,7 +3785,7 @@ export default function App() {
                                       </div>
                                     </div>
 
-                                    {/* RATIO SUB-BAR: Expands smoothly from Left -> Right */}
+                                    {/* RATIO SUB-BAR */}
                                     {isRatioExpanded && (
                                       <div className="ratio-horizontal-subbar">
                                         {['1:1', '16:9', '9:16', '4:3'].map((r, idx) => (
@@ -2792,58 +3812,26 @@ export default function App() {
                                     )}
                                   </div>
 
-                                  {/* 2. Reference Image Option */}
+                                  {/* 2. Upload Your Image Option */}
                                   <div
                                     className="plus-menu-row-item"
                                     onClick={() => {
                                       fileInputRef.current?.click()
+                                      setIsPlusMenuOpen(false)
                                     }}
                                   >
                                     <div className="menu-row-left">
                                       <ImagePlus size={15} className="menu-item-icon" />
-                                      <span>Reference image</span>
+                                      <span>Upload your image</span>
                                     </div>
                                     <span className="menu-action-hint">Upload</span>
-                                  </div>
-
-                                  {/* 3. Preset Style Enhancer */}
-                                  <div className="plus-styles-subgroup">
-                                    <div className="styles-subgroup-label">
-                                      <Palette size={12} />
-                                      <span>Add Style Preset</span>
-                                    </div>
-                                    <div className="styles-pills-row">
-                                      {[
-                                        'Photorealistic',
-                                        'Anime',
-                                        '3D Octane',
-                                        'Cyberpunk',
-                                        'Minimalist'
-                                      ].map((style) => (
-                                        <button
-                                          key={style}
-                                          type="button"
-                                          className="style-chip-btn"
-                                          onClick={() => {
-                                            const suffix = `, ${style.toLowerCase()} style, 8k resolution`
-                                            setIdeaText((prev) => (prev ? `${prev.trim()}${suffix}` : style))
-                                            showToast(`Added ${style} style ✨`)
-                                            setIsPlusMenuOpen(false)
-                                            setIsRatioExpanded(false)
-                                            setTimeout(() => searchInputRef.current?.focus(), 50)
-                                          }}
-                                        >
-                                          {style}
-                                        </button>
-                                      ))}
-                                    </div>
                                   </div>
                                 </div>
                               )}
                             </div>
                           </div>
 
-                          {/* RIGHT CONTROLS: [ Flash ▼ ] [ 🎙️ ] [ Generate ] */}
+                          {/* RIGHT CONTROLS: [ Flash ▼ ] [ Generate ] */}
                           <div className="composer-right-actions">
                             {/* Model Selector Dropdown */}
                             <div className="model-dropdown-container">
@@ -2893,7 +3881,7 @@ export default function App() {
                               type="button"
                               className={`composer-generate-btn ${isGenerating ? 'btn-generating' : ''}`}
                               disabled={isGenerating}
-                              onClick={handleGenerateFromIdea}
+                              onClick={() => handleGenerateFromIdea()}
                               title="Generate image"
                             >
                               <span className="btn-generate-sheen" />
@@ -2903,364 +3891,597 @@ export default function App() {
                           </div>
                         </div>
                       </div>
-                    )}
+                    </div>
 
-                    {/* 2B. GENERATING STATE: LIQUID GLASS THEME NEURAL REVEAL */}
-                    {isGenerating && (
-                      <div className="composer-generating-view">
+                    {/* 3. INSPIRATION / REFERENCE TEMPLATE CARDS */}
+                    <div className="template-cards-section">
+                      <div className="template-cards-row">
+                        {REFERENCE_TEMPLATE_SLOTS.map((slotItems, slotIndex) => {
+                          const activeTmpl = slotItems[templateCycleIndex % slotItems.length]
+                          return (
+                            <div
+                              key={`slot-${slotIndex}`}
+                              className={`template-card template-card-motion-${slotIndex}`}
+                              onClick={(e) => handleTemplateReferenceClick(activeTmpl, e)}
+                              title={`Click to attach ${activeTmpl.name} image as reference`}
+                              role="button"
+                              tabIndex={0}
+                            >
+                              <div className="template-card-img-wrap">
+                                {slotItems.map((item, imgIdx) => {
+                                  const isCurrent = imgIdx === (templateCycleIndex % slotItems.length)
+                                  return (
+                                    <img
+                                      key={item.id}
+                                      src={item.image}
+                                      alt={item.name}
+                                      className={`template-card-img template-img-motion-${slotIndex} ${
+                                        isCurrent ? 'template-img-active' : 'template-img-inactive'
+                                      }`}
+                                      loading="eager"
+                                    />
+                                  )
+                                })}
+                              </div>
+                              <div className="template-card-gradient" />
+                              <div className="template-card-sheen" />
+                              <div className="template-card-badge">
+                                <Sparkles size={10} className="template-badge-sparkle" />
+                                <span>Ref</span>
+                              </div>
+                              <div className="template-card-label-wrap">
+                                <span key={activeTmpl.id} className="template-card-label animated-title-fade">
+                                  {activeTmpl.name}
+                                </span>
+                              </div>
+                            </div>
+                          )
+                        })}
+
+                        {/* DEDICATED SEE ALL / EXPLORE 34 REFERENCE CONCEPTS CARD */}
                         <div
-                          className={`developing-image-preview blur-stage-${Math.min(generationStep, 4)}`}
-                          style={{ backgroundImage: `url(${currentGeneration?.url})` }}
-                        />
-                        <LiquidGlassNeuralCanvas step={generationStep} />
-                        <div className="glass-ambient-prism-sweep" />
-                        <div className="glass-scanline-laser" />
-
-                        <div className="generating-overlay-info">
-                          <div className="generating-status-pill">
-                            <span className="live-pulse-dot" />
-                            <span className="generating-status-text">
-                              {GENERATION_STATUS_MESSAGES[generationStep] || 'Creating your image...'}
-                            </span>
+                          className="template-card template-card-see-all"
+                          onClick={() => setIsCategoriesModalOpen(true)}
+                          title="Explore all 34 reference image concept styles"
+                          role="button"
+                          tabIndex={0}
+                        >
+                          <div className="see-all-mosaic-wrap">
+                            <img
+                              src={REFERENCE_CONCEPT_STYLES[0].image}
+                              alt="Paint Reference"
+                              className="see-all-mosaic-img"
+                              loading="eager"
+                            />
+                            <img
+                              src={REFERENCE_CONCEPT_STYLES[6].image}
+                              alt="Bloom Reference"
+                              className="see-all-mosaic-img"
+                              loading="eager"
+                            />
+                            <img
+                              src={REFERENCE_CONCEPT_STYLES[3].image}
+                              alt="Plushie Reference"
+                              className="see-all-mosaic-img"
+                              loading="eager"
+                            />
+                            <img
+                              src={REFERENCE_CONCEPT_STYLES[8].image}
+                              alt="Clay Reference"
+                              className="see-all-mosaic-img"
+                              loading="eager"
+                            />
                           </div>
-
-                          <div className="generating-model-badge">
-                            <Zap size={13} className="badge-zap-icon" />
-                            <span>{selectedModel} Engine • {aspectRatio}</span>
+                          <div className="see-all-dark-overlay" />
+                          <div className="template-card-sheen" />
+                          <div className="see-all-content-overlay">
+                            <div className="template-card-badge see-all-top-badge">
+                              <Sparkles size={10} className="see-all-badge-sparkle" />
+                              <span>34 Concepts</span>
+                            </div>
+                            <div className="see-all-bottom-bar">
+                              <div className="see-all-pill-btn">
+                                <LayoutGrid size={13} className="see-all-grid-icon" />
+                                <span>See All</span>
+                              </div>
+                              <span className="see-all-sub-caption">34 Styles ➔</span>
+                            </div>
                           </div>
-
-                          {/* GLASS STOP GENERATING BUTTON */}
-                          <button
-                            type="button"
-                            className="btn-stop-generating"
-                            onClick={handleStopGenerating}
-                            title="Stop generating"
-                          >
-                            <Square size={12} className="stop-square-icon" />
-                            <span>Stop generating</span>
-                          </button>
                         </div>
                       </div>
-                    )}
+                    </div>
+                  </>
+                )}
 
-                    {/* 2C. COMPLETED STATE: SETTLED IMAGE & ACTIONS INSIDE BOX */}
-                    {!isGenerating && currentGeneration && (
-                      <div className="composer-completed-view">
-                        <img
-                          src={currentGeneration.url}
-                          alt={currentGeneration.prompt}
-                          className={`completed-result-img ${
-                            currentGeneration.isRevealing ? 'image-reveal-active' : 'image-revealed'
-                          }`}
-                        />
-
-                        {/* Floating Result Light Glass Action Bar */}
-                        <div className="result-glass-action-bar">
-                          <div className="result-left-meta">
-                            {/* [ ← Back ] Button */}
-                            <button
-                              type="button"
-                              className="result-action-btn btn-back-action"
-                              title="Back to prompt composer"
-                              onClick={() => {
-                                setCurrentGeneration(null)
-                                setTimeout(() => searchInputRef.current?.focus(), 50)
-                              }}
-                            >
-                              <ArrowLeft size={14} />
-                              <span>Back</span>
-                            </button>
-                            <span className="result-ratio-chip">{currentGeneration.ratio || '1:1'}</span>
-                            <span className="result-domain-chip">{currentGeneration.domain || 'Creative'}</span>
-                          </div>
-
-                          <div className="result-right-actions">
-                            {/* Save Toggle Button */}
-                            <button
-                              type="button"
-                              className={`result-action-btn ${
-                                currentGeneration.saved ? 'saved-active' : ''
-                              }`}
-                              title={currentGeneration.saved ? 'Saved' : 'Save to gallery'}
-                              onClick={() => handleToggleSave(currentGeneration.id)}
-                            >
-                              {currentGeneration.saved ? (
-                                <>
-                                  <Check size={14} />
-                                  <span>Saved</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Save size={14} />
-                                  <span>Save</span>
-                                </>
-                              )}
-                            </button>
-
-                            {/* Download Inline Light Glass Dropdown */}
-                            <div className="download-dropdown-wrap" ref={downloadMenuRef}>
-                              <button
-                                type="button"
-                                className="result-action-btn btn-download-trigger"
-                                onClick={() => setIsDownloadMenuOpen((prev) => !prev)}
-                                title="Download image"
-                              >
-                                {downloadStatus === 'processing' ? (
-                                  <Loader2 size={14} className="spin-loader" />
-                                ) : downloadStatus === 'downloaded' ? (
-                                  <Check size={14} color="#10b981" />
-                                ) : (
-                                  <Download size={14} />
+                {/* 2B. GEMINI-STYLE CHAT CONVERSATION STREAM VIEW */}
+                {(chatMessages.length > 0 || isGenerating) && (
+                  <div className="chat-conversation-wrapper">
+                    {/* Scrollable Conversation Stream */}
+                    <div className="chat-thread-container" ref={chatScrollRef}>
+                      {chatMessages.map((msg) => {
+                        if (msg.role === 'user') {
+                          return (
+                            <div key={msg.id} className="chat-user-message-row">
+                              <div className="chat-user-bubble">
+                                {msg.references && msg.references.length > 0 && (
+                                  <div className="chat-user-attached-refs">
+                                    {msg.references.map((r) => (
+                                      <div key={r.id} className="chat-user-ref-pill">
+                                        <img src={r.preview} alt={r.name} className="chat-user-ref-thumb" />
+                                        <span className="chat-user-ref-name">{r.name}</span>
+                                      </div>
+                                    ))}
+                                  </div>
                                 )}
-                                <span>Download</span>
-                                <ChevronDown
-                                  size={13}
-                                  className={`download-chevron ${
-                                    isDownloadMenuOpen ? 'open' : ''
-                                  }`}
-                                />
-                              </button>
+                                <div className="chat-user-text">{msg.text}</div>
+                              </div>
+                            </div>
+                          )
+                        }
 
-                              {isDownloadMenuOpen && (
-                                <div className="download-glass-menu">
-                                  <div className="download-menu-label">Download as</div>
+                        // Assistant Conversational Text Response (Greetings, FAQs, Help)
+                        if (msg.isTextResponse || msg.type === 'text') {
+                          return (
+                            <div key={msg.id} className="chat-assistant-message-row text-response-row">
+                              <div className="assistant-text-bubble">
+                                <div className="assistant-bubble-header">
+                                  <Sparkles size={16} className="assistant-sparkle-icon" />
+                                  <span className="assistant-brand-name">Thamili AI</span>
+                                </div>
+                                <div className="assistant-bubble-body">
+                                  <p>{msg.text}</p>
+                                  {msg.suggestions && msg.suggestions.length > 0 && (
+                                    <div className="assistant-suggestions-chips">
+                                      {msg.suggestions.map((sug, sIdx) => (
+                                        <button
+                                          key={sIdx}
+                                          type="button"
+                                          className="suggestion-chip-btn"
+                                          onClick={() => {
+                                            setIdeaText(sug)
+                                            handleGenerateFromIdea(sug)
+                                          }}
+                                        >
+                                          <Sparkles size={12} />
+                                          <span>{sug}</span>
+                                        </button>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        }
+
+                        // Assistant AI Image Card
+                        const hasError = msg.error || (!msg.isGenerating && !msg.url)
+                        const hasImage = !msg.isGenerating && !msg.error && !!msg.url
+
+                        return (
+                          <div key={msg.id} className="chat-assistant-message-row">
+                            <div className="chat-image-card-wrapper">
+                              <div className="chat-image-card" data-ratio={msg.ratio || aspectRatio}>
+                                {msg.isGenerating ? (
+                                  <div className="composer-generating-view chat-generating-view">
+                                    <div
+                                      className={`developing-image-preview blur-stage-${Math.min(
+                                        msg.generationStep !== undefined ? msg.generationStep : generationStep,
+                                        4
+                                      )}`}
+                                      style={{ backgroundImage: `url(${msg.url})` }}
+                                    />
+                                    <LiquidGlassNeuralCanvas step={msg.generationStep !== undefined ? msg.generationStep : generationStep} />
+                                    <div className="glass-ambient-prism-sweep" />
+                                    <div className="glass-scanline-laser" />
+
+                                    <div className="generating-overlay-info">
+                                      <div className="generating-status-pill">
+                                        <span className="live-pulse-dot" />
+                                        <span className="generating-status-text">
+                                          {GENERATION_STATUS_MESSAGES[
+                                            msg.generationStep !== undefined ? msg.generationStep : generationStep
+                                          ] || 'Creating your image...'}
+                                        </span>
+                                      </div>
+
+                                      <div className="generating-model-badge">
+                                        <Zap size={13} className="badge-zap-icon" />
+                                        <span>{selectedModel} Engine • {msg.ratio || aspectRatio}</span>
+                                      </div>
+
+                                      <button
+                                        type="button"
+                                        className="btn-stop-generating"
+                                        onClick={handleStopGenerating}
+                                        title="Stop generating"
+                                      >
+                                        <Square size={12} className="stop-square-icon" />
+                                        <span>Stop generating</span>
+                                      </button>
+                                    </div>
+                                  </div>
+                                ) : hasError ? (
+                                  <div className="chat-error-card-content">
+                                    <div className="chat-error-icon-wrapper">
+                                      <AlertTriangle size={26} className="chat-error-warning-icon" />
+                                    </div>
+                                    <h3 className="chat-error-title">Image Generation Unavailable</h3>
+                                    <p className="chat-error-detail">
+                                      {msg.errorMessage || 'Unable to generate image. Please verify your Gemini API key or billing quota.'}
+                                    </p>
+                                    <div className="chat-error-actions-row">
+                                      {msg.errorMessage?.includes('billing') && (
+                                        <a
+                                          href="https://aistudio.google.com"
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="chat-error-action-link"
+                                          onClick={(e) => e.stopPropagation()}
+                                        >
+                                          <span>Enable Google AI Studio Billing</span>
+                                          <ArrowRight size={13} />
+                                        </a>
+                                      )}
+                                      <button
+                                        type="button"
+                                        className="chat-error-retry-btn"
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          const retryPrompt = msg.originalIdea || msg.prompt
+                                          if (retryPrompt) handleGenerateFromIdea(retryPrompt)
+                                        }}
+                                      >
+                                        <RefreshCw size={14} />
+                                        <span>Retry Generation</span>
+                                      </button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <img
+                                    src={msg.url}
+                                    alt={msg.originalIdea || msg.prompt}
+                                    className="chat-result-img"
+                                    loading="eager"
+                                    onError={(e) => {
+                                      e.currentTarget.style.display = 'none'
+                                    }}
+                                    onClick={() => !msg.isGenerating && setFullscreenImageModal(msg)}
+                                    title="Click to view full screen"
+                                  />
+                                )}
+
+                                {/* Watermark Logo in Bottom-Right Corner with Reduced Opacity */}
+                                {hasImage && (
+                                  <div className="chat-img-watermark-logo" title="Created with Thamili AI">
+                                    <img
+                                      src={thamiliLogoImg}
+                                      alt="Thamili"
+                                      className="chat-img-watermark-icon"
+                                    />
+                                  </div>
+                                )}
+
+                                {/* 3 Floating Action Buttons in Top-Right Corner on Hover */}
+                                {hasImage && (
+                                  <div className="chat-img-hover-actions">
+                                    <button
+                                      type="button"
+                                      className="chat-img-pill-action"
+                                      onClick={() => handleShareImage(msg.url, msg.originalIdea || msg.prompt)}
+                                      title="Share image"
+                                    >
+                                      <Share2 size={16} />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="chat-img-pill-action"
+                                      onClick={() => handleCopyImageOrPrompt(msg.url, msg.originalIdea || msg.prompt)}
+                                      title="Copy prompt"
+                                    >
+                                      <Copy size={16} />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="chat-img-pill-action"
+                                      onClick={() => handleDirectDownload(msg.url, msg.originalIdea || msg.prompt)}
+                                      title="Download image"
+                                    >
+                                      <Download size={16} />
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Bottom Reactions & Options Row */}
+                              {hasImage && (
+                                <div className="chat-img-bottom-reactions">
                                   <button
                                     type="button"
-                                    className="download-menu-item"
-                                    onClick={() => handleDownloadFormat('png')}
+                                    className={`chat-reaction-btn ${msg.liked ? 'active-like' : ''}`}
+                                    onClick={() => handleToggleLike(msg.id)}
+                                    title="Good response"
                                   >
-                                    <span>PNG</span>
-                                    <span className="format-badge">Lossless</span>
+                                    <ThumbsUp size={16} />
                                   </button>
                                   <button
                                     type="button"
-                                    className="download-menu-item"
-                                    onClick={() => handleDownloadFormat('jpg')}
+                                    className={`chat-reaction-btn ${msg.disliked ? 'active-dislike' : ''}`}
+                                    onClick={() => handleToggleDislike(msg.id)}
+                                    title="Bad response"
                                   >
-                                    <span>JPG</span>
-                                    <span className="format-badge">Standard</span>
+                                    <ThumbsDown size={16} />
                                   </button>
                                   <button
                                     type="button"
-                                    className="download-menu-item"
-                                    onClick={() => handleDownloadFormat('webp')}
+                                    className="chat-reaction-btn"
+                                    onClick={() => handleRegenerateMessage(msg)}
+                                    title="Regenerate image"
                                   >
-                                    <span>WEBP</span>
-                                    <span className="format-badge">Modern</span>
+                                    <RefreshCw size={16} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="chat-reaction-btn"
+                                    onClick={() => handleShareImage(msg.url, msg.originalIdea || msg.prompt)}
+                                    title="Share"
+                                  >
+                                    <Share2 size={16} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className={`chat-reaction-btn ${msg.saved ? 'saved-active' : ''}`}
+                                    onClick={() => handleToggleSave(msg.id)}
+                                    title={msg.saved ? 'Saved in gallery' : 'Save to gallery'}
+                                  >
+                                    <Bookmark size={16} className={msg.saved ? 'bookmark-saved-icon' : ''} />
                                   </button>
                                 </div>
                               )}
                             </div>
                           </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* 2D. PROMPT-AWARE AUTOMATIC MARKETPLACE SEARCH DRAWER */}
-                {matchedMarketplaceAssets.length > 0 && ideaText.trim().length >= 3 && !isGenerating && !currentGeneration && (
-                  <div className="prompt-marketplace-discovery-drawer">
-                    <div className="prompt-match-header">
-                      <div className="prompt-match-header-left">
-                        <div className="sparkle-pulse-badge">
-                          <Sparkles size={12} className="sparkle-icon-animated" />
-                          <span>Thamili Marketplace Match</span>
-                        </div>
-                        <span className="prompt-match-query-hint">
-                          Found <strong>{matchedMarketplaceAssets.length}</strong> community assets matching "<em>{ideaText.slice(0, 32)}</em>"
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        className="btn-view-all-marketplace"
-                        onClick={() => {
-                          setMarketplaceSearchQuery(ideaText)
-                          setImagesSubTab('marketplace')
-                        }}
-                      >
-                        <span>Browse in Marketplace</span>
-                        <ArrowRight size={13} />
-                      </button>
-                    </div>
-
-                    <div className="prompt-match-cards-scroll">
-                      {matchedMarketplaceAssets.map((asset) => {
-                        const isLicensed = myLicensedAssetIds.includes(asset.id)
-                        return (
-                          <div key={asset.id} className="prompt-match-card">
-                            <div className="match-card-thumb-wrap">
-                              <img src={asset.image} alt={asset.title} className="match-card-thumb-img" />
-                              <span className="match-card-price-chip">
-                                {isLicensed ? (
-                                  <span className="licensed-chip-text"><Check size={10} /> Licensed</span>
-                                ) : (
-                                  <span>{asset.priceCredits} Cr</span>
-                                )}
-                              </span>
-                            </div>
-
-                            <div className="match-card-info">
-                              <h4 className="match-card-title" title={asset.title}>{asset.title}</h4>
-                              <div className="match-card-creator">
-                                <img src={asset.creatorAvatar} alt={asset.creatorName} className="match-creator-mini-avatar" />
-                                <span>{asset.creatorHandle}</span>
-                              </div>
-                              <div className="match-card-actions">
-                                <button
-                                  type="button"
-                                  className="btn-match-action btn-match-use-ai"
-                                  onClick={() => handleAttachMarketplaceRef(asset)}
-                                  title="Attach as Reference Image into AI Composer"
-                                >
-                                  <ImagePlus size={12} />
-                                  <span>Use in AI</span>
-                                </button>
-                                {isLicensed ? (
-                                  <button
-                                    type="button"
-                                    className="btn-match-action btn-match-download"
-                                    onClick={() => handleDownloadMarketplaceAsset(asset)}
-                                    title="Download High-Resolution Asset"
-                                  >
-                                    <Download size={12} />
-                                    <span>Download</span>
-                                  </button>
-                                ) : (
-                                  <button
-                                    type="button"
-                                    className="btn-match-action btn-match-license"
-                                    onClick={() => {
-                                      setLicensingAsset(asset)
-                                      setIsLicenseModalOpen(true)
-                                    }}
-                                    title={`License for ${asset.priceCredits} Credits`}
-                                  >
-                                    <Lock size={12} />
-                                    <span>License ({asset.priceCredits} Cr)</span>
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-                          </div>
                         )
                       })}
                     </div>
-                  </div>
-                )}
 
-                {/* 3. INSPIRATION / REFERENCE TEMPLATE CARDS */}
-                <div className="template-cards-section">
-                  <div className="template-cards-row">
-                    {REFERENCE_TEMPLATE_SLOTS.map((slotItems, slotIndex) => {
-                      const activeTmpl = slotItems[templateCycleIndex % slotItems.length]
-                      return (
-                        <div
-                          key={`slot-${slotIndex}`}
-                          className={`template-card template-card-motion-${slotIndex}`}
-                          onClick={(e) => handleTemplateReferenceClick(activeTmpl, e)}
-                          title={`Click to attach ${activeTmpl.name} image as reference`}
-                          role="button"
-                          tabIndex={0}
-                        >
-                          <div className="template-card-img-wrap">
-                            {slotItems.map((item, imgIdx) => {
-                              const isCurrent = imgIdx === (templateCycleIndex % slotItems.length)
+                    {/* Sticky Bottom Prompt Composer */}
+                    <div className="chat-bottom-composer-wrapper">
+                      <div className="prompt-composer-glass-card is-ready-mode composer-bottom-pill">
+                        {/* Attached Reference & Uploaded Image Thumbnails */}
+                        {attachedReferences.length > 0 && (
+                          <div className="attached-references-dropzone">
+                            {attachedReferences.map((ref) => {
+                              const isRefConcept = ref.isTemplate || ref.isReferenceConcept || ref.type === 'reference'
                               return (
-                                <img
-                                  key={item.id}
-                                  src={item.image}
-                                  alt={item.name}
-                                  className={`template-card-img template-img-motion-${slotIndex} ${
-                                    isCurrent ? 'template-img-active' : 'template-img-inactive'
+                                <div
+                                  key={ref.id}
+                                  className={`attached-ref-thumbnail-card ${
+                                    isRefConcept ? 'is-concept-ref' : 'is-user-upload'
                                   }`}
-                                  loading="eager"
-                                />
+                                  title={
+                                    isRefConcept
+                                      ? `Reference Concept: ${ref.name || 'Style'}`
+                                      : `Uploaded Image: ${ref.name || 'Image'}`
+                                  }
+                                >
+                                  <img
+                                    src={ref.preview}
+                                    alt={ref.name || 'Reference'}
+                                    className="attached-ref-thumb-img"
+                                  />
+                                  <div className="attached-ref-overlay-gradient" />
+
+                                  <div
+                                    className={`attached-ref-tag-pill ${
+                                      isRefConcept ? 'tag-concept' : 'tag-upload'
+                                    }`}
+                                  >
+                                    {isRefConcept ? (
+                                      <>
+                                        <Sparkles size={8} className="ref-tag-sparkle" />
+                                        <span>Ref Img</span>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Upload size={8} className="ref-tag-upload-icon" />
+                                        <span>User Img</span>
+                                      </>
+                                    )}
+                                  </div>
+
+                                  <button
+                                    type="button"
+                                    className="attached-ref-remove-btn"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      handleRemoveReference(ref.id)
+                                    }}
+                                    title={isRefConcept ? 'Remove reference style' : 'Remove uploaded image'}
+                                  >
+                                    <X size={10} />
+                                  </button>
+                                </div>
                               )
                             })}
                           </div>
-                          <div className="template-card-gradient" />
-                          <div className="template-card-sheen" />
-                          <div className="template-card-badge">
-                            <Sparkles size={10} className="template-badge-sparkle" />
-                            <span>Ref</span>
-                          </div>
-                          <div className="template-card-label-wrap">
-                            <span key={activeTmpl.id} className="template-card-label animated-title-fade">
-                              {activeTmpl.name}
-                            </span>
-                          </div>
-                        </div>
-                      )
-                    })}
+                        )}
 
-                    {/* DEDICATED SEE ALL / EXPLORE 30+ CATEGORIES CARD */}
-                    <div
-                      className="template-card template-card-see-all"
-                      onClick={() => setIsCategoriesModalOpen(true)}
-                      title="Explore all 30+ creative categories & styles"
-                      role="button"
-                      tabIndex={0}
-                    >
-                      <div className="see-all-mosaic-wrap">
-                        <img
-                          src="/images/tamil/chettinad-mansion.jpg"
-                          alt="Chettinad Vintage House"
-                          className="see-all-mosaic-img"
-                          loading="eager"
+                        <textarea
+                          ref={searchInputRef}
+                          className="prompt-composer-textarea"
+                          placeholder="Describe your image"
+                          rows={1}
+                          value={ideaText}
+                          disabled={isGenerating}
+                          onChange={(e) => setIdeaText(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey && !isGenerating) {
+                              e.preventDefault()
+                              handleGenerateFromIdea()
+                            }
+                          }}
                         />
-                        <img
-                          src="/images/tamil/vintage-ambassador-1.jpg"
-                          alt="Vintage Ambassador Car"
-                          className="see-all-mosaic-img"
-                          loading="eager"
-                        />
-                        <img
-                          src="/images/tamil/pongal-pot.jpg"
-                          alt="Village Pongal Pot"
-                          className="see-all-mosaic-img"
-                          loading="eager"
-                        />
-                        <img
-                          src="/images/tamil/alanganallur-jallikattu.jpg"
-                          alt="Alanganallur Jallikattu Bull"
-                          className="see-all-mosaic-img"
-                          loading="eager"
-                        />
-                      </div>
-                      <div className="see-all-dark-overlay" />
-                      <div className="template-card-sheen" />
-                      <div className="see-all-content-overlay">
-                        <div className="template-card-badge see-all-top-badge">
-                          <Sparkles size={10} className="see-all-badge-sparkle" />
-                          <span>30+ Styles</span>
-                        </div>
-                        <div className="see-all-bottom-bar">
-                          <div className="see-all-pill-btn">
-                            <LayoutGrid size={13} className="see-all-grid-icon" />
-                            <span>See All</span>
+
+                        {/* PROMPT BAR CONTROLS */}
+                        <div className="composer-action-bar">
+                          {/* LEFT CONTROLS: [ + ] [ Images ] */}
+                          <div className="composer-left-actions">
+                            <div className="plus-menu-anchor-wrap" ref={plusMenuRef}>
+                              <button
+                                type="button"
+                                className={`composer-plus-btn ${isPlusMenuOpen ? 'menu-active' : ''}`}
+                                title="Add options & ratio"
+                                onClick={() => {
+                                  setIsPlusMenuOpen((prev) => !prev)
+                                  if (isPlusMenuOpen) {
+                                    setIsRatioExpanded(false)
+                                  }
+                                }}
+                              >
+                                <span className="btn-plus-sheen" />
+                                <Plus size={17} className="plus-icon-animated" />
+                              </button>
+
+                              {/* PROGRESSIVE DISCLOSURE PLUS GLASS MENU */}
+                              {isPlusMenuOpen && (
+                                <div className="plus-expandable-glass-menu">
+                                  {/* 1. Progressive Ratio Option */}
+                                  <div className="plus-menu-section">
+                                    <div
+                                      className={`plus-menu-row-item ${
+                                        isRatioExpanded ? 'expanded-active' : ''
+                                      }`}
+                                      onClick={() => setIsRatioExpanded((prev) => !prev)}
+                                    >
+                                      <div className="menu-row-left">
+                                        <SlidersHorizontal size={15} className="menu-item-icon" />
+                                        <span>Ratio</span>
+                                      </div>
+                                      <div className="menu-row-right">
+                                        <span className="current-ratio-tag">{aspectRatio}</span>
+                                        <ChevronRight
+                                          size={14}
+                                          className={`ratio-expand-chevron ${
+                                            isRatioExpanded ? 'rotated' : ''
+                                          }`}
+                                        />
+                                      </div>
+                                    </div>
+
+                                    {/* RATIO SUB-BAR */}
+                                    {isRatioExpanded && (
+                                      <div className="ratio-horizontal-subbar">
+                                        {['1:1', '16:9', '9:16', '4:3'].map((r, idx) => (
+                                          <button
+                                            key={r}
+                                            type="button"
+                                            style={{ animationDelay: `${idx * 35}ms` }}
+                                            className={`ratio-sub-btn ${
+                                              aspectRatio === r ? 'active' : ''
+                                            }`}
+                                            onClick={(e) => {
+                                              e.stopPropagation()
+                                              setAspectRatio(r)
+                                              showToast(`Aspect ratio set to ${r}`)
+                                              setTimeout(() => {
+                                                setIsRatioExpanded(false)
+                                              }, 220)
+                                            }}
+                                          >
+                                            {r}
+                                          </button>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  {/* 2. Upload Your Image Option */}
+                                  <div
+                                    className="plus-menu-row-item"
+                                    onClick={() => {
+                                      fileInputRef.current?.click()
+                                      setIsPlusMenuOpen(false)
+                                    }}
+                                  >
+                                    <div className="menu-row-left">
+                                      <ImagePlus size={15} className="menu-item-icon" />
+                                      <span>Upload your image</span>
+                                    </div>
+                                    <span className="menu-action-hint">Upload</span>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
                           </div>
-                          <span className="see-all-sub-caption">30+ Categories ➔</span>
+
+                          {/* RIGHT CONTROLS: [ Flash ▼ ] [ Generate ] */}
+                          <div className="composer-right-actions">
+                            {/* Model Selector Dropdown */}
+                            <div className="model-dropdown-container">
+                              <button
+                                type="button"
+                                className="composer-model-pill"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setIsModelDropdownOpen((prev) => !prev)
+                                }}
+                                title="Select AI Model"
+                              >
+                                <span className="btn-flash-sheen" />
+                                <Zap size={13} className="model-zap-icon zap-electric-animated" />
+                                <span className="model-name">{selectedModel}</span>
+                                <ChevronDown
+                                  size={13}
+                                  className={`model-chevron ${isModelDropdownOpen ? 'open' : ''}`}
+                                />
+                              </button>
+
+                              {isModelDropdownOpen && (
+                                <div className="model-dropdown-menu">
+                                  {['Flash', 'Pro', 'Ultra'].map((model) => (
+                                    <button
+                                      key={model}
+                                      type="button"
+                                      className={`model-dropdown-item ${
+                                        selectedModel === model ? 'active' : ''
+                                      }`}
+                                      onClick={() => {
+                                        setSelectedModel(model)
+                                        setIsModelDropdownOpen(false)
+                                        showToast(`Model set to ${model}`)
+                                      }}
+                                    >
+                                      <span>{model}</span>
+                                      {selectedModel === model && <Check size={14} color="#6366f1" />}
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+
+                            {/* PRIMARY GENERATE BUTTON */}
+                            <button
+                              type="button"
+                              className={`composer-generate-btn ${isGenerating ? 'btn-generating' : ''}`}
+                              disabled={isGenerating}
+                              onClick={() => handleGenerateFromIdea()}
+                              title="Generate image"
+                            >
+                              <span className="btn-generate-sheen" />
+                              <Sparkles size={15} className={`btn-sparkle-icon ${isGenerating ? 'sparkle-spin-fast' : 'sparkle-twinkle'}`} />
+                              <span className="generate-btn-text">Generate</span>
+                            </button>
+                          </div>
                         </div>
+                      </div>
+
+                      {/* Disclaimer text below bottom composer */}
+                      <div className="chat-disclaimer-text">
+                        Thamili is AI and can make mistakes.
                       </div>
                     </div>
                   </div>
-                </div>
-
-                {/* 4. CLEAN WORKSPACE FOOTER & GALLERY ACCESS */}
-                <div className="workspace-clean-footer">
-                  <button
-                    type="button"
-                    className="btn-open-gallery"
-                    onClick={() => setIsGalleryOpen(true)}
-                    title="Open Saved Gallery & Folders"
-                  >
-                    <span className="btn-gallery-sheen" />
-                    <Layers size={14} className="gallery-icon-animated" />
-                    <span className="gallery-btn-text">Gallery & Folders</span>
-                    <span className="gallery-count-badge">{galleryImages.length}</span>
-                  </button>
-                </div>
+                )}
               </>
             )}
 
@@ -3831,7 +5052,7 @@ export default function App() {
               <div style={{ marginTop: '24px' }}>
                 <button
                   className="btn-getstarted"
-                  onClick={() => setActiveTab('AI Image')}
+                  onClick={handleNavigateHome}
                 >
                   Go to AI Image Studio
                 </button>
@@ -4200,94 +5421,153 @@ export default function App() {
           onClick={() => setIsCategoriesModalOpen(false)}
         >
           <div
-            className="modal-content categories-hub-modal"
+            className="modal-content categories-hub-modal reference-concepts-modal"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Clean Header: Search Logo Button + Input followed by Headings */}
-            <div className="categories-header-clean">
-              <div className="categories-search-box-clean">
-                <button type="button" className="categories-search-logo-btn" title="Search styles">
-                  <Search size={18} />
+            {/* Clean, Balanced Header */}
+            <div className="ref-modal-header">
+              <div className="ref-modal-header-left">
+                <div className="ref-modal-badge-icon">
+                  <Sparkles size={18} />
+                </div>
+                <div>
+                  <div className="ref-modal-title-row">
+                    <h2 className="ref-modal-title">Reference Image Concepts</h2>
+                    <span className="ref-modal-count-pill">{filteredCategories.length} styles</span>
+                  </div>
+                  <p className="ref-modal-subtitle">
+                    Select any visual reference concept to apply to your generation
+                  </p>
+                </div>
+              </div>
+
+              <div className="ref-modal-header-right">
+                <div className="ref-search-box">
+                  <Search size={16} className="ref-search-icon" />
+                  <input
+                    type="text"
+                    className="ref-search-input"
+                    placeholder="Search styles (Paint, Clay, Neon, Chibi...)"
+                    value={categorySearchQuery}
+                    onChange={(e) => setCategorySearchQuery(e.target.value)}
+                    autoFocus
+                  />
+                  {categorySearchQuery && (
+                    <button
+                      type="button"
+                      className="ref-search-clear"
+                      onClick={() => setCategorySearchQuery('')}
+                      title="Clear search"
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  className="ref-modal-close-btn"
+                  onClick={() => setIsCategoriesModalOpen(false)}
+                  title="Close (Esc)"
+                >
+                  <X size={18} />
                 </button>
-                <input
-                  type="text"
-                  className="categories-search-input-clean"
-                  placeholder="Search Tamil vintage houses, vintage cars, streets, Pongal, Diwali, Jallikattu..."
-                  value={categorySearchQuery}
-                  onChange={(e) => setCategorySearchQuery(e.target.value)}
-                  autoFocus
-                />
-                {categorySearchQuery && (
-                  <button
-                    type="button"
-                    className="categories-search-clear"
-                    onClick={() => setCategorySearchQuery('')}
-                    title="Clear search"
-                  >
-                    <X size={14} />
-                  </button>
-                )}
               </div>
-
-              <div className="categories-header-title-block">
-                <h2 className="categories-hub-title-clean">Explore Tamil Vintage & Cultural Heritage Styles</h2>
-                <p className="categories-hub-sub-clean">
-                  Click any image to add it directly to your search bar
-                </p>
-              </div>
-
-              <button
-                className="modal-close-btn categories-clean-close"
-                onClick={() => setIsCategoriesModalOpen(false)}
-                title="Close"
-              >
-                <X size={18} />
-              </button>
             </div>
 
-            {/* Visual Image Grid - Wall to wall Images with No Borders */}
-            <div className="categories-hub-grid">
+            {/* Filter Category Chips Bar */}
+            <div className="ref-category-chips-bar">
+              {[
+                { id: 'All', label: 'All Styles' },
+                { id: 'Artistic & Street', label: '🎨 Artistic & Street' },
+                { id: '3D & Cute Goods', label: '🧸 3D & Cute Goods' },
+                { id: 'Portraits & Characters', label: '👤 Portraits & People' },
+                { id: 'Nature & Botanical', label: '🌿 Nature & Botanical' },
+                { id: 'Retro, Sci-Fi & Action', label: '⚡ Retro, Sci-Fi & Action' }
+              ].map((filterTab) => (
+                <button
+                  key={filterTab.id}
+                  type="button"
+                  className={`ref-chip-btn ${selectedCategoryField === filterTab.id ? 'active' : ''}`}
+                  onClick={() => setSelectedCategoryField(filterTab.id)}
+                >
+                  {filterTab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Reference Concepts Grid with Clean Spacing & Proper Aspect Ratio */}
+            <div className="ref-concepts-grid-container">
               {filteredCategories.length === 0 ? (
                 <div className="empty-categories-state">
                   <Compass size={36} className="empty-compass-icon" />
-                  <p className="empty-title">No matching Tamil vintage styles found</p>
+                  <p className="empty-title">No matching reference styles found</p>
                   <p className="empty-sub">
-                    Try searching for keywords like "vintage house", "ambassador", "street", "pongal", "diwali", or "jallikattu"
+                    Try searching for "Paint", "Mural", "Clay", "Bloom", "Neon", or "Chibi"
                   </p>
+                  <button
+                    type="button"
+                    className="ref-reset-search-btn"
+                    onClick={() => {
+                      setCategorySearchQuery('')
+                      setSelectedCategoryField('All')
+                    }}
+                  >
+                    Reset Filters
+                  </button>
                 </div>
               ) : (
-                filteredCategories.map((cat) => (
-                  <div
-                    key={cat.id}
-                    className="ref-gallery-card"
-                    onClick={() => handleApplyCategoryPrompt(cat)}
-                    title={`Click to add "${cat.name}" to search bar`}
-                  >
-                    {/* Full-bleed Reference Image */}
-                    <img
-                      src={cat.image}
-                      alt={cat.name}
-                      className="ref-gallery-img"
-                      loading="eager"
-                    />
+                <div className="reference-concepts-grid">
+                  {filteredCategories.map((concept) => (
+                    <div
+                      key={concept.id}
+                      className="concept-pill-card"
+                      onClick={() => handleApplyCategoryPrompt(concept)}
+                      title={`Click to use "${concept.name}" (${concept.tag}) reference style`}
+                      role="button"
+                      tabIndex={0}
+                    >
+                      <div className="concept-card-img-wrap">
+                        <img
+                          src={concept.image}
+                          alt={concept.name}
+                          className="concept-pill-img"
+                          loading="lazy"
+                          onError={(e) => {
+                            e.currentTarget.onerror = null
+                            e.currentTarget.src = 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=480&auto=format&fit=crop&q=80'
+                          }}
+                        />
+                        <div className="concept-pill-gradient" />
+                        <div className="concept-card-hover-overlay">
+                          <span className="concept-hover-apply-btn">
+                            <Plus size={14} /> Apply
+                          </span>
+                        </div>
+                      </div>
 
-                    {/* Gradient Overlays & Sheen */}
-                    <div className="ref-card-gradient-top" />
-                    <div className="ref-card-gradient-bottom" />
-                    <div className="ref-card-sheen" />
-
-                    {/* Top Field Badge */}
-                    <div className="ref-card-top-bar">
-                      <span className="ref-field-badge">{cat.field}</span>
+                      <div className="concept-pill-info">
+                        <span className="concept-pill-label">{concept.name}</span>
+                        <span className="concept-pill-tag">{concept.tag}</span>
+                      </div>
                     </div>
-
-                    {/* Bottom Info Title */}
-                    <div className="ref-card-bottom-panel">
-                      <h4 className="ref-card-title">{cat.name}</h4>
-                    </div>
-                  </div>
-                ))
+                  ))}
+                </div>
               )}
+            </div>
+
+            {/* Modal Clean Footer */}
+            <div className="ref-modal-footer">
+              <span className="ref-footer-hint">
+                ✨ Click any visual style to apply it to your AI Prompt Composer
+              </span>
+              <button
+                type="button"
+                className="ref-footer-close-btn"
+                onClick={() => setIsCategoriesModalOpen(false)}
+              >
+                Done
+              </button>
             </div>
           </div>
         </div>
@@ -5253,6 +6533,387 @@ export default function App() {
               <button type="button" className="btn-secondary" onClick={() => setLicenseCertificateAsset(null)}>
                 Close
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= FULLSCREEN EXPANDED IMAGE LIGHTBOX MODAL ================= */}
+      {fullscreenImageModal && (
+        <div
+          className="fullscreen-lightbox-backdrop"
+          onClick={() => setFullscreenImageModal(null)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            className="fullscreen-lightbox-dialog"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Top Bar Controls */}
+            <div className="fullscreen-lightbox-header">
+              <div className="fullscreen-prompt-badge">
+                <Sparkles size={14} className="badge-sparkle" />
+                <span className="fullscreen-prompt-text">
+                  {fullscreenImageModal.originalIdea || fullscreenImageModal.prompt}
+                </span>
+              </div>
+              <div className="fullscreen-header-actions">
+                <button
+                  type="button"
+                  className="fullscreen-glass-btn"
+                  onClick={() => handleDirectDownload(fullscreenImageModal.url, fullscreenImageModal.originalIdea || fullscreenImageModal.prompt)}
+                  title="Download image"
+                >
+                  <Download size={18} />
+                </button>
+                <button
+                  type="button"
+                  className="fullscreen-glass-btn"
+                  onClick={() => handleCopyImageOrPrompt(fullscreenImageModal.url, fullscreenImageModal.originalIdea || fullscreenImageModal.prompt)}
+                  title="Copy prompt"
+                >
+                  <Copy size={18} />
+                </button>
+                <button
+                  type="button"
+                  className="fullscreen-glass-btn"
+                  onClick={() => handleShareImage(fullscreenImageModal.url, fullscreenImageModal.originalIdea || fullscreenImageModal.prompt)}
+                  title="Share image"
+                >
+                  <Share2 size={18} />
+                </button>
+                <button
+                  type="button"
+                  className="fullscreen-glass-btn btn-close-fullscreen"
+                  onClick={() => setFullscreenImageModal(null)}
+                  title="Close (Esc)"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+
+            {/* Center High-Res Image Stage */}
+            <div
+              className="fullscreen-image-stage"
+              onClick={() => setFullscreenImageModal(null)}
+            >
+              <img
+                src={fullscreenImageModal.url}
+                alt={fullscreenImageModal.originalIdea || fullscreenImageModal.prompt}
+                className="fullscreen-rendered-img"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= GOOGLE GEMINI-STYLE SEARCH CHATS & HISTORY MODAL ================= */}
+      {isSearchModalOpen && (
+        <div
+          className="modal-overlay search-modal-overlay"
+          onClick={() => setIsSearchModalOpen(false)}
+        >
+          <div
+            className="search-chats-modal-container"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Top Search Input Box (Gemini Large Pill Search Bar) */}
+            <div className="search-chats-input-wrapper">
+              <Search size={19} className="search-chats-icon" />
+              <input
+                type="text"
+                className="search-chats-input"
+                placeholder="Search chats"
+                value={searchChatsQuery}
+                onChange={(e) => setSearchChatsQuery(e.target.value)}
+                autoFocus
+              />
+              {searchChatsQuery && (
+                <button
+                  type="button"
+                  className="btn-clear-search-input"
+                  onClick={() => setSearchChatsQuery('')}
+                  title="Clear input"
+                >
+                  <X size={16} />
+                </button>
+              )}
+              <button
+                type="button"
+                className="btn-close-search-modal"
+                onClick={() => setIsSearchModalOpen(false)}
+                title="Close search (Esc)"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Time Filter Tabs (All / Today / Past Dates) */}
+            <div className="search-time-filters-row">
+              <div className="filters-left-group">
+                {[
+                  { id: 'all', label: 'All' },
+                  { id: 'today', label: 'Today' },
+                  { id: 'older', label: 'Past Dates' }
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    className={`search-filter-pill ${searchChatsFilter === tab.id ? 'active' : ''}`}
+                    onClick={() => setSearchChatsFilter(tab.id)}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="filters-right-group">
+                {isLoggedIn ? (
+                  <span className="search-auth-status-tag logged-in">
+                    <CheckCircle2 size={12} /> Saved by Time & Date
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    className="search-auth-status-tag guest-login-btn"
+                    onClick={() => {
+                      setIsSearchModalOpen(false)
+                      setAuthMode('signin')
+                      setIsAuthModalOpen(true)
+                    }}
+                    title="Sign in to save history across dates"
+                  >
+                    <Lock size={12} /> Sign In to Save History
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Guest Banner if not logged in */}
+            {!isLoggedIn && (
+              <div className="guest-history-banner">
+                <div className="guest-banner-left">
+                  <Clock size={15} className="guest-banner-icon" />
+                  <div className="guest-banner-text">
+                    <strong>Guest Session Mode</strong>
+                    <span>Searches are temporary. Sign in to save full history organized by date.</span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className="btn-guest-banner-signin"
+                  onClick={() => {
+                    setIsSearchModalOpen(false)
+                    setAuthMode('signin')
+                    setIsAuthModalOpen(true)
+                  }}
+                >
+                  Sign In
+                </button>
+              </div>
+            )}
+
+            {/* Recent Section Header */}
+            <div className="search-results-section-header">
+              <span className="results-header-title">
+                {searchChatsQuery
+                  ? `Search Results (${activeHistory.length})`
+                  : isLoggedIn
+                  ? 'Recent'
+                  : 'Recent (Current Session)'}
+              </span>
+              {activeHistory.length > 0 && (
+                <button
+                  type="button"
+                  className="btn-clear-modal-history"
+                  onClick={handleClearHistoryList}
+                >
+                  Clear all
+                </button>
+              )}
+            </div>
+
+            {/* Gemini-Style History Rows List */}
+            <div className="search-chats-results-list">
+              {activeHistory.length === 0 ? (
+                <div className="search-empty-state">
+                  <Search size={28} className="empty-search-icon" />
+                  <p>
+                    {searchChatsQuery
+                      ? `No chats found matching "${searchChatsQuery}"`
+                      : 'No recent searches or chats yet.'}
+                  </p>
+                  <span>Start a new chat to see history appear here.</span>
+                </div>
+              ) : (
+                activeHistory.map((item) => (
+                  <div
+                    key={item.id}
+                    className="gemini-chat-history-row"
+                    onClick={() => handleSelectHistoryChat(item)}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    <div className="chat-row-left">
+                      <MessageSquare size={16} className="chat-row-icon" />
+                      <span className="chat-row-title" title={item.query}>
+                        {item.title || item.query}
+                      </span>
+                    </div>
+
+                    <div className="chat-row-right">
+                      <span className="chat-row-timetag">{item.timeTag || 'Today'}</span>
+                      <button
+                        type="button"
+                        className="btn-row-delete"
+                        onClick={(e) => handleDeleteHistoryChat(e, item.id)}
+                        title="Delete chat"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= SAMPLE USER LOGIN & SIGN UP AUTH MODAL ================= */}
+      {isAuthModalOpen && (
+        <div
+          className="modal-overlay auth-modal-overlay"
+          onClick={() => setIsAuthModalOpen(false)}
+        >
+          <div
+            className="modal-content auth-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header with Thamili Logo */}
+            <div className="auth-modal-header">
+              <img src={thamiliLogoImg} alt="Thamili AI" className="auth-modal-logo" />
+              <h3 className="auth-modal-title">
+                {authMode === 'signin' ? 'Welcome Back to Thamili AI' : 'Create Your Thamili Account'}
+              </h3>
+              <p className="auth-modal-subtitle">
+                {authMode === 'signin'
+                  ? 'Sign in to access persistent history saved by date & Pro features.'
+                  : 'Start creating with instant cloud history sync & free AI credits.'}
+              </p>
+              <button
+                type="button"
+                className="modal-close-btn auth-close-btn"
+                onClick={() => setIsAuthModalOpen(false)}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* 1-Click Instant Demo Login Option */}
+            <div className="auth-instant-demo-box">
+              <button
+                type="button"
+                className="btn-demo-quick-login"
+                onClick={() =>
+                  handlePerformLogin({
+                    name: 'Adrin',
+                    email: 'adrin@thamili.ai',
+                    avatar: 'A',
+                    role: 'Pro Creator',
+                    credits: 250
+                  })
+                }
+              >
+                <Sparkles size={16} className="demo-login-sparkle" />
+                <span>1-Click Instant Demo Login (as Adrin)</span>
+                <span className="demo-tag">Instant</span>
+              </button>
+            </div>
+
+            <div className="auth-divider">
+              <span>or continue with email</span>
+            </div>
+
+            {/* Email / Password Form */}
+            <form
+              className="auth-form-body"
+              onSubmit={(e) => {
+                e.preventDefault()
+                handlePerformLogin()
+              }}
+            >
+              {authMode === 'signup' && (
+                <div className="form-group">
+                  <label className="form-label">Full Name</label>
+                  <input
+                    type="text"
+                    className="input-field"
+                    placeholder="Adrin"
+                    value={authFormData.name}
+                    onChange={(e) => setAuthFormData({ ...authFormData, name: e.target.value })}
+                    required
+                  />
+                </div>
+              )}
+
+              <div className="form-group">
+                <label className="form-label">Email Address</label>
+                <input
+                  type="email"
+                  className="input-field"
+                  placeholder="adrin@thamili.ai"
+                  value={authFormData.email}
+                  onChange={(e) => setAuthFormData({ ...authFormData, email: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Password</label>
+                <input
+                  type="password"
+                  className="input-field"
+                  placeholder="••••••••"
+                  value={authFormData.password}
+                  onChange={(e) => setAuthFormData({ ...authFormData, password: e.target.value })}
+                  required
+                />
+              </div>
+
+              <button type="submit" className="btn-primary-gradient btn-auth-submit">
+                <Check size={16} />
+                <span>{authMode === 'signin' ? 'Sign In to Account' : 'Create Account'}</span>
+              </button>
+            </form>
+
+            <div className="auth-toggle-footer">
+              {authMode === 'signin' ? (
+                <p>
+                  Don't have an account?{' '}
+                  <button
+                    type="button"
+                    className="auth-switch-link"
+                    onClick={() => setAuthMode('signup')}
+                  >
+                    Sign Up Free
+                  </button>
+                </p>
+              ) : (
+                <p>
+                  Already have an account?{' '}
+                  <button
+                    type="button"
+                    className="auth-switch-link"
+                    onClick={() => setAuthMode('signin')}
+                  >
+                    Sign In
+                  </button>
+                </p>
+              )}
             </div>
           </div>
         </div>
