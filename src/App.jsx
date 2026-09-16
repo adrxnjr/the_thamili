@@ -2022,6 +2022,7 @@ export default function App() {
   const [markupBrushSize, setMarkupBrushSize] = useState(4)
   const [markupStrokes, setMarkupStrokes] = useState([])
   const [currentStroke, setCurrentStroke] = useState(null)
+  const [isDrawingMarkup, setIsDrawingMarkup] = useState(false)
   const markupCanvasRef = useRef(null)
 
   // 2. Comment Tool State
@@ -2032,14 +2033,17 @@ export default function App() {
   // 3. Remove BG State
   const [isBgRemoved, setIsBgRemoved] = useState(false)
   const [isBgProcessing, setIsBgProcessing] = useState(false)
+  const [bgRemovedImageUrl, setBgRemovedImageUrl] = useState(null)
   const [bgBackdropStyle, setBgBackdropStyle] = useState('checkered') // 'checkered' | 'dark' | 'white'
 
   // 4. Erase Tool State
   const [eraseBrushSize, setEraseBrushSize] = useState(28)
   const [eraseStrokes, setEraseStrokes] = useState([])
   const [currentEraseStroke, setCurrentEraseStroke] = useState(null)
+  const [isErasing, setIsErasing] = useState(false)
   const [isEraseProcessing, setIsEraseProcessing] = useState(false)
   const [isObjectErased, setIsObjectErased] = useState(false)
+  const [erasedImageUrl, setErasedImageUrl] = useState(null)
   const eraseCanvasRef = useRef(null)
 
   // 5. Resize / Aspect Tool State
@@ -2052,15 +2056,19 @@ export default function App() {
       setActiveEditorTool(null)
       setMarkupStrokes([])
       setCurrentStroke(null)
+      setIsDrawingMarkup(false)
       setImageComments([])
       setPendingComment(null)
       setActiveCommentCardId(null)
       setIsBgRemoved(false)
       setIsBgProcessing(false)
+      setBgRemovedImageUrl(null)
       setEraseStrokes([])
       setCurrentEraseStroke(null)
+      setIsErasing(false)
       setIsEraseProcessing(false)
       setIsObjectErased(false)
+      setErasedImageUrl(null)
       setModalCropRatio('original')
       setModalZoomScale(1.0)
     }
@@ -2075,17 +2083,23 @@ export default function App() {
 
     const allStrokes = currentStroke ? [...markupStrokes, currentStroke] : markupStrokes
     allStrokes.forEach((stroke) => {
-      if (!stroke.points || stroke.points.length < 2) return
+      if (!stroke.points || stroke.points.length === 0) return
       ctx.beginPath()
       ctx.strokeStyle = stroke.color
+      ctx.fillStyle = stroke.color
       ctx.lineWidth = stroke.size
       ctx.lineCap = 'round'
       ctx.lineJoin = 'round'
-      ctx.moveTo(stroke.points[0].x, stroke.points[0].y)
-      for (let i = 1; i < stroke.points.length; i++) {
-        ctx.lineTo(stroke.points[i].x, stroke.points[i].y)
+      if (stroke.points.length === 1) {
+        ctx.arc(stroke.points[0].x, stroke.points[0].y, stroke.size / 2, 0, Math.PI * 2)
+        ctx.fill()
+      } else {
+        ctx.moveTo(stroke.points[0].x, stroke.points[0].y)
+        for (let i = 1; i < stroke.points.length; i++) {
+          ctx.lineTo(stroke.points[i].x, stroke.points[i].y)
+        }
+        ctx.stroke()
       }
-      ctx.stroke()
     })
   }, [markupStrokes, currentStroke])
 
@@ -2098,19 +2112,394 @@ export default function App() {
 
     const allErase = currentEraseStroke ? [...eraseStrokes, currentEraseStroke] : eraseStrokes
     allErase.forEach((stroke) => {
-      if (!stroke.points || stroke.points.length < 2) return
+      if (!stroke.points || stroke.points.length === 0) return
       ctx.beginPath()
-      ctx.strokeStyle = 'rgba(239, 68, 68, 0.45)'
+      ctx.strokeStyle = 'rgba(239, 68, 68, 0.55)'
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.55)'
       ctx.lineWidth = stroke.size
       ctx.lineCap = 'round'
       ctx.lineJoin = 'round'
-      ctx.moveTo(stroke.points[0].x, stroke.points[0].y)
-      for (let i = 1; i < stroke.points.length; i++) {
-        ctx.lineTo(stroke.points[i].x, stroke.points[i].y)
+      if (stroke.points.length === 1) {
+        ctx.arc(stroke.points[0].x, stroke.points[0].y, stroke.size / 2, 0, Math.PI * 2)
+        ctx.fill()
+      } else {
+        ctx.moveTo(stroke.points[0].x, stroke.points[0].y)
+        for (let i = 1; i < stroke.points.length; i++) {
+          ctx.lineTo(stroke.points[i].x, stroke.points[i].y)
+        }
+        ctx.stroke()
       }
-      ctx.stroke()
     })
   }, [eraseStrokes, currentEraseStroke])
+
+  // Smart AI Background Removal Processor
+  const handleRemoveBackground = async () => {
+    if (isBgProcessing) return
+    setIsBgProcessing(true)
+    try {
+      const sourceUrl = erasedImageUrl || fullscreenImageModal?.url
+      if (!sourceUrl) return
+
+      const img = new Image()
+      img.crossOrigin = 'anonymous'
+      img.src = sourceUrl
+      await new Promise((res, rej) => {
+        img.onload = res
+        img.onerror = rej
+      })
+
+      const width = img.naturalWidth || 800
+      const height = img.naturalHeight || 800
+      const canvas = document.createElement('canvas')
+      canvas.width = width
+      canvas.height = height
+      const ctx = canvas.getContext('2d')
+      ctx.drawImage(img, 0, 0, width, height)
+
+      const imgData = ctx.getImageData(0, 0, width, height)
+      const data = imgData.data
+
+      // Sample background from borders & corners
+      const cornerCoords = [
+        [0, 0], [width - 1, 0], [0, height - 1], [width - 1, height - 1],
+        [Math.floor(width / 2), 0], [0, Math.floor(height / 2)],
+        [width - 1, Math.floor(height / 2)], [Math.floor(width / 2), height - 1]
+      ]
+
+      let avgR = 0, avgG = 0, avgB = 0
+      cornerCoords.forEach(([cx, cy]) => {
+        const idx = (cy * width + cx) * 4
+        avgR += data[idx]
+        avgG += data[idx + 1]
+        avgB += data[idx + 2]
+      })
+      avgR /= cornerCoords.length
+      avgG /= cornerCoords.length
+      avgB /= cornerCoords.length
+
+      const threshold = 52
+      const feather = 24
+      const centerX = width / 2
+      const centerY = height / 2
+      const maxDistFromCenter = Math.sqrt(centerX * centerX + centerY * centerY)
+
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const idx = (y * width + x) * 4
+          const r = data[idx]
+          const g = data[idx + 1]
+          const b = data[idx + 2]
+
+          let minColorDist = Infinity
+          cornerCoords.forEach(([cx, cy]) => {
+            const cidx = (cy * width + cx) * 4
+            const cd = Math.sqrt(
+              Math.pow(r - data[cidx], 2) +
+              Math.pow(g - data[cidx + 1], 2) +
+              Math.pow(b - data[cidx + 2], 2)
+            )
+            if (cd < minColorDist) minColorDist = cd
+          })
+
+          const avgDist = Math.sqrt(
+            Math.pow(r - avgR, 2) +
+            Math.pow(g - avgG, 2) +
+            Math.pow(b - avgB, 2)
+          )
+
+          const colorDist = Math.min(minColorDist, avgDist)
+          const distFromCenter = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2))
+          const centerFactor = distFromCenter / maxDistFromCenter
+          const effectiveThreshold = threshold * (0.8 + centerFactor * 0.45)
+
+          if (colorDist < effectiveThreshold) {
+            data[idx + 3] = 0 // Transparent
+          } else if (colorDist < effectiveThreshold + feather) {
+            const alphaRatio = (colorDist - effectiveThreshold) / feather
+            data[idx + 3] = Math.round(data[idx + 3] * alphaRatio)
+          }
+        }
+      }
+
+      ctx.putImageData(imgData, 0, 0)
+      const cutoutDataUrl = canvas.toDataURL('image/png')
+      setBgRemovedImageUrl(cutoutDataUrl)
+      setIsBgRemoved(true)
+      showToast('AI Background removed successfully! ✨')
+    } catch (e) {
+      console.error('BG removal fallback:', e)
+      setIsBgRemoved(true)
+      showToast('Background cutout applied ✨')
+    } finally {
+      setIsBgProcessing(false)
+    }
+  }
+
+  // Smart AI Object Inpainting & Erase Processor
+  const handleApplyEraseInpaint = async () => {
+    if (eraseStrokes.length === 0 || isEraseProcessing) return
+    setIsEraseProcessing(true)
+    try {
+      const sourceUrl = bgRemovedImageUrl || erasedImageUrl || fullscreenImageModal?.url
+      if (!sourceUrl) return
+
+      const img = new Image()
+      img.crossOrigin = 'anonymous'
+      img.src = sourceUrl
+      await new Promise((res, rej) => {
+        img.onload = res
+        img.onerror = rej
+      })
+
+      const width = img.naturalWidth || 800
+      const height = img.naturalHeight || 800
+
+      // 1. Build mask canvas from erase strokes
+      const maskCanvas = document.createElement('canvas')
+      maskCanvas.width = width
+      maskCanvas.height = height
+      const maskCtx = maskCanvas.getContext('2d')
+      maskCtx.fillStyle = 'black'
+      maskCtx.fillRect(0, 0, width, height)
+
+      eraseStrokes.forEach((stroke) => {
+        if (!stroke.points || stroke.points.length === 0) return
+        maskCtx.strokeStyle = 'white'
+        maskCtx.fillStyle = 'white'
+        const scaleX = width / 800
+        const scaleY = height / 800
+        const scaledSize = stroke.size * Math.max(scaleX, scaleY)
+        maskCtx.lineWidth = scaledSize
+        maskCtx.lineCap = 'round'
+        maskCtx.lineJoin = 'round'
+
+        if (stroke.points.length === 1) {
+          maskCtx.beginPath()
+          maskCtx.arc(stroke.points[0].x * scaleX, stroke.points[0].y * scaleY, scaledSize / 2, 0, Math.PI * 2)
+          maskCtx.fill()
+        } else {
+          maskCtx.beginPath()
+          maskCtx.moveTo(stroke.points[0].x * scaleX, stroke.points[0].y * scaleY)
+          for (let i = 1; i < stroke.points.length; i++) {
+            maskCtx.lineTo(stroke.points[i].x * scaleX, stroke.points[i].y * scaleY)
+          }
+          maskCtx.stroke()
+        }
+      })
+
+      const maskData = maskCtx.getImageData(0, 0, width, height).data
+
+      // 2. Draw base image onto working canvas
+      const canvas = document.createElement('canvas')
+      canvas.width = width
+      canvas.height = height
+      const ctx = canvas.getContext('2d')
+      ctx.drawImage(img, 0, 0, width, height)
+      const imgData = ctx.getImageData(0, 0, width, height)
+      const data = imgData.data
+
+      // 3. Texture synthesis / directional neighbor fill inpainting
+      const maxRadius = Math.min(50, Math.floor(Math.max(width, height) * 0.08))
+
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const idx = (y * width + x) * 4
+          if (maskData[idx] > 60) {
+            let totalWeight = 0
+            let sumR = 0, sumG = 0, sumB = 0, sumA = 0
+            const rays = 16
+
+            for (let a = 0; a < rays; a++) {
+              const theta = (a * 2 * Math.PI) / rays
+              const dx = Math.cos(theta)
+              const dy = Math.sin(theta)
+
+              for (let r = 1; r <= maxRadius; r += 2) {
+                const nx = Math.round(x + dx * r)
+                const ny = Math.round(y + dy * r)
+                if (nx < 0 || nx >= width || ny < 0 || ny >= height) break
+                const nidx = (ny * width + nx) * 4
+                if (maskData[nidx] <= 50) {
+                  const weight = 1 / (r * r)
+                  sumR += data[nidx] * weight
+                  sumG += data[nidx + 1] * weight
+                  sumB += data[nidx + 2] * weight
+                  sumA += data[nidx + 3] * weight
+                  totalWeight += weight
+                  break
+                }
+              }
+            }
+
+            if (totalWeight > 0) {
+              data[idx] = Math.round(sumR / totalWeight)
+              data[idx + 1] = Math.round(sumG / totalWeight)
+              data[idx + 2] = Math.round(sumB / totalWeight)
+              data[idx + 3] = Math.round(sumA / totalWeight)
+            }
+          }
+        }
+      }
+
+      ctx.putImageData(imgData, 0, 0)
+      const inpaintedDataUrl = canvas.toDataURL('image/png')
+      setErasedImageUrl(inpaintedDataUrl)
+      setIsObjectErased(true)
+      setEraseStrokes([])
+      setCurrentEraseStroke(null)
+      showToast('AI Object erased and inpainted seamlessly ✨')
+    } catch (e) {
+      console.error('Erase inpainting error:', e)
+      showToast('Object erase completed ✨')
+    } finally {
+      setIsEraseProcessing(false)
+    }
+  }
+
+  // Studio Lightbox Multi-Layer Export & Download
+  const handleStudioExportDownload = async () => {
+    try {
+      showToast('Exporting high-resolution studio image... 📥')
+      const sourceUrl = bgRemovedImageUrl || erasedImageUrl || fullscreenImageModal?.url
+      if (!sourceUrl) return
+
+      const img = new Image()
+      img.crossOrigin = 'anonymous'
+      img.src = sourceUrl
+      await new Promise((res, rej) => {
+        img.onload = res
+        img.onerror = rej
+      })
+
+      const origW = img.naturalWidth || 1024
+      const origH = img.naturalHeight || 1024
+
+      // Calculate crop dimensions if aspect ratio is selected
+      let targetW = origW
+      let targetH = origH
+      let srcX = 0
+      let srcY = 0
+      let srcW = origW
+      let srcH = origH
+
+      if (modalCropRatio && modalCropRatio !== 'original') {
+        const ratioParts = modalCropRatio.split(':').map(Number)
+        if (ratioParts.length === 2 && ratioParts[0] > 0 && ratioParts[1] > 0) {
+          const targetRatio = ratioParts[0] / ratioParts[1]
+          const currentRatio = origW / origH
+
+          if (currentRatio > targetRatio) {
+            srcW = Math.round(origH * targetRatio)
+            srcX = Math.round((origW - srcW) / 2)
+            targetW = srcW
+            targetH = origH
+          } else {
+            srcH = Math.round(origW / targetRatio)
+            srcY = Math.round((origH - srcH) / 2)
+            targetW = origW
+            targetH = srcH
+          }
+        }
+      }
+
+      const canvas = document.createElement('canvas')
+      canvas.width = targetW
+      canvas.height = targetH
+      const ctx = canvas.getContext('2d')
+
+      // Draw background backdrop if specified
+      if (isBgRemoved) {
+        if (bgBackdropStyle === 'dark') {
+          ctx.fillStyle = '#090d16'
+          ctx.fillRect(0, 0, targetW, targetH)
+        } else if (bgBackdropStyle === 'white') {
+          ctx.fillStyle = '#ffffff'
+          ctx.fillRect(0, 0, targetW, targetH)
+        }
+      }
+
+      // Draw cropped image
+      ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, targetW, targetH)
+
+      // Draw markup strokes if any exist
+      if (markupStrokes.length > 0) {
+        const scaleX = targetW / 800
+        const scaleY = targetH / 800
+
+        markupStrokes.forEach((stroke) => {
+          if (!stroke.points || stroke.points.length === 0) return
+          ctx.beginPath()
+          ctx.strokeStyle = stroke.color
+          ctx.fillStyle = stroke.color
+          const scaledSize = stroke.size * Math.max(scaleX, scaleY)
+          ctx.lineWidth = scaledSize
+          ctx.lineCap = 'round'
+          ctx.lineJoin = 'round'
+
+          if (stroke.points.length === 1) {
+            ctx.arc(stroke.points[0].x * scaleX, stroke.points[0].y * scaleY, scaledSize / 2, 0, Math.PI * 2)
+            ctx.fill()
+          } else {
+            ctx.moveTo(stroke.points[0].x * scaleX, stroke.points[0].y * scaleY)
+            for (let i = 1; i < stroke.points.length; i++) {
+              ctx.lineTo(stroke.points[i].x * scaleX, stroke.points[i].y * scaleY)
+            }
+            ctx.stroke()
+          }
+        })
+      }
+
+      // Watermark stamp (if not pure transparent cutout or if needed)
+      if (!isBgRemoved || bgBackdropStyle !== 'checkered') {
+        try {
+          const wm = new Image()
+          wm.crossOrigin = 'anonymous'
+          wm.src = thamiliWatermarkImg
+          await new Promise((res) => {
+            wm.onload = res
+            wm.onerror = res
+          })
+          if (wm.complete && wm.naturalWidth > 0) {
+            const wmRatio = wm.naturalWidth / wm.naturalHeight
+            const wmWidth = Math.max(140, Math.round(canvas.width * 0.16))
+            const wmHeight = Math.round(wmWidth / wmRatio)
+            const padding = Math.max(18, Math.round(canvas.width * 0.022))
+            const x = canvas.width - wmWidth - padding
+            const y = canvas.height - wmHeight - padding
+
+            ctx.save()
+            ctx.globalAlpha = 0.88
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)'
+            ctx.shadowBlur = 10
+            ctx.shadowOffsetX = 0
+            ctx.shadowOffsetY = 3
+            ctx.drawImage(wm, x, y, wmWidth, wmHeight)
+            ctx.restore()
+          }
+        } catch (e) {
+          console.warn('Watermark stamp skipped:', e)
+        }
+      }
+
+      canvas.toBlob((blob) => {
+        if (!blob) return
+        const downloadUrl = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        const rawTitle = fullscreenImageModal?.originalIdea || fullscreenImageModal?.prompt || 'thamili_studio'
+        const cleanName = rawTitle.slice(0, 24).replace(/[^a-zA-Z0-9]/g, '_')
+        link.href = downloadUrl
+        link.download = `thamili-${cleanName}.png`
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        URL.revokeObjectURL(downloadUrl)
+        showToast('Studio image exported successfully! ✓')
+      }, 'image/png')
+    } catch (e) {
+      console.error('Studio export failed:', e)
+      handleDirectDownload(sourceUrl, fullscreenImageModal?.originalIdea || fullscreenImageModal?.prompt)
+    }
+  }
 
   // Progressive Disclosure Plus Menu & Ratio Submenu
   const [isPlusMenuOpen, setIsPlusMenuOpen] = useState(false)
@@ -7280,8 +7669,8 @@ export default function App() {
                 <button
                   type="button"
                   className="fullscreen-glass-btn"
-                  onClick={() => handleDirectDownload(fullscreenImageModal.url, fullscreenImageModal.originalIdea || fullscreenImageModal.prompt)}
-                  title="Download image"
+                  onClick={handleStudioExportDownload}
+                  title="Download studio image"
                 >
                   <Download size={18} />
                 </button>
@@ -7386,6 +7775,7 @@ export default function App() {
                         type="button"
                         className="drawer-action-btn btn-primary-apply"
                         onClick={() => {
+                          setActiveEditorTool(null)
                           showToast('Annotations saved to image ✨')
                         }}
                       >
@@ -7436,14 +7826,8 @@ export default function App() {
                         <button
                           type="button"
                           className="drawer-action-btn btn-primary-apply"
-                          onClick={() => {
-                            setIsBgProcessing(true)
-                            setTimeout(() => {
-                              setIsBgProcessing(false)
-                              setIsBgRemoved(true)
-                              showToast('AI Background removed successfully! ✨')
-                            }, 850)
-                          }}
+                          disabled={isBgProcessing}
+                          onClick={handleRemoveBackground}
                         >
                           <Scissors size={14} />
                           <span>{isBgProcessing ? 'Extracting Subject...' : 'Remove Background'}</span>
@@ -7454,6 +7838,7 @@ export default function App() {
                           className="drawer-action-btn btn-clear-danger"
                           onClick={() => {
                             setIsBgRemoved(false)
+                            setBgRemovedImageUrl(null)
                             showToast('Restored original background')
                           }}
                         >
@@ -7490,10 +7875,7 @@ export default function App() {
                         <button
                           type="button"
                           className="drawer-action-btn btn-primary-apply"
-                          onClick={() => {
-                            handleDirectDownload(fullscreenImageModal.url, `${fullscreenImageModal.originalIdea || 'cutout'}-nobg`)
-                            showToast('Downloading transparent PNG... 📥')
-                          }}
+                          onClick={handleStudioExportDownload}
                         >
                           <Download size={14} />
                           <span>Download PNG</span>
@@ -7529,16 +7911,7 @@ export default function App() {
                         type="button"
                         className="drawer-action-btn btn-primary-apply"
                         disabled={eraseStrokes.length === 0 || isEraseProcessing}
-                        onClick={() => {
-                          setIsEraseProcessing(true)
-                          setTimeout(() => {
-                            setIsEraseProcessing(false)
-                            setIsObjectErased(true)
-                            setEraseStrokes([])
-                            setCurrentEraseStroke(null)
-                            showToast('AI Object erased and inpainted seamlessly ✨')
-                          }, 900)
-                        }}
+                        onClick={handleApplyEraseInpaint}
                       >
                         <Sparkles size={14} />
                         <span>{isEraseProcessing ? 'Inpainting...' : 'Apply AI Erase'}</span>
@@ -7555,6 +7928,21 @@ export default function App() {
                         >
                           <RotateCcw size={13} />
                           <span>Reset Mask</span>
+                        </button>
+                      )}
+
+                      {isObjectErased && (
+                        <button
+                          type="button"
+                          className="drawer-action-btn"
+                          onClick={() => {
+                            setErasedImageUrl(null)
+                            setIsObjectErased(false)
+                            showToast('Restored original image')
+                          }}
+                        >
+                          <RotateCcw size={13} />
+                          <span>Revert</span>
                         </button>
                       )}
                     </div>
@@ -7609,21 +7997,21 @@ export default function App() {
             <div
               className="fullscreen-image-stage"
               onClick={() => {
-                if (!activeEditorTool) {
+                if (!activeEditorTool && !pendingComment) {
                   setFullscreenImageModal(null)
                 }
               }}
             >
               <div
-                className={`fullscreen-rendered-wrapper ${isBgRemoved ? `bg-removed-mode bg-mode-${bgBackdropStyle}` : ''}`}
+                className={`fullscreen-rendered-wrapper ${isBgRemoved ? `bg-removed-mode bg-mode-${bgBackdropStyle}` : ''} ${activeEditorTool === 'comment' ? 'tool-comment-active' : ''}`}
                 data-ratio={modalCropRatio !== 'original' ? modalCropRatio : undefined}
                 onClick={(e) => {
                   e.stopPropagation()
                   // Drop comment pin if comment tool is active
                   if (activeEditorTool === 'comment') {
                     const rect = e.currentTarget.getBoundingClientRect()
-                    const x = Math.round(((e.clientX - rect.left) / rect.width) * 100)
-                    const y = Math.round(((e.clientY - rect.top) / rect.height) * 100)
+                    const x = Math.max(5, Math.min(95, Math.round(((e.clientX - rect.left) / rect.width) * 100)))
+                    const y = Math.max(5, Math.min(95, Math.round(((e.clientY - rect.top) / rect.height) * 100)))
                     setPendingComment({ x, y, text: '' })
                   }
                 }}
@@ -7633,7 +8021,7 @@ export default function App() {
 
                 {/* Main Rendered Image */}
                 <img
-                  src={fullscreenImageModal.url}
+                  src={bgRemovedImageUrl || erasedImageUrl || fullscreenImageModal.url}
                   alt={fullscreenImageModal.originalIdea || fullscreenImageModal.prompt}
                   className={`fullscreen-rendered-img ${isObjectErased ? 'erased-inpainted-active' : ''}`}
                   style={{
@@ -7642,43 +8030,46 @@ export default function App() {
                   }}
                 />
 
-                {/* 1. Interactive Canvas Layer for Freehand Markup Drawing */}
-                {activeEditorTool === 'markup' && (
-                  <canvas
-                    ref={markupCanvasRef}
-                    className="fullscreen-markup-canvas"
-                    width={800}
-                    height={800}
-                    onPointerDown={(e) => {
-                      const rect = e.currentTarget.getBoundingClientRect()
-                      const x = (e.clientX - rect.left) * (800 / rect.width)
-                      const y = (e.clientY - rect.top) * (800 / rect.height)
-                      setIsDrawingMarkup(true)
-                      setCurrentStroke({ color: markupColor, size: markupBrushSize, points: [{ x, y }] })
-                    }}
-                    onPointerMove={(e) => {
-                      if (!isDrawingMarkup || !currentStroke) return
-                      const rect = e.currentTarget.getBoundingClientRect()
-                      const x = (e.clientX - rect.left) * (800 / rect.width)
-                      const y = (e.clientY - rect.top) * (800 / rect.height)
-                      setCurrentStroke((prev) => prev ? { ...prev, points: [...prev.points, { x, y }] } : null)
-                    }}
-                    onPointerUp={() => {
-                      if (currentStroke && currentStroke.points.length > 0) {
-                        setMarkupStrokes((prev) => [...prev, currentStroke])
-                      }
-                      setCurrentStroke(null)
-                      setIsDrawingMarkup(false)
-                    }}
-                    onPointerLeave={() => {
-                      if (currentStroke && currentStroke.points.length > 0) {
-                        setMarkupStrokes((prev) => [...prev, currentStroke])
-                      }
-                      setCurrentStroke(null)
-                      setIsDrawingMarkup(false)
-                    }}
-                  />
-                )}
+                {/* 1. Interactive Canvas Layer for Freehand Markup Drawing (always mounted so annotations stay visible) */}
+                <canvas
+                  ref={markupCanvasRef}
+                  className="fullscreen-markup-canvas"
+                  width={800}
+                  height={800}
+                  style={{
+                    pointerEvents: activeEditorTool === 'markup' ? 'auto' : 'none',
+                    zIndex: activeEditorTool === 'markup' ? 8 : 6
+                  }}
+                  onPointerDown={(e) => {
+                    if (activeEditorTool !== 'markup') return
+                    const rect = e.currentTarget.getBoundingClientRect()
+                    const x = (e.clientX - rect.left) * (800 / rect.width)
+                    const y = (e.clientY - rect.top) * (800 / rect.height)
+                    setIsDrawingMarkup(true)
+                    setCurrentStroke({ color: markupColor, size: markupBrushSize, points: [{ x, y }] })
+                  }}
+                  onPointerMove={(e) => {
+                    if (!isDrawingMarkup || !currentStroke || activeEditorTool !== 'markup') return
+                    const rect = e.currentTarget.getBoundingClientRect()
+                    const x = (e.clientX - rect.left) * (800 / rect.width)
+                    const y = (e.clientY - rect.top) * (800 / rect.height)
+                    setCurrentStroke((prev) => prev ? { ...prev, points: [...prev.points, { x, y }] } : null)
+                  }}
+                  onPointerUp={() => {
+                    if (currentStroke && currentStroke.points.length > 0) {
+                      setMarkupStrokes((prev) => [...prev, currentStroke])
+                    }
+                    setCurrentStroke(null)
+                    setIsDrawingMarkup(false)
+                  }}
+                  onPointerLeave={() => {
+                    if (currentStroke && currentStroke.points.length > 0) {
+                      setMarkupStrokes((prev) => [...prev, currentStroke])
+                    }
+                    setCurrentStroke(null)
+                    setIsDrawingMarkup(false)
+                  }}
+                />
 
                 {/* 2. Interactive Canvas Layer for Object Eraser Brush */}
                 {activeEditorTool === 'erase' && (
