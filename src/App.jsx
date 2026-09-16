@@ -53,10 +53,21 @@ import {
   ThumbsDown,
   Share2,
   MoreHorizontal,
-  Bookmark
+  Bookmark,
+  Crown,
+  PenLine,
+  MessageSquarePlus,
+  Scissors,
+  Eraser,
+  Crop,
+  Undo2,
+  RotateCcw,
+  Send,
+  ZoomIn
 } from 'lucide-react'
 import thamiliLogoImg from './assets/thamili-logo.png'
 import sidebarLogoImg from './assets/thamili-logo.png'
+import thamiliWatermarkImg from './assets/thamili-watermark.png'
 import './App.css'
 
 export const LICENSE_TIERS = [
@@ -134,19 +145,339 @@ export const SAMPLE_UPLOAD_PRESETS = [
   }
 ]
 
+export const AVAILABLE_AI_MODELS = [
+  {
+    id: 'Basic',
+    name: 'Basic',
+    shortName: 'Basic',
+    badge: 'Fast & Free',
+    desc: 'Ultra-fast generation for rapid concepts & drafts',
+    category: 'Standard Tier',
+    icon: Zap,
+    color: '#06b6d4',
+    engineModel: 'turbo'
+  },
+  {
+    id: 'Pro',
+    name: 'Pro',
+    shortName: 'Pro',
+    badge: 'High Detail',
+    desc: 'Balanced high-fidelity generation with crisp details',
+    category: 'Professional Tier',
+    icon: Sparkles,
+    color: '#8b5cf6',
+    engineModel: 'flux'
+  },
+  {
+    id: 'Pro+',
+    name: 'Pro+',
+    shortName: 'Pro+',
+    badge: 'Master 8K',
+    desc: 'Supreme UHD photorealism with cinematic studio lighting',
+    category: 'Ultra Tier',
+    icon: Crown,
+    color: '#ec4899',
+    engineModel: 'flux-realism'
+  }
+]
+
 export const INITIAL_LOGGED_IN_HISTORY = [
-  { id: 'chat-1', title: 'Casual Greeting', query: 'Casual Greeting and friendly conversation', timeTag: 'Today', dateBucket: 'today', createdAt: 'Today, 6:15 PM' },
-  { id: 'chat-2', title: 'Electric Sedan Coastal Drive', query: 'Electric Sedan Coastal Drive at sunset 8k cinematic wallpaper', timeTag: 'Today', dateBucket: 'today', createdAt: 'Today, 4:20 PM', image: '/images/basic/car-sports-red.jpg' },
-  { id: 'chat-3', title: 'Coastal Tesla Sunset Drive', query: 'Coastal Tesla Sunset Drive aesthetic highway wallpaper', timeTag: 'Today', dateBucket: 'today', createdAt: 'Today, 2:05 PM', image: '/images/basic/car-supercar.jpg' },
-  { id: 'chat-4', title: 'HHD Table Lab Guide', query: 'HHD Table Lab Guide visual technical diagram and schematic', timeTag: '29 Aug', dateBucket: 'older', createdAt: '29 Aug 2026', image: '/images/tamil/madurai-temple.jpg' },
-  { id: 'chat-5', title: 'Futuristic Cyberpunk Metropolis', query: 'Futuristic cyberpunk city at dusk 8k volumetric neon rain', timeTag: '25 Aug', dateBucket: 'older', createdAt: '25 Aug 2026', image: '/images/tamil/madurai-temple.jpg' },
-  { id: 'chat-6', title: 'Lotus Flower Macro Droplets', query: 'Lotus flower water droplets macro close up photography', timeTag: '18 Aug', dateBucket: 'older', createdAt: '18 Aug 2026', image: '/images/basic/flower-lotus.jpg' },
-  { id: 'chat-7', title: '3D Clay Style Mascot Character', query: '3D cute clay style smiling mascot character design', timeTag: '12 Aug', dateBucket: 'older', createdAt: '12 Aug 2026', image: '/images/basic/concept-plushie.jpg' }
+  {
+    id: 'chat-1',
+    title: 'Casual Greeting',
+    query: 'Hello Thamili AI! What can you create for me today?',
+    timeTag: 'Today',
+    dateBucket: 'today',
+    createdAt: 'Today, 6:15 PM',
+    messages: [
+      {
+        id: 'msg-c1-user',
+        role: 'user',
+        text: 'Hello Thamili AI! What can you create for me today?',
+        createdAt: 'Today, 6:15 PM'
+      },
+      {
+        id: 'msg-c1-ai',
+        role: 'assistant',
+        isTextResponse: true,
+        type: 'text',
+        text: 'Vanakkam! Welcome to Thamili AI 2.0 ✨ I can generate high-resolution Dravidian heritage art, cyberpunk temple cities, photorealistic portraits, anime art, and 3D concept renders. What would you like to create today?',
+        suggestions: [
+          'Cyberpunk Tanjore Gopuram 2099',
+          'Tamil Traditional Temple Wedding',
+          'Neon sports car in midnight rain'
+        ],
+        createdAt: 'Today, 6:15 PM'
+      }
+    ]
+  },
+  {
+    id: 'chat-2',
+    title: 'Electric Sedan Coastal Drive',
+    query: 'Electric Sedan Coastal Drive at sunset 8k cinematic wallpaper',
+    timeTag: 'Today',
+    dateBucket: 'today',
+    createdAt: 'Today, 4:20 PM',
+    image: '/images/basic/car-sports-red.jpg',
+    ratio: '16:9',
+    messages: [
+      {
+        id: 'msg-c2-user',
+        role: 'user',
+        text: 'Electric Sedan Coastal Drive at sunset 8k cinematic wallpaper',
+        createdAt: 'Today, 4:20 PM'
+      },
+      {
+        id: 'msg-c2-ai',
+        role: 'assistant',
+        originalIdea: 'Electric Sedan Coastal Drive at sunset 8k cinematic wallpaper',
+        prompt: 'Electric Sedan Coastal Drive at sunset 8k cinematic wallpaper, golden hour horizon, sleek aerodynamic lines, wet reflections',
+        domain: 'Flux 1.0 Pro Engine',
+        ratio: '16:9',
+        dimensions: '1024 x 576',
+        url: '/images/basic/car-sports-red.jpg',
+        isGenerating: false,
+        saved: true,
+        liked: true,
+        disliked: false,
+        createdAt: 'Today, 4:20 PM'
+      }
+    ]
+  },
+  {
+    id: 'chat-3',
+    title: 'Coastal Tesla Sunset Drive',
+    query: 'Coastal Tesla Sunset Drive aesthetic highway wallpaper',
+    timeTag: 'Today',
+    dateBucket: 'today',
+    createdAt: 'Today, 2:05 PM',
+    image: '/images/basic/car-supercar.jpg',
+    ratio: '16:9',
+    messages: [
+      {
+        id: 'msg-c3-user',
+        role: 'user',
+        text: 'Coastal Tesla Sunset Drive aesthetic highway wallpaper',
+        createdAt: 'Today, 2:05 PM'
+      },
+      {
+        id: 'msg-c3-ai',
+        role: 'assistant',
+        originalIdea: 'Coastal Tesla Sunset Drive aesthetic highway wallpaper',
+        prompt: 'Coastal Tesla Sunset Drive aesthetic highway wallpaper, ocean view, dusk lighting, ultra detailed',
+        domain: 'Flux Fast Engine',
+        ratio: '16:9',
+        dimensions: '1024 x 576',
+        url: '/images/basic/car-supercar.jpg',
+        isGenerating: false,
+        saved: false,
+        liked: false,
+        disliked: false,
+        createdAt: 'Today, 2:05 PM'
+      }
+    ]
+  },
+  {
+    id: 'chat-4',
+    title: 'HHD Table Lab Guide',
+    query: 'HHD Table Lab Guide visual technical diagram and schematic',
+    timeTag: '29 Aug',
+    dateBucket: 'older',
+    createdAt: '29 Aug 2026',
+    image: '/images/tamil/madurai-temple.jpg',
+    ratio: '16:9',
+    messages: [
+      {
+        id: 'msg-c4-user',
+        role: 'user',
+        text: 'HHD Table Lab Guide visual technical diagram and schematic',
+        createdAt: '29 Aug 2026'
+      },
+      {
+        id: 'msg-c4-ai',
+        role: 'assistant',
+        originalIdea: 'HHD Table Lab Guide visual technical diagram and schematic',
+        prompt: 'HHD Table Lab Guide visual technical diagram, isometric architectural perspective, detailed Dravidian stone engineering',
+        domain: 'Flux 1.0 Pro Engine',
+        ratio: '16:9',
+        dimensions: '1024 x 576',
+        url: '/images/tamil/madurai-temple.jpg',
+        isGenerating: false,
+        saved: false,
+        liked: false,
+        disliked: false,
+        createdAt: '29 Aug 2026'
+      }
+    ]
+  },
+  {
+    id: 'chat-5',
+    title: 'Futuristic Cyberpunk Metropolis',
+    query: 'Futuristic cyberpunk city at dusk 8k volumetric neon rain',
+    timeTag: '25 Aug',
+    dateBucket: 'older',
+    createdAt: '25 Aug 2026',
+    image: '/images/tamil/madurai-temple.jpg',
+    ratio: '16:9',
+    messages: [
+      {
+        id: 'msg-c5-user',
+        role: 'user',
+        text: 'Futuristic cyberpunk city at dusk 8k volumetric neon rain',
+        createdAt: '25 Aug 2026'
+      },
+      {
+        id: 'msg-c5-ai',
+        role: 'assistant',
+        originalIdea: 'Futuristic cyberpunk city at dusk 8k volumetric neon rain',
+        prompt: 'Futuristic cyberpunk city at dusk 8k volumetric neon rain, towering Dravidian gopuram spires with neon holographic signs',
+        domain: 'Flux Realism Engine',
+        ratio: '16:9',
+        dimensions: '1024 x 576',
+        url: '/images/tamil/madurai-temple.jpg',
+        isGenerating: false,
+        saved: false,
+        liked: true,
+        disliked: false,
+        createdAt: '25 Aug 2026'
+      }
+    ]
+  },
+  {
+    id: 'chat-6',
+    title: 'Lotus Flower Macro Droplets',
+    query: 'Lotus flower water droplets macro close up photography',
+    timeTag: '18 Aug',
+    dateBucket: 'older',
+    createdAt: '18 Aug 2026',
+    image: '/images/basic/flower-lotus.jpg',
+    ratio: '1:1',
+    messages: [
+      {
+        id: 'msg-c6-user',
+        role: 'user',
+        text: 'Lotus flower water droplets macro close up photography',
+        createdAt: '18 Aug 2026'
+      },
+      {
+        id: 'msg-c6-ai',
+        role: 'assistant',
+        originalIdea: 'Lotus flower water droplets macro close up photography',
+        prompt: 'Lotus flower water droplets macro close up photography, soft morning light, hyper detailed dew drops, bokeh background',
+        domain: 'Flux Realism Engine',
+        ratio: '1:1',
+        dimensions: '1024 x 1024',
+        url: '/images/basic/flower-lotus.jpg',
+        isGenerating: false,
+        saved: true,
+        liked: true,
+        disliked: false,
+        createdAt: '18 Aug 2026'
+      }
+    ]
+  },
+  {
+    id: 'chat-7',
+    title: '3D Clay Style Mascot Character',
+    query: '3D cute clay style smiling mascot character design',
+    timeTag: '12 Aug',
+    dateBucket: 'older',
+    createdAt: '12 Aug 2026',
+    image: '/images/basic/concept-plushie.jpg',
+    ratio: '1:1',
+    messages: [
+      {
+        id: 'msg-c7-user',
+        role: 'user',
+        text: '3D cute clay style smiling mascot character design',
+        createdAt: '12 Aug 2026'
+      },
+      {
+        id: 'msg-c7-ai',
+        role: 'assistant',
+        originalIdea: '3D cute clay style smiling mascot character design',
+        prompt: '3D cute clay style smiling mascot character design, soft claymation texture, pastel lighting, studio render',
+        domain: 'Flux 3D Render Engine',
+        ratio: '1:1',
+        dimensions: '1024 x 1024',
+        url: '/images/basic/concept-plushie.jpg',
+        isGenerating: false,
+        saved: false,
+        liked: true,
+        disliked: false,
+        createdAt: '12 Aug 2026'
+      }
+    ]
+  }
 ]
 
 export const INITIAL_GUEST_HISTORY = [
-  { id: 'guest-1', title: 'Futuristic cyberpunk city at dusk', query: 'Futuristic cyberpunk city at dusk 8k', timeTag: 'Session', dateBucket: 'session', createdAt: 'Just now', image: '/images/tamil/madurai-temple.jpg' },
-  { id: 'guest-2', title: 'Neon sports car in midnight rain', query: 'Neon sports car in midnight rain', timeTag: 'Session', dateBucket: 'session', createdAt: '1h ago', image: '/images/basic/car-supercar.jpg' }
+  {
+    id: 'guest-1',
+    title: 'Futuristic cyberpunk city at dusk',
+    query: 'Futuristic cyberpunk city at dusk 8k',
+    timeTag: 'Session',
+    dateBucket: 'session',
+    createdAt: 'Just now',
+    image: '/images/tamil/madurai-temple.jpg',
+    ratio: '16:9',
+    messages: [
+      {
+        id: 'msg-g1-user',
+        role: 'user',
+        text: 'Futuristic cyberpunk city at dusk 8k volumetric neon rain',
+        createdAt: 'Just now'
+      },
+      {
+        id: 'msg-g1-ai',
+        role: 'assistant',
+        originalIdea: 'Futuristic cyberpunk city at dusk 8k volumetric neon rain',
+        prompt: 'Futuristic cyberpunk city at dusk 8k volumetric neon rain, neon holographic gopuram lights, floating energy spires',
+        domain: 'Flux 1.0 Pro Engine',
+        ratio: '16:9',
+        dimensions: '1024 x 576',
+        url: '/images/tamil/madurai-temple.jpg',
+        isGenerating: false,
+        saved: false,
+        liked: true,
+        disliked: false,
+        createdAt: 'Just now'
+      }
+    ]
+  },
+  {
+    id: 'guest-2',
+    title: 'Neon sports car in midnight rain',
+    query: 'Neon sports car in midnight rain',
+    timeTag: 'Session',
+    dateBucket: 'session',
+    createdAt: '1h ago',
+    image: '/images/basic/car-supercar.jpg',
+    ratio: '16:9',
+    messages: [
+      {
+        id: 'msg-g2-user',
+        role: 'user',
+        text: 'Neon sports car in midnight rain glowing reflections 4k',
+        createdAt: '1h ago'
+      },
+      {
+        id: 'msg-g2-ai',
+        role: 'assistant',
+        originalIdea: 'Neon sports car in midnight rain glowing reflections 4k',
+        prompt: 'Neon sports car in midnight rain glowing reflections 4k, wet asphalt, cinematic purple neon bokeh',
+        domain: 'Basic Engine',
+        ratio: '16:9',
+        dimensions: '1024 x 576',
+        url: '/images/basic/car-supercar.jpg',
+        isGenerating: false,
+        saved: false,
+        liked: false,
+        disliked: false,
+        createdAt: '1h ago'
+      }
+    ]
+  }
 ]
 
 export function ThamiliLogoIcon({ className = 'logo-icon-svg' }) {
@@ -1198,21 +1529,10 @@ function analyzeAndExpandIdea(rawIdea) {
     detectedDomain = 'Floral & Botanical Art'
     if (/lotus|thamarai|water lily/i.test(lower)) {
       samplePool = ['/images/basic/flower-lotus.jpg']
-    } else if (/rose|roses|red rose|roja/i.test(lower)) {
-      samplePool = ['/images/basic/flower-rose.jpg']
-    } else if (/jasmine|malli|malligai|garland|gajra/i.test(lower)) {
-      samplePool = ['/images/basic/flower-jasmine.jpg']
-    } else if (/sunflower|sunflowers|suriyagandhi/i.test(lower)) {
-      samplePool = ['/images/basic/flower-sunflower.jpg']
-    } else if (/marigold|sammanthi|genda|yellow flower|orange flower/i.test(lower)) {
-      samplePool = ['/images/basic/flower-marigold.jpg']
     } else {
       samplePool = [
         '/images/basic/flower-lotus.jpg',
-        '/images/basic/flower-rose.jpg',
-        '/images/basic/flower-jasmine.jpg',
-        '/images/basic/flower-sunflower.jpg',
-        '/images/basic/flower-marigold.jpg'
+        '/images/basic/flower-rose.jpg'
       ]
     }
   }
@@ -1237,8 +1557,7 @@ function analyzeAndExpandIdea(rawIdea) {
       samplePool = [
         '/images/basic/car-supercar.jpg',
         '/images/basic/car-sports-red.jpg',
-        '/images/tamil/vintage-ambassador-1.jpg',
-        '/images/tamil/vintage-ambassador-2.jpg'
+        '/images/tamil/vintage-ambassador-1.jpg'
       ]
     }
   }
@@ -1249,21 +1568,7 @@ function analyzeAndExpandIdea(rawIdea) {
     )
   ) {
     detectedDomain = 'Motorcycles & Superbikes'
-    if (/superbike|racing bike|sports bike|ducati|ninja|yamaha|fast bike/i.test(lower)) {
-      samplePool = ['/images/basic/bike-superbike.jpg']
-    } else if (/bullet|royal enfield|cruiser|classic bike|vintage bike|enfield/i.test(lower)) {
-      samplePool = ['/images/basic/bike-bullet.jpg']
-    } else if (/scooter|electric|ev|vespa|moped/i.test(lower)) {
-      samplePool = ['/images/basic/bike-scooter.jpg']
-    } else if (/bicycle|cycle|roadster/i.test(lower)) {
-      samplePool = ['/images/tamil/agraharam-street.jpg']
-    } else {
-      samplePool = [
-        '/images/basic/bike-bullet.jpg',
-        '/images/basic/bike-superbike.jpg',
-        '/images/basic/bike-scooter.jpg'
-      ]
-    }
+    samplePool = ['/images/basic/bike-bullet.jpg']
   }
   // 4. Scenic Nature, Waterfalls & Mountain Landscapes
   else if (
@@ -1272,16 +1577,7 @@ function analyzeAndExpandIdea(rawIdea) {
     )
   ) {
     detectedDomain = 'Scenic Nature & Landscapes'
-    if (/waterfall|waterfalls|falls|cascade|courtallam|hogenakkal/i.test(lower)) {
-      samplePool = ['/images/basic/nature-waterfall.jpg']
-    } else if (/tea|plantation|mountain|mountains|hill|hills|munnar|ooty|kodaikanal|valley/i.test(lower)) {
-      samplePool = ['/images/basic/nature-mountains.jpg']
-    } else {
-      samplePool = [
-        '/images/basic/nature-waterfall.jpg',
-        '/images/basic/nature-mountains.jpg'
-      ]
-    }
+    samplePool = ['/images/basic/nature-waterfall.jpg']
   }
   // 5. Wildlife, Birds & Animals (Peacock, Bull, etc.)
   else if (
@@ -1290,7 +1586,7 @@ function analyzeAndExpandIdea(rawIdea) {
     )
   ) {
     detectedDomain = 'Wildlife & Birds'
-    samplePool = ['/images/basic/animal-peacock.jpg']
+    samplePool = ['/images/tamil/mattu-pongal-cow.jpg', '/images/tamil/bull-taming-1.jpg']
   }
   // 6. Tamil Vintage Houses & Mansions
   else if (
@@ -1326,17 +1622,17 @@ function analyzeAndExpandIdea(rawIdea) {
       lower
     )
   ) {
-    detectedDomain = 'Tamil Diwali Celebrations'
+    detectedDomain = 'Tamil Festivals & Celebrations'
     samplePool = [
       '/images/tamil/diwali-diya.jpg',
       '/images/tamil/kuthuvilakku-brass.jpg',
-      '/images/tamil/diwali-sparklers.jpg',
-      '/images/tamil/diwali-diyas-night.jpg'
+      '/images/tamil/nilavilakku-brass.jpg',
+      '/images/tamil/diwali-sparklers.jpg'
     ]
   }
-  // 9. Tamil Jallikattu Heritage & Brave Bulls
+  // 9. Tamil Jallikattu & Bull Taming Heritage
   else if (
-    /(jallikattu|bull|bulls|kangayam|alanganallur|palamedu|rekla|vadivasal|kovil kaalai|manju virattu)/i.test(
+    /(jallikattu|eruthazhuvuthal|bull|kangeyam|manju virattu|alanganallur|avaniyapuram|palamedu|veera vilaiyattu)/i.test(
       lower
     )
   ) {
@@ -1357,7 +1653,6 @@ function analyzeAndExpandIdea(rawIdea) {
       '/images/basic/bike-bullet.jpg',
       '/images/basic/nature-waterfall.jpg',
       '/images/basic/flower-rose.jpg',
-      '/images/basic/animal-peacock.jpg',
       '/images/tamil/chettinad-mansion.jpg',
       '/images/tamil/vintage-ambassador-1.jpg'
     ]
@@ -1473,130 +1768,204 @@ const GENERATION_STATUS_MESSAGES = [
 ]
 
 // =========================================================================
-// LIQUID GLASS NEURAL CAUSTIC & PARTICLES CANVAS (Minimal Blur, Pure Smoothness)
+// CHATGPT TAMIL GLYPH MATRIX NEURAL WAVE & DIFFUSION CANVAS
 // =========================================================================
-function LiquidGlassNeuralCanvas({ step = 0 }) {
+const TAMIL_MATRIX_GLYPHS = [
+  'அ', 'ஆ', 'இ', 'ஈ', 'உ', 'ஊ', 'எ', 'ஏ', 'ஐ', 'ஒ', 'ஓ', 'ஔ', 'ஃ',
+  'க', 'ங', 'ச', 'ஞ', 'ட', 'ண', 'த', 'ந', 'ப', 'ம', 'ய', 'ர', 'ல',
+  'வ', 'ழ', 'ள', 'ற', 'ன', 'தி', 'மி', 'ழி', 'தை', 'மெ', 'ழீ', 'ஸ்ரீ',
+  'சா', 'சு', 'தா', 'து', 'நா', 'பா', 'மா', 'மு', 'யா', 'ரா', 'வா', 'ழா',
+  'கா', 'கி', 'சீ', 'தீ', 'நீ', 'பீ', 'மீ', 'லீ', 'வீ', 'ழூ', 'றோ', 'னோ'
+]
+
+function DotMatrixWaveCanvas({ step = 0, isGenerating = true, startTime = null }) {
   const canvasRef = useRef(null)
-  const stepRef = useRef(step)
+  const [progress, setProgress] = useState(1)
 
   useEffect(() => {
-    stepRef.current = step
-  }, [step])
+    if (!isGenerating) {
+      setProgress(100)
+      return
+    }
+    const initialStart = startTime || Date.now()
+    const timer = setInterval(() => {
+      const elapsed = Date.now() - initialStart
+      // Smooth curve reaching ~46% around 5-6s (matching reference screenshot)
+      let p = Math.round(98 * (1 - Math.exp(-elapsed / 8500)))
+      if (p < 1) p = 1
+      if (p > 98) p = 98
+      setProgress(p)
+    }, 120)
+    return () => clearInterval(timer)
+  }, [isGenerating, startTime])
 
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     let animId
-    let width = (canvas.width = canvas.offsetWidth || 560)
-    let height = (canvas.height = canvas.offsetHeight || 420)
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
 
-    // Subtle diamond sparkle particles
-    const particleCount = 28
-    const particles = []
-    for (let i = 0; i < particleCount; i++) {
-      particles.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        size: Math.random() * 2 + 1,
-        speedX: (Math.random() - 0.5) * 0.35,
-        speedY: (Math.random() - 0.5) * 0.35,
-        alpha: Math.random() * 0.6 + 0.2,
-        twinkleSpeed: (Math.random() * 0.02 + 0.01) * (Math.random() > 0.5 ? 1 : -1)
-      })
+    let width = 0
+    let height = 0
+
+    const updateDimensions = () => {
+      const rect = canvas.getBoundingClientRect()
+      width = rect.width || canvas.offsetWidth || 560
+      height = rect.height || canvas.offsetHeight || 420
+      canvas.width = Math.floor(width * dpr)
+      canvas.height = Math.floor(height * dpr)
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     }
 
-    let scanY = 0
-    let scanSpeed = 1.6
-    let sweepPhase = 0
+    updateDimensions()
+
+    let time = 0
 
     const render = () => {
+      // Silky-smooth time progression
+      time += 0.012
+
+      // 1. Transparent Canvas
       ctx.clearRect(0, 0, width, height)
 
-      // 1. Sleek subtle diagonal glass sheen reflection
-      sweepPhase += 0.018
-      const sweepPos = ((Math.sin(sweepPhase) + 1) / 2) * (width + height) - height * 0.5
+      // 2. 3D Wandering Sphere Orbit Physics
+      const orbitX = width * 0.26
+      const orbitY = height * 0.24
+      const sphereX = (width * 0.5) + Math.sin(time * 0.75) * orbitX + Math.cos(time * 0.35) * (width * 0.08)
+      const sphereY = (height * 0.5) + Math.cos(time * 0.55) * orbitY + Math.sin(time * 0.45) * (height * 0.06)
+      const baseRadius = Math.min(width, height) * 0.36
+      const sphereRadius = baseRadius * (1 + Math.sin(time * 0.4) * 0.06)
+      const sphereRadiusSq = sphereRadius * sphereRadius
 
-      const glassGrad = ctx.createLinearGradient(
-        sweepPos - 80,
-        0,
-        sweepPos + 80,
-        height
-      )
-      glassGrad.addColorStop(0, 'rgba(255, 255, 255, 0)')
-      glassGrad.addColorStop(0.35, 'rgba(56, 189, 248, 0.12)')
-      glassGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.28)')
-      glassGrad.addColorStop(0.65, 'rgba(192, 132, 252, 0.14)')
-      glassGrad.addColorStop(1, 'rgba(255, 255, 255, 0)')
+      // Normalized 3D directional light (tilted from upper-left toward viewer)
+      const lx = -0.42
+      const ly = -0.52
+      const lz = 0.74
 
-      ctx.fillStyle = glassGrad
-      ctx.fillRect(0, 0, width, height)
+      // 3. Dense High-Tech Tamil Letter Matrix Grid (More Rows & Columns)
+      // 23px spacing with proportional font scaling produces dense rows & columns with zero collision
+      const cellSpacing = 23
+      const cols = Math.ceil(width / cellSpacing) + 2
+      const rows = Math.ceil(height / cellSpacing) + 2
+      const startX = (width - (cols - 1) * cellSpacing) * 0.5
+      const startY = (height - (rows - 1) * cellSpacing) * 0.5
 
-      // 2. Fine precision laser scanline that sweeps down
-      scanY += scanSpeed
-      if (scanY > height + 20) scanY = -20
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
 
-      const laserGrad = ctx.createLinearGradient(0, scanY - 12, 0, scanY + 12)
-      laserGrad.addColorStop(0, 'rgba(99, 102, 241, 0)')
-      laserGrad.addColorStop(0.5, 'rgba(99, 102, 241, 0.45)')
-      laserGrad.addColorStop(1, 'rgba(192, 132, 252, 0)')
+      for (let r = 0; r < rows; r++) {
+        const gy = startY + r * cellSpacing
+        for (let c = 0; c < cols; c++) {
+          const gx = startX + c * cellSpacing
 
-      ctx.fillStyle = laserGrad
-      ctx.fillRect(0, scanY - 8, width, 16)
+          const dx = gx - sphereX
+          const dy = gy - sphereY
+          const distSq = dx * dx + dy * dy
+          const dist = Math.sqrt(distSq)
 
-      // 3. Starlight Sparkle Diamond Particles
-      particles.forEach((p) => {
-        p.x += p.speedX
-        p.y += p.speedY
-        p.alpha += p.twinkleSpeed
+          let px = gx
+          let py = gy
+          let fontSize = 9.5
+          let intensity = 0
+          let isInsideSphere = false
+          let nz = 0
 
-        if (p.alpha > 0.85 || p.alpha < 0.15) {
-          p.twinkleSpeed = -p.twinkleSpeed
+          if (dist < sphereRadius) {
+            isInsideSphere = true
+            // 3D elevation on the hemisphere (Z-height from 0 at rim to 1 at apex)
+            nz = Math.sqrt(sphereRadiusSq - distSq) / sphereRadius
+            const nx = dx / sphereRadius
+            const ny = dy / sphereRadius
+
+            // Delicate 3D Spherical Lens Refraction (bounded displacement so letters never touch)
+            const normDist = dist / sphereRadius
+            const bulge = Math.sin(normDist * Math.PI) * 1.2
+            if (dist > 0.001) {
+              px = gx + (dx / dist) * bulge
+              py = gy + (dy / dist) * bulge
+            }
+
+            // 3D Diffuse & Specular Lighting
+            const diffuse = Math.max(0, nx * lx + ny * ly + nz * lz)
+            const specular = Math.pow(diffuse, 3.2)
+            intensity = Math.min(1, 0.30 * nz + 0.70 * diffuse + 0.80 * specular)
+
+            // Tasteful font zoom in dense grid (9.5px base -> 13.5px peak, never touches neighbor)
+            fontSize = 9.5 + nz * 3.5 + specular * 0.8
+          } else {
+            // Outside sphere: gentle proximity aura
+            const edgeDist = dist - sphereRadius
+            const glow = Math.exp(-edgeDist / 42) * 0.32
+            intensity = glow
+            fontSize = 9.5
+          }
+
+          // Consistent Tamil glyph placement across matrix
+          const glyphIdx = (r * 17 + c * 11 + (r + c)) % TAMIL_MATRIX_GLYPHS.length
+          const glyph = TAMIL_MATRIX_GLYPHS[glyphIdx]
+
+          ctx.font = `${intensity > 0.58 ? '700' : '600'} ${fontSize.toFixed(1)}px "Noto Sans Tamil", system-ui, -apple-system, sans-serif`
+
+          // Strictly Thamili Brand Colors: Leaf Green (#10b981) and Royal Ocean Blue (#2563eb)
+          if (isInsideSphere) {
+            if (intensity > 0.72) {
+              // 🌿 Luminous Thamili Green Specular Highlight
+              ctx.fillStyle = '#10b981'
+              ctx.shadowColor = '#10b981'
+              ctx.shadowBlur = Math.round(6 * nz)
+              ctx.fillText(glyph, px, py)
+              ctx.shadowBlur = 0
+            } else if (intensity > 0.45) {
+              // 🌿/🌊 Emerald Green to Vibrant Blue Body
+              const alpha = 0.70 + intensity * 0.30
+              ctx.fillStyle = `rgba(16, 185, 129, ${alpha})`
+              ctx.shadowColor = 'rgba(16, 185, 129, 0.35)'
+              ctx.shadowBlur = Math.round(3 * nz)
+              ctx.fillText(glyph, px, py)
+              ctx.shadowBlur = 0
+            } else {
+              // 💙 Royal Blue on the Lower Sphere Rim
+              const alpha = 0.55 + nz * 0.40
+              ctx.fillStyle = `rgba(37, 99, 235, ${alpha})`
+              ctx.shadowColor = 'rgba(37, 99, 235, 0.2)'
+              ctx.shadowBlur = 2
+              ctx.fillText(glyph, px, py)
+              ctx.shadowBlur = 0
+            }
+          } else {
+            // 🔷 Ambient Rest State Outside Sphere
+            const alpha = 0.16 + intensity * 0.40
+            ctx.fillStyle = `rgba(37, 99, 235, ${alpha})`
+            ctx.fillText(glyph, px, py)
+          }
         }
-
-        if (p.x < 0) p.x = width
-        if (p.x > width) p.x = 0
-        if (p.y < 0) p.y = height
-        if (p.y > height) p.y = 0
-
-        ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`
-        ctx.beginPath()
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
-        ctx.fill()
-
-        // Diamond 4-point sparkle cross on brighter particles
-        if (p.alpha > 0.5) {
-          ctx.strokeStyle = `rgba(186, 230, 253, ${p.alpha * 0.7})`
-          ctx.lineWidth = 0.75
-          ctx.beginPath()
-          ctx.moveTo(p.x - p.size * 2.5, p.y)
-          ctx.lineTo(p.x + p.size * 2.5, p.y)
-          ctx.moveTo(p.x, p.y - p.size * 2.5)
-          ctx.lineTo(p.x, p.y + p.size * 2.5)
-          ctx.stroke()
-        }
-      })
+      }
 
       animId = requestAnimationFrame(render)
     }
 
     render()
 
-    const handleResize = () => {
-      if (!canvas) return
-      width = canvas.width = canvas.offsetWidth || 560
-      height = canvas.height = canvas.offsetHeight || 420
-    }
-    window.addEventListener('resize', handleResize)
+    window.addEventListener('resize', updateDimensions)
 
     return () => {
       cancelAnimationFrame(animId)
-      window.removeEventListener('resize', handleResize)
+      window.removeEventListener('resize', updateDimensions)
     }
   }, [])
 
-  return <canvas ref={canvasRef} className="liquid-glass-neural-canvas" />
+  return (
+    <div className="dot-matrix-wave-wrapper">
+      <canvas ref={canvasRef} className="dot-matrix-wave-canvas" />
+      <div className="dot-matrix-progress-badge" title="Generation progress">
+        <span>{progress}%</span>
+      </div>
+    </div>
+  )
 }
+
+const ChatGPTDotMatrixCanvas = DotMatrixWaveCanvas
 
 export default function App() {
   const [theme, setTheme] = useState('light')
@@ -1643,6 +2012,106 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
+  // =========================================================================
+  // LIGHTBOX INTERACTIVE STUDIO TOOL STATES (Markup, Comment, Remove BG, Erase, Resize)
+  // =========================================================================
+  const [activeEditorTool, setActiveEditorTool] = useState(null)
+
+  // 1. Markup Tool State
+  const [markupColor, setMarkupColor] = useState('#10b981')
+  const [markupBrushSize, setMarkupBrushSize] = useState(4)
+  const [markupStrokes, setMarkupStrokes] = useState([])
+  const [currentStroke, setCurrentStroke] = useState(null)
+  const markupCanvasRef = useRef(null)
+
+  // 2. Comment Tool State
+  const [imageComments, setImageComments] = useState([])
+  const [pendingComment, setPendingComment] = useState(null)
+  const [activeCommentCardId, setActiveCommentCardId] = useState(null)
+
+  // 3. Remove BG State
+  const [isBgRemoved, setIsBgRemoved] = useState(false)
+  const [isBgProcessing, setIsBgProcessing] = useState(false)
+  const [bgBackdropStyle, setBgBackdropStyle] = useState('checkered') // 'checkered' | 'dark' | 'white'
+
+  // 4. Erase Tool State
+  const [eraseBrushSize, setEraseBrushSize] = useState(28)
+  const [eraseStrokes, setEraseStrokes] = useState([])
+  const [currentEraseStroke, setCurrentEraseStroke] = useState(null)
+  const [isEraseProcessing, setIsEraseProcessing] = useState(false)
+  const [isObjectErased, setIsObjectErased] = useState(false)
+  const eraseCanvasRef = useRef(null)
+
+  // 5. Resize / Aspect Tool State
+  const [modalCropRatio, setModalCropRatio] = useState('original')
+  const [modalZoomScale, setModalZoomScale] = useState(1.0)
+
+  // Reset editor studio tool state when closing lightbox
+  useEffect(() => {
+    if (!fullscreenImageModal) {
+      setActiveEditorTool(null)
+      setMarkupStrokes([])
+      setCurrentStroke(null)
+      setImageComments([])
+      setPendingComment(null)
+      setActiveCommentCardId(null)
+      setIsBgRemoved(false)
+      setIsBgProcessing(false)
+      setEraseStrokes([])
+      setCurrentEraseStroke(null)
+      setIsEraseProcessing(false)
+      setIsObjectErased(false)
+      setModalCropRatio('original')
+      setModalZoomScale(1.0)
+    }
+  }, [fullscreenImageModal])
+
+  // Redraw markup strokes on markupCanvasRef
+  useEffect(() => {
+    const canvas = markupCanvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+    const allStrokes = currentStroke ? [...markupStrokes, currentStroke] : markupStrokes
+    allStrokes.forEach((stroke) => {
+      if (!stroke.points || stroke.points.length < 2) return
+      ctx.beginPath()
+      ctx.strokeStyle = stroke.color
+      ctx.lineWidth = stroke.size
+      ctx.lineCap = 'round'
+      ctx.lineJoin = 'round'
+      ctx.moveTo(stroke.points[0].x, stroke.points[0].y)
+      for (let i = 1; i < stroke.points.length; i++) {
+        ctx.lineTo(stroke.points[i].x, stroke.points[i].y)
+      }
+      ctx.stroke()
+    })
+  }, [markupStrokes, currentStroke])
+
+  // Redraw erase strokes on eraseCanvasRef
+  useEffect(() => {
+    const canvas = eraseCanvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+    const allErase = currentEraseStroke ? [...eraseStrokes, currentEraseStroke] : eraseStrokes
+    allErase.forEach((stroke) => {
+      if (!stroke.points || stroke.points.length < 2) return
+      ctx.beginPath()
+      ctx.strokeStyle = 'rgba(239, 68, 68, 0.45)'
+      ctx.lineWidth = stroke.size
+      ctx.lineCap = 'round'
+      ctx.lineJoin = 'round'
+      ctx.moveTo(stroke.points[0].x, stroke.points[0].y)
+      for (let i = 1; i < stroke.points.length; i++) {
+        ctx.lineTo(stroke.points[i].x, stroke.points[i].y)
+      }
+      ctx.stroke()
+    })
+  }, [eraseStrokes, currentEraseStroke])
+
   // Progressive Disclosure Plus Menu & Ratio Submenu
   const [isPlusMenuOpen, setIsPlusMenuOpen] = useState(false)
   const [isRatioExpanded, setIsRatioExpanded] = useState(false)
@@ -1674,12 +2143,87 @@ export default function App() {
   const [authMode, setAuthMode] = useState('signin') // 'signin' | 'signup'
   const [authFormData, setAuthFormData] = useState({ name: '', email: '', password: '' })
 
-  // Google Gemini-Style Search Chats Modal & History States
+  const [userHistoryList, setUserHistoryList] = useState(() => {
+    try {
+      const saved = localStorage.getItem('thamili_user_history')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed
+      }
+    } catch (e) {
+      // ignore
+    }
+    return INITIAL_LOGGED_IN_HISTORY
+  })
+
+  const [guestHistoryList, setGuestHistoryList] = useState(() => {
+    try {
+      const saved = localStorage.getItem('thamili_guest_history')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed
+      }
+    } catch (e) {
+      // ignore
+    }
+    return INITIAL_GUEST_HISTORY
+  })
+
+  // Search Chats Modal & Filter state
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false)
   const [searchChatsQuery, setSearchChatsQuery] = useState('')
-  const [searchChatsFilter, setSearchChatsFilter] = useState('all') // 'all' | 'today' | 'older'
-  const [userHistoryList, setUserHistoryList] = useState(INITIAL_LOGGED_IN_HISTORY)
-  const [guestHistoryList, setGuestHistoryList] = useState(INITIAL_GUEST_HISTORY)
+  const [searchChatsFilter, setSearchChatsFilter] = useState('all')
+
+  // Initial load from backend API if available
+  useEffect(() => {
+    const fetchHistoryFromBackend = async () => {
+      try {
+        const userId = isLoggedIn ? (currentUser?.id || 'user') : 'guest'
+        const res = await fetch(`/api/history?userId=${userId}`)
+        if (res.ok) {
+          const data = await res.json()
+          if (data.success && Array.isArray(data.history) && data.history.length > 0) {
+            if (isLoggedIn) {
+              setUserHistoryList(data.history)
+            } else {
+              setGuestHistoryList(data.history)
+            }
+          }
+        }
+      } catch (e) {
+        // Fallback silently to localStorage
+      }
+    }
+    fetchHistoryFromBackend()
+  }, [isLoggedIn, currentUser])
+
+  // Sync history to localStorage and backend API
+  useEffect(() => {
+    try {
+      localStorage.setItem('thamili_guest_history', JSON.stringify(guestHistoryList))
+    } catch (e) {
+      // ignore
+    }
+    fetch('/api/history', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: 'guest', history: guestHistoryList })
+    }).catch(() => {})
+  }, [guestHistoryList])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('thamili_user_history', JSON.stringify(userHistoryList))
+    } catch (e) {
+      // ignore
+    }
+    const uid = currentUser?.id || 'user'
+    fetch('/api/history', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: uid, history: userHistoryList })
+    }).catch(() => {})
+  }, [userHistoryList, currentUser])
 
   // Active History computed based on Auth state & Search query / filter
   const activeHistory = useMemo(() => {
@@ -2187,7 +2731,7 @@ export default function App() {
   }
 
   // Model & Voice state
-  const [selectedModel, setSelectedModel] = useState('Flash')
+  const [selectedModel, setSelectedModel] = useState('Basic')
   const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false)
   const [isListening, setIsListening] = useState(false)
 
@@ -2666,7 +3210,13 @@ export default function App() {
         })
       })
 
-      const responsePayload = await response.json()
+      let responsePayload = null
+      try {
+        const text = await response.text()
+        responsePayload = text ? JSON.parse(text) : {}
+      } catch {
+        responsePayload = {}
+      }
 
       if (!response.ok || !responsePayload.success) {
         throw new Error(responsePayload.error || `Generation failed with status ${response.status}`)
@@ -2809,6 +3359,36 @@ export default function App() {
       canvas.height = img.naturalHeight || 1024
       const ctx = canvas.getContext('2d')
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+
+      // Overlay Thamili watermark in bottom-right corner
+      try {
+        const wm = new Image()
+        wm.crossOrigin = 'anonymous'
+        wm.src = thamiliWatermarkImg
+        await new Promise((resolve) => {
+          wm.onload = resolve
+          wm.onerror = resolve
+        })
+        if (wm.complete && wm.naturalWidth > 0) {
+          const wmRatio = wm.naturalWidth / wm.naturalHeight
+          const wmWidth = Math.max(140, Math.round(canvas.width * 0.16))
+          const wmHeight = Math.round(wmWidth / wmRatio)
+          const padding = Math.max(18, Math.round(canvas.width * 0.022))
+          const x = canvas.width - wmWidth - padding
+          const y = canvas.height - wmHeight - padding
+
+          ctx.save()
+          ctx.globalAlpha = 0.88
+          ctx.shadowColor = 'rgba(0, 0, 0, 0.8)'
+          ctx.shadowBlur = 10
+          ctx.shadowOffsetX = 0
+          ctx.shadowOffsetY = 3
+          ctx.drawImage(wm, x, y, wmWidth, wmHeight)
+          ctx.restore()
+        }
+      } catch (e) {
+        console.warn('Watermark stamp skipped:', e)
+      }
       canvas.toBlob((blob) => {
         if (!blob) return
         const downloadUrl = URL.createObjectURL(blob)
@@ -2940,12 +3520,11 @@ export default function App() {
   const handleLoadChatFromHistory = (item) => {
     if (!item) return
     const queryText = (item.query || item.title || '').trim()
-    if (!queryText && (!item.messages || item.messages.length === 0)) return
 
     const allHistory = isLoggedIn ? userHistoryList : guestHistoryList
     const existingChat = allHistory.find((c) => c.id === item.id) || item
 
-    const chatIdToSet = existingChat.id || createId('chat')
+    const chatIdToSet = existingChat.id || item.id || createId('chat')
     setActiveChatId(chatIdToSet)
     setActiveTab('AI Image')
     setImagesSubTab('studio')
@@ -2956,7 +3535,6 @@ export default function App() {
     setIsCategoriesModalOpen(false)
     setIsAddCreditsModalOpen(false)
     setIsLicenseModalOpen(false)
-    setIsSellModalOpen(false)
     setIsUserMenuOpen(false)
     setIsPlusMenuOpen(false)
     setIsRatioExpanded(false)
@@ -2966,85 +3544,45 @@ export default function App() {
     setIdeaText('')
     setAttachedReferences([])
 
-    // If chat already has stored messages, load them directly
-    if (existingChat.messages && existingChat.messages.length > 0) {
+    // 1. If chat has pre-built message history, restore it completely
+    if (existingChat.messages && Array.isArray(existingChat.messages) && existingChat.messages.length > 0) {
       setChatMessages(existingChat.messages)
       setCurrentGeneration(existingChat.generation || null)
+      showToast(`Switched to: "${existingChat.title || queryText}" ✨`)
     } else {
-      // Otherwise construct rich message stream from query/image
-      const conv = detectConversationalIntent(queryText)
-      if (conv) {
-        const userMessage = {
-          id: createId('msg-user'),
-          role: 'user',
-          text: queryText,
-          references: [],
-          createdAt: existingChat.createdAt || 'Today'
-        }
-        const assistantMessage = {
-          id: createId('msg-ai-conv'),
-          role: 'assistant',
-          isTextResponse: true,
-          type: 'text',
-          text: conv.text,
-          suggestions: conv.suggestions,
-          createdAt: existingChat.createdAt || 'Today'
-        }
-        const newMsgs = [userMessage, assistantMessage]
-        setChatMessages(newMsgs)
-        setCurrentGeneration(null)
-        upsertChatToHistory(chatIdToSet, existingChat.title || queryText, queryText, newMsgs, null)
-      } else {
-        const { detectedDomain, enhancedPrompt, imageUrl } = analyzeAndExpandIdea(queryText)
-        const genId = createId('gen-hist')
-        const targetUrl = existingChat.image || existingChat.url || imageUrl || '/images/basic/flower-lotus.jpg'
-        const userMessage = {
-          id: createId('msg-user'),
-          role: 'user',
-          text: queryText,
-          references: [],
-          createdAt: existingChat.createdAt || 'Today'
-        }
-        const assistantMessage = {
-          id: genId,
-          role: 'assistant',
-          originalIdea: queryText,
-          prompt: enhancedPrompt,
-          domain: detectedDomain,
-          ratio: existingChat.ratio || '16:9',
-          url: targetUrl,
-          isGenerating: false,
-          generationStep: 4,
-          saved: false,
-          liked: false,
-          disliked: false,
-          createdAt: existingChat.createdAt || 'Today'
-        }
-
-        const newMsgs = [userMessage, assistantMessage]
-        const genData = {
-          id: genId,
-          originalIdea: queryText,
-          enhancedPrompt,
-          domain: detectedDomain,
-          ratio: existingChat.ratio || '16:9',
-          url: targetUrl,
-          saved: false,
-          liked: false,
-          disliked: false,
-          createdAt: existingChat.createdAt || 'Today'
-        }
-        setChatMessages(newMsgs)
-        setCurrentGeneration(genData)
-        upsertChatToHistory(chatIdToSet, existingChat.title || queryText, queryText, newMsgs, genData)
+      // 2. Construct clean conversational message history from the saved chat metadata
+      const promptText = existingChat.query || existingChat.title || 'Creative artwork'
+      const userMessage = {
+        id: `msg-${chatIdToSet}-user`,
+        role: 'user',
+        text: promptText,
+        createdAt: existingChat.createdAt || 'Earlier'
       }
+      const assistantMessage = {
+        id: `gen-${chatIdToSet}`,
+        role: 'assistant',
+        originalIdea: promptText,
+        prompt: promptText,
+        domain: existingChat.domain || 'Flux 1.0 Pro Engine',
+        ratio: existingChat.ratio || aspectRatio,
+        dimensions: existingChat.dimensions || '1024 x 576',
+        url: existingChat.image || existingChat.url || '',
+        isGenerating: false,
+        saved: false,
+        liked: false,
+        disliked: false,
+        createdAt: existingChat.createdAt || 'Earlier'
+      }
+      const restoredMessages = [userMessage, assistantMessage]
+      setChatMessages(restoredMessages)
+      setCurrentGeneration(assistantMessage)
+      showToast(`Switched to: "${existingChat.title || promptText}" ✨`)
     }
 
-    showToast(`Switched to chat: "${existingChat.title || queryText}" ✨`)
     setTimeout(() => {
-      chatScrollRef.current?.scrollTo({ top: 99999, behavior: 'smooth' })
       searchInputRef.current?.focus()
-    }, 80)
+      chatScrollRef.current?.scrollTo({ top: 99999, behavior: 'smooth' })
+    }, 100)
   }
 
   // Alias for search modal and history dropdown
@@ -3072,7 +3610,6 @@ export default function App() {
     setIsSearchModalOpen(false)
     setIsAddCreditsModalOpen(false)
     setIsLicenseModalOpen(false)
-    setIsSellModalOpen(false)
     setIsUserMenuOpen(false)
     setIsPlusMenuOpen(false)
     setIsRatioExpanded(false)
@@ -3167,6 +3704,36 @@ export default function App() {
         ctx.fillRect(0, 0, canvas.width, canvas.height)
       }
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+
+      // Overlay Thamili watermark in bottom-right corner
+      try {
+        const wm = new Image()
+        wm.crossOrigin = 'anonymous'
+        wm.src = thamiliWatermarkImg
+        await new Promise((resolve) => {
+          wm.onload = resolve
+          wm.onerror = resolve
+        })
+        if (wm.complete && wm.naturalWidth > 0) {
+          const wmRatio = wm.naturalWidth / wm.naturalHeight
+          const wmWidth = Math.max(140, Math.round(canvas.width * 0.16))
+          const wmHeight = Math.round(wmWidth / wmRatio)
+          const padding = Math.max(18, Math.round(canvas.width * 0.022))
+          const x = canvas.width - wmWidth - padding
+          const y = canvas.height - wmHeight - padding
+
+          ctx.save()
+          ctx.globalAlpha = 0.88
+          ctx.shadowColor = 'rgba(0, 0, 0, 0.8)'
+          ctx.shadowBlur = 10
+          ctx.shadowOffsetX = 0
+          ctx.shadowOffsetY = 3
+          ctx.drawImage(wm, x, y, wmWidth, wmHeight)
+          ctx.restore()
+        }
+      } catch (e) {
+        console.warn('Watermark stamp skipped:', e)
+      }
 
       const mimeType =
         format === 'jpg' || format === 'jpeg'
@@ -3354,6 +3921,12 @@ export default function App() {
                           key={item.id}
                           className={`sidebar-history-item ${activeChatId === item.id ? 'active-chat-item' : ''}`}
                           onClick={() => handleSelectSearchHistory(item)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault()
+                              handleSelectSearchHistory(item)
+                            }
+                          }}
                           title={`Click to open chat: "${item.title || item.query}"`}
                           role="button"
                           tabIndex={0}
@@ -3397,93 +3970,12 @@ export default function App() {
           </div>
         )}
 
-        {/* USER PROFILE & CREATOR STUDIO DROP-UP BOX */}
-        <div className="user-profile-container" ref={userMenuRef}>
-          {isUserMenuOpen && (
-            <div className="user-dropup-box">
-              {/* Creator Studio Dropup Header */}
-              <div className="user-dropup-header">
-                <div className="dropup-creator-title">
-                  <Sparkles size={15} className="creator-sparkle" />
-                  <span>Creator Studio</span>
-                </div>
-              </div>
-
-              {/* Creator Studio Options */}
-              <div className="user-dropup-items">
-                <button
-                  type="button"
-                  className={`user-dropup-item item-marketplace ${
-                    activeTab === 'AI Image' && imagesSubTab === 'marketplace' ? 'active' : ''
-                  }`}
-                  onClick={() => {
-                    setActiveTab('AI Image')
-                    setImagesSubTab('marketplace')
-                    setIsUserMenuOpen(false)
-                  }}
-                >
-                  <div className="dropup-item-left">
-                    <ShoppingBag size={15} className="dropup-item-icon" />
-                    <span>Marketplace</span>
-                  </div>
-                  <span className="dropup-count-tag">{marketplaceAssets.length}</span>
-                </button>
-
-                <button
-                  type="button"
-                  className={`user-dropup-item item-earnings ${
-                    activeTab === 'AI Image' && imagesSubTab === 'earnings' ? 'active' : ''
-                  }`}
-                  onClick={() => {
-                    setActiveTab('AI Image')
-                    setImagesSubTab('earnings')
-                    setIsUserMenuOpen(false)
-                  }}
-                >
-                  <div className="dropup-item-left">
-                    <TrendingUp size={15} className="dropup-item-icon" />
-                    <span>Creator Earnings</span>
-                  </div>
-                  <span className="dropup-earning-pill">80%</span>
-                </button>
-
-                {/* Dropup Credits Balance Box */}
-                <div
-                  className="user-dropup-credits-card"
-                  onClick={() => {
-                    setIsAddCreditsModalOpen(true)
-                    setIsUserMenuOpen(false)
-                  }}
-                  title="Click to add credits"
-                >
-                  <div className="dropup-credits-left">
-                    <Coins size={15} className="credits-coin-icon" />
-                    <div className="dropup-credits-info">
-                      <span className="dropup-credits-val">{userCredits}</span>
-                      <span className="dropup-credits-label">Credits</span>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    className="btn-dropup-add-credit"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setIsAddCreditsModalOpen(true)
-                      setIsUserMenuOpen(false)
-                    }}
-                    title="Top Up Credits"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
+        {/* USER PROFILE BUTTON */}
+        <div className="user-profile-container">
           {/* User Profile Bar / Trigger */}
           <div
             className={`user-profile ${isUserMenuOpen ? 'menu-open' : ''} ${isLoggedIn ? 'is-logged-in' : ''}`}
-            onClick={() => setIsUserMenuOpen((prev) => !prev)}
+            onClick={() => setIsUserMenuOpen(true)}
             title={isLoggedIn ? `Signed in as ${currentUser?.name}` : 'Click to open Creator Studio'}
           >
             <div className="user-info">
@@ -3493,76 +3985,28 @@ export default function App() {
                 <span className="user-role-label">{isLoggedIn ? 'Pro Creator' : 'Guest Mode'}</span>
               </div>
             </div>
-            <ChevronDown
-              size={15}
-              className={`user-chevron ${isUserMenuOpen ? 'arrow-up' : ''}`}
-            />
+            <button
+              type="button"
+              className="user-profile-theme-toggle"
+              onClick={(e) => {
+                e.stopPropagation()
+                toggleTheme()
+              }}
+              title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
+              aria-label="Toggle Dark Mode"
+            >
+              {theme === 'light' ? (
+                <MoonStar size={16} className="user-theme-icon moon-icon" />
+              ) : (
+                <SunMedium size={16} className="user-theme-icon sun-icon" />
+              )}
+            </button>
           </div>
         </div>
       </aside>
 
       {/* ================= MAIN WRAPPER ================= */}
       <div className="main-wrapper">
-        {/* BAR-LESS INDEPENDENT FLOATING TOP CONTROLS */}
-        <div className="floating-top-controls">
-          <button
-            className="floating-glass-btn theme-toggle-btn"
-            onClick={toggleTheme}
-            title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
-            aria-label="Toggle theme"
-          >
-            {theme === 'light' ? (
-              <MoonStar size={18} className="theme-toggle-icon" />
-            ) : (
-              <SunMedium size={18} className="theme-toggle-icon" />
-            )}
-          </button>
-
-          {isLoggedIn ? (
-            <div className="top-logged-in-group">
-              <div
-                className="top-user-pill"
-                onClick={() => setIsUserMenuOpen((prev) => !prev)}
-                title={currentUser?.email || 'Logged in as Adrin'}
-              >
-                <div className="top-user-avatar">{currentUser?.avatar || 'A'}</div>
-                <span className="top-user-name">{currentUser?.name || 'Adrin'}</span>
-                <span className="top-pro-badge">PRO</span>
-              </div>
-              <button
-                type="button"
-                className="floating-glass-btn btn-signout"
-                onClick={handleSignOut}
-                title="Sign out of account"
-              >
-                Sign Out
-              </button>
-            </div>
-          ) : (
-            <>
-              <button
-                type="button"
-                className="floating-glass-btn btn-signin"
-                onClick={() => {
-                  setAuthMode('signin')
-                  setIsAuthModalOpen(true)
-                }}
-              >
-                Sign In
-              </button>
-              <button
-                type="button"
-                className="floating-glass-btn btn-getstarted"
-                onClick={() => {
-                  setAuthMode('signup')
-                  setIsAuthModalOpen(true)
-                }}
-              >
-                Get Started
-              </button>
-            </>
-          )}
-        </div>
 
         {/* ================= HOME VIEW ================= */}
         {activeTab === 'Home' && (
@@ -3788,7 +4232,7 @@ export default function App() {
                                     {/* RATIO SUB-BAR */}
                                     {isRatioExpanded && (
                                       <div className="ratio-horizontal-subbar">
-                                        {['1:1', '16:9', '9:16', '4:3'].map((r, idx) => (
+                                        {['1:1', '16:9', '9:16', '4:3', '3:4', '3:2', '2:3'].map((r, idx) => (
                                           <button
                                             key={r}
                                             type="button"
@@ -3842,11 +4286,17 @@ export default function App() {
                                   e.stopPropagation()
                                   setIsModelDropdownOpen((prev) => !prev)
                                 }}
-                                title="Select AI Model"
+                                title="Switch AI Model Engine"
                               >
                                 <span className="btn-flash-sheen" />
-                                <Zap size={13} className="model-zap-icon zap-electric-animated" />
-                                <span className="model-name">{selectedModel}</span>
+                                {(() => {
+                                  const currentModelObj = AVAILABLE_AI_MODELS.find((m) => m.id === selectedModel || m.name === selectedModel || m.shortName === selectedModel)
+                                  const CurrentIcon = currentModelObj?.icon || Zap
+                                  return <CurrentIcon size={13} className="model-zap-icon zap-electric-animated" style={{ color: currentModelObj?.color }} />
+                                })()}
+                                <span className="model-name">
+                                  {AVAILABLE_AI_MODELS.find((m) => m.id === selectedModel || m.name === selectedModel || m.shortName === selectedModel)?.shortName || selectedModel}
+                                </span>
                                 <ChevronDown
                                   size={13}
                                   className={`model-chevron ${isModelDropdownOpen ? 'open' : ''}`}
@@ -3855,23 +4305,44 @@ export default function App() {
 
                               {isModelDropdownOpen && (
                                 <div className="model-dropdown-menu">
-                                  {['Flash', 'Pro', 'Ultra'].map((model) => (
-                                    <button
-                                      key={model}
-                                      type="button"
-                                      className={`model-dropdown-item ${
-                                        selectedModel === model ? 'active' : ''
-                                      }`}
-                                      onClick={() => {
-                                        setSelectedModel(model)
-                                        setIsModelDropdownOpen(false)
-                                        showToast(`Model set to ${model}`)
-                                      }}
-                                    >
-                                      <span>{model}</span>
-                                      {selectedModel === model && <Check size={14} color="#6366f1" />}
-                                    </button>
-                                  ))}
+                                  <div className="model-dropdown-header">
+                                    <Sparkles size={13} className="header-sparkle-icon" />
+                                    <span>Select AI Model Engine</span>
+                                  </div>
+                                  <div className="model-dropdown-list">
+                                    {AVAILABLE_AI_MODELS.map((model) => {
+                                      const isCurrent = selectedModel === model.id || selectedModel === model.name || selectedModel === model.shortName
+                                      const IconComp = model.icon || Zap
+                                      return (
+                                        <button
+                                          key={model.id}
+                                          type="button"
+                                          className={`model-dropdown-card-item ${isCurrent ? 'active' : ''}`}
+                                          onClick={() => {
+                                            setSelectedModel(model.name)
+                                            setIsModelDropdownOpen(false)
+                                            showToast(`Switched to ${model.name} (${model.badge}) ✨`)
+                                          }}
+                                        >
+                                          <div className="model-item-left">
+                                            <div className="model-item-icon-box" style={{ background: `${model.color}15`, color: model.color }}>
+                                              <IconComp size={14} />
+                                            </div>
+                                            <div className="model-item-texts">
+                                              <div className="model-item-title-row">
+                                                <span className="model-item-title">{model.name}</span>
+                                                <span className="model-item-badge" style={{ color: model.color, borderColor: `${model.color}35`, background: `${model.color}10` }}>
+                                                  {model.badge}
+                                                </span>
+                                              </div>
+                                              <span className="model-item-desc">{model.desc}</span>
+                                            </div>
+                                          </div>
+                                          {isCurrent && <Check size={14} className="model-check-icon" />}
+                                        </button>
+                                      )
+                                    })}
+                                  </div>
                                 </div>
                               )}
                             </div>
@@ -3998,6 +4469,20 @@ export default function App() {
                   <div className="chat-conversation-wrapper">
                     {/* Scrollable Conversation Stream */}
                     <div className="chat-thread-container" ref={chatScrollRef}>
+                      {/* Top Centered Time Header */}
+                      <div className="chat-thread-header-bar">
+                        <div className="chat-thread-time-header">
+                          {(() => {
+                            const firstUserMsg = chatMessages.find((m) => m.role === 'user' && m.createdAt)
+                            if (firstUserMsg && firstUserMsg.createdAt) {
+                              return firstUserMsg.createdAt.includes('Today') ? firstUserMsg.createdAt.replace('Today, ', 'Today ') : `Today ${firstUserMsg.createdAt}`
+                            }
+                            const now = new Date()
+                            return `Today ${now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`
+                          })()}
+                        </div>
+                      </div>
+
                       {chatMessages.map((msg) => {
                         if (msg.role === 'user') {
                           return (
@@ -4061,68 +4546,30 @@ export default function App() {
                         return (
                           <div key={msg.id} className="chat-assistant-message-row">
                             <div className="chat-image-card-wrapper">
-                              <div className="chat-image-card" data-ratio={msg.ratio || aspectRatio}>
+                              <div className={`chat-image-card ${msg.isGenerating ? 'is-generating' : ''}`} data-ratio={msg.ratio || aspectRatio}>
                                 {msg.isGenerating ? (
                                   <div className="composer-generating-view chat-generating-view">
-                                    <div
-                                      className={`developing-image-preview blur-stage-${Math.min(
-                                        msg.generationStep !== undefined ? msg.generationStep : generationStep,
-                                        4
-                                      )}`}
-                                      style={{ backgroundImage: `url(${msg.url})` }}
-                                    />
-                                    <LiquidGlassNeuralCanvas step={msg.generationStep !== undefined ? msg.generationStep : generationStep} />
-                                    <div className="glass-ambient-prism-sweep" />
-                                    <div className="glass-scanline-laser" />
-
-                                    <div className="generating-overlay-info">
-                                      <div className="generating-status-pill">
-                                        <span className="live-pulse-dot" />
-                                        <span className="generating-status-text">
-                                          {GENERATION_STATUS_MESSAGES[
-                                            msg.generationStep !== undefined ? msg.generationStep : generationStep
-                                          ] || 'Creating your image...'}
-                                        </span>
-                                      </div>
-
-                                      <div className="generating-model-badge">
-                                        <Zap size={13} className="badge-zap-icon" />
-                                        <span>{selectedModel} Engine • {msg.ratio || aspectRatio}</span>
-                                      </div>
-
-                                      <button
-                                        type="button"
-                                        className="btn-stop-generating"
-                                        onClick={handleStopGenerating}
-                                        title="Stop generating"
-                                      >
-                                        <Square size={12} className="stop-square-icon" />
-                                        <span>Stop generating</span>
-                                      </button>
-                                    </div>
+                                    {msg.url && (
+                                      <div
+                                        className={`developing-image-preview blur-stage-${Math.min(
+                                          msg.generationStep !== undefined ? msg.generationStep : generationStep,
+                                          4
+                                        )}`}
+                                        style={{ backgroundImage: `url(${msg.url})` }}
+                                      />
+                                    )}
+                                    <ChatGPTDotMatrixCanvas step={msg.generationStep !== undefined ? msg.generationStep : generationStep} />
                                   </div>
                                 ) : hasError ? (
                                   <div className="chat-error-card-content">
                                     <div className="chat-error-icon-wrapper">
                                       <AlertTriangle size={26} className="chat-error-warning-icon" />
                                     </div>
-                                    <h3 className="chat-error-title">Image Generation Unavailable</h3>
+                                    <h3 className="chat-error-title">Image Generation Notice</h3>
                                     <p className="chat-error-detail">
-                                      {msg.errorMessage || 'Unable to generate image. Please verify your Gemini API key or billing quota.'}
+                                      {msg.errorMessage || 'Unable to render image. Please try again.'}
                                     </p>
                                     <div className="chat-error-actions-row">
-                                      {msg.errorMessage?.includes('billing') && (
-                                        <a
-                                          href="https://aistudio.google.com"
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          className="chat-error-action-link"
-                                          onClick={(e) => e.stopPropagation()}
-                                        >
-                                          <span>Enable Google AI Studio Billing</span>
-                                          <ArrowRight size={13} />
-                                        </a>
-                                      )}
                                       <button
                                         type="button"
                                         className="chat-error-retry-btn"
@@ -4151,24 +4598,16 @@ export default function App() {
                                   />
                                 )}
 
-                                {/* Watermark Logo in Bottom-Right Corner with Reduced Opacity */}
-                                {hasImage && (
-                                  <div className="chat-img-watermark-logo" title="Created with Thamili AI">
-                                    <img
-                                      src={thamiliLogoImg}
-                                      alt="Thamili"
-                                      className="chat-img-watermark-icon"
-                                    />
-                                  </div>
-                                )}
-
-                                {/* 3 Floating Action Buttons in Top-Right Corner on Hover */}
+                                {/* 3 Floating Action Buttons on Hover in Top-Right Corner */}
                                 {hasImage && (
                                   <div className="chat-img-hover-actions">
                                     <button
                                       type="button"
                                       className="chat-img-pill-action"
-                                      onClick={() => handleShareImage(msg.url, msg.originalIdea || msg.prompt)}
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleShareImage(msg.url, msg.originalIdea || msg.prompt)
+                                      }}
                                       title="Share image"
                                     >
                                       <Share2 size={16} />
@@ -4176,7 +4615,10 @@ export default function App() {
                                     <button
                                       type="button"
                                       className="chat-img-pill-action"
-                                      onClick={() => handleCopyImageOrPrompt(msg.url, msg.originalIdea || msg.prompt)}
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleCopyImageOrPrompt(msg.url, msg.originalIdea || msg.prompt)
+                                      }}
                                       title="Copy prompt"
                                     >
                                       <Copy size={16} />
@@ -4184,18 +4626,62 @@ export default function App() {
                                     <button
                                       type="button"
                                       className="chat-img-pill-action"
-                                      onClick={() => handleDirectDownload(msg.url, msg.originalIdea || msg.prompt)}
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleDirectDownload(msg.url, msg.originalIdea || msg.prompt)
+                                      }}
                                       title="Download image"
                                     >
                                       <Download size={16} />
                                     </button>
                                   </div>
                                 )}
+
+                                {/* In-Card Bottom Overlay: Edit Pill (Bottom-Left) */}
+                                {hasImage && (
+                                  <div className="chat-img-in-card-bottom-overlay">
+                                    <button
+                                      type="button"
+                                      className="chat-img-edit-pill-btn"
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        const promptToEdit = msg.originalIdea || msg.prompt || ''
+                                        setIdeaText(promptToEdit)
+                                        if (searchInputRef.current) {
+                                          searchInputRef.current.focus()
+                                          searchInputRef.current.select?.()
+                                        }
+                                      }}
+                                      title="Edit prompt"
+                                    >
+                                      <span>Edit</span>
+                                    </button>
+                                  </div>
+                                )}
+
+                                {/* Original Thamili Watermark Logo in Bottom-Right Corner */}
+                                {hasImage && (
+                                  <div className="chat-img-watermark-logo" title="Created with Thamili AI">
+                                    <img
+                                      src={thamiliWatermarkImg}
+                                      alt="Thamili"
+                                      className="chat-img-watermark-icon"
+                                    />
+                                  </div>
+                                )}
                               </div>
 
-                              {/* Bottom Reactions & Options Row */}
+                              {/* Bottom Reactions & Options Row matching reference */}
                               {hasImage && (
                                 <div className="chat-img-bottom-reactions">
+                                  <button
+                                    type="button"
+                                    className="chat-reaction-btn"
+                                    onClick={() => handleCopyImageOrPrompt(msg.url, msg.originalIdea || msg.prompt)}
+                                    title="Copy prompt"
+                                  >
+                                    <Copy size={16} />
+                                  </button>
                                   <button
                                     type="button"
                                     className={`chat-reaction-btn ${msg.liked ? 'active-like' : ''}`}
@@ -4215,14 +4701,6 @@ export default function App() {
                                   <button
                                     type="button"
                                     className="chat-reaction-btn"
-                                    onClick={() => handleRegenerateMessage(msg)}
-                                    title="Regenerate image"
-                                  >
-                                    <RefreshCw size={16} />
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="chat-reaction-btn"
                                     onClick={() => handleShareImage(msg.url, msg.originalIdea || msg.prompt)}
                                     title="Share"
                                   >
@@ -4230,11 +4708,11 @@ export default function App() {
                                   </button>
                                   <button
                                     type="button"
-                                    className={`chat-reaction-btn ${msg.saved ? 'saved-active' : ''}`}
+                                    className="chat-reaction-btn"
                                     onClick={() => handleToggleSave(msg.id)}
-                                    title={msg.saved ? 'Saved in gallery' : 'Save to gallery'}
+                                    title="More options"
                                   >
-                                    <Bookmark size={16} className={msg.saved ? 'bookmark-saved-icon' : ''} />
+                                    <MoreHorizontal size={16} />
                                   </button>
                                 </div>
                               )}
@@ -4371,7 +4849,7 @@ export default function App() {
                                     {/* RATIO SUB-BAR */}
                                     {isRatioExpanded && (
                                       <div className="ratio-horizontal-subbar">
-                                        {['1:1', '16:9', '9:16', '4:3'].map((r, idx) => (
+                                        {['1:1', '16:9', '9:16', '4:3', '3:4', '3:2', '2:3'].map((r, idx) => (
                                           <button
                                             key={r}
                                             type="button"
@@ -4425,11 +4903,17 @@ export default function App() {
                                   e.stopPropagation()
                                   setIsModelDropdownOpen((prev) => !prev)
                                 }}
-                                title="Select AI Model"
+                                title="Switch AI Model Engine"
                               >
                                 <span className="btn-flash-sheen" />
-                                <Zap size={13} className="model-zap-icon zap-electric-animated" />
-                                <span className="model-name">{selectedModel}</span>
+                                {(() => {
+                                  const currentModelObj = AVAILABLE_AI_MODELS.find((m) => m.id === selectedModel || m.name === selectedModel || m.shortName === selectedModel)
+                                  const CurrentIcon = currentModelObj?.icon || Zap
+                                  return <CurrentIcon size={13} className="model-zap-icon zap-electric-animated" style={{ color: currentModelObj?.color }} />
+                                })()}
+                                <span className="model-name">
+                                  {AVAILABLE_AI_MODELS.find((m) => m.id === selectedModel || m.name === selectedModel || m.shortName === selectedModel)?.shortName || selectedModel}
+                                </span>
                                 <ChevronDown
                                   size={13}
                                   className={`model-chevron ${isModelDropdownOpen ? 'open' : ''}`}
@@ -4438,23 +4922,44 @@ export default function App() {
 
                               {isModelDropdownOpen && (
                                 <div className="model-dropdown-menu">
-                                  {['Flash', 'Pro', 'Ultra'].map((model) => (
-                                    <button
-                                      key={model}
-                                      type="button"
-                                      className={`model-dropdown-item ${
-                                        selectedModel === model ? 'active' : ''
-                                      }`}
-                                      onClick={() => {
-                                        setSelectedModel(model)
-                                        setIsModelDropdownOpen(false)
-                                        showToast(`Model set to ${model}`)
-                                      }}
-                                    >
-                                      <span>{model}</span>
-                                      {selectedModel === model && <Check size={14} color="#6366f1" />}
-                                    </button>
-                                  ))}
+                                  <div className="model-dropdown-header">
+                                    <Sparkles size={13} className="header-sparkle-icon" />
+                                    <span>Select AI Model Engine</span>
+                                  </div>
+                                  <div className="model-dropdown-list">
+                                    {AVAILABLE_AI_MODELS.map((model) => {
+                                      const isCurrent = selectedModel === model.id || selectedModel === model.name || selectedModel === model.shortName
+                                      const IconComp = model.icon || Zap
+                                      return (
+                                        <button
+                                          key={model.id}
+                                          type="button"
+                                          className={`model-dropdown-card-item ${isCurrent ? 'active' : ''}`}
+                                          onClick={() => {
+                                            setSelectedModel(model.name)
+                                            setIsModelDropdownOpen(false)
+                                            showToast(`Switched to ${model.name} (${model.badge}) ✨`)
+                                          }}
+                                        >
+                                          <div className="model-item-left">
+                                            <div className="model-item-icon-box" style={{ background: `${model.color}15`, color: model.color }}>
+                                              <IconComp size={14} />
+                                            </div>
+                                            <div className="model-item-texts">
+                                              <div className="model-item-title-row">
+                                                <span className="model-item-title">{model.name}</span>
+                                                <span className="model-item-badge" style={{ color: model.color, borderColor: `${model.color}35`, background: `${model.color}10` }}>
+                                                  {model.badge}
+                                                </span>
+                                              </div>
+                                              <span className="model-item-desc">{model.desc}</span>
+                                            </div>
+                                          </div>
+                                          {isCurrent && <Check size={14} className="model-check-icon" />}
+                                        </button>
+                                      )
+                                    })}
+                                  </div>
                                 </div>
                               )}
                             </div>
@@ -6400,6 +6905,146 @@ export default function App() {
         </div>
       )}
 
+      {/* ================= CENTERED USER CREATOR STUDIO MODAL ================= */}
+      {isUserMenuOpen && (
+        <div
+          className="modal-overlay user-center-modal-overlay"
+          onClick={() => setIsUserMenuOpen(false)}
+        >
+          <div
+            className="modal-content user-center-modal-card"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="user-center-modal-header">
+              <div className="user-center-header-user">
+                <div className="avatar user-center-avatar">{isLoggedIn ? (currentUser?.avatar || 'A') : 'U'}</div>
+                <div className="user-center-header-text">
+                  <div className="user-center-name-row">
+                    <span className="user-center-name">{isLoggedIn ? (currentUser?.name || 'Adrin') : 'User'}</span>
+                    <span className={`user-center-badge ${isLoggedIn ? 'badge-pro' : 'badge-guest'}`}>
+                      {isLoggedIn ? 'Pro Creator' : 'Guest Mode'}
+                    </span>
+                  </div>
+                  <span className="user-center-email">{isLoggedIn ? (currentUser?.email || 'creator@thamili.ai') : 'Guest Session • Local History'}</span>
+                </div>
+              </div>
+              <div className="user-center-header-actions">
+                {isLoggedIn ? (
+                  <button
+                    type="button"
+                    className="btn-user-center-logout"
+                    onClick={() => {
+                      handleSignOut()
+                      setIsUserMenuOpen(false)
+                    }}
+                  >
+                    Sign Out
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn-user-center-signin btn-user-center-top-signin"
+                    onClick={() => {
+                      setIsAuthModalOpen(true)
+                      setIsUserMenuOpen(false)
+                    }}
+                  >
+                    Sign In
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className="modal-close-btn"
+                  onClick={() => setIsUserMenuOpen(false)}
+                  title="Close"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+            </div>
+
+            {/* Creator Studio Navigation Grid */}
+            <div className="user-center-grid">
+              <div
+                className="user-center-card user-center-marketplace"
+                onClick={() => {
+                  setActiveTab('AI Image')
+                  setImagesSubTab('marketplace')
+                  setIsUserMenuOpen(false)
+                }}
+              >
+                <div className="user-center-card-icon-wrap icon-marketplace">
+                  <ShoppingBag size={22} />
+                </div>
+                <div className="user-center-card-content">
+                  <div className="user-center-card-title-row">
+                    <h4>Marketplace</h4>
+                    <span className="user-center-pill-count">{marketplaceAssets.length} Assets</span>
+                  </div>
+                  <p>Browse, collect, and license community created prompts & art</p>
+                </div>
+              </div>
+
+              <div
+                className="user-center-card user-center-earnings"
+                onClick={() => {
+                  setActiveTab('AI Image')
+                  setImagesSubTab('earnings')
+                  setIsUserMenuOpen(false)
+                }}
+              >
+                <div className="user-center-card-icon-wrap icon-earnings">
+                  <TrendingUp size={22} />
+                </div>
+                <div className="user-center-card-content">
+                  <div className="user-center-card-title-row">
+                    <h4>Creator Earnings</h4>
+                    <span className="user-center-pill-split">80% Revenue Split</span>
+                  </div>
+                  <p>Track downloads, commissions, and instant payout balances</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Credits Balance & Top-Up Row */}
+            <div className="user-center-credits-banner">
+              <div className="user-center-credits-left">
+                <div className="credits-icon-orb">
+                  <Coins size={22} className="credits-coin-icon" />
+                </div>
+                <div className="user-center-credits-info">
+                  <div className="credits-val-heading">{userCredits} <span className="credits-val-unit">Available Credits</span></div>
+                  <span className="credits-subtext">Used for AI image generation, models & 4K downloads</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="btn-user-center-topup"
+                onClick={() => {
+                  setIsAddCreditsModalOpen(true)
+                  setIsUserMenuOpen(false)
+                }}
+              >
+                <Plus size={15} />
+                <span>Add Credits</span>
+              </button>
+            </div>
+
+            {/* Footer / Account Actions */}
+            <div className="user-center-modal-footer">
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => setIsUserMenuOpen(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ================= ADD CREDITS TOP-UP MODAL ================= */}
       {isAddCreditsModalOpen && (
         <div
@@ -6558,6 +7203,79 @@ export default function App() {
                   {fullscreenImageModal.originalIdea || fullscreenImageModal.prompt}
                 </span>
               </div>
+
+              {/* Top Center Editor Toolbar Pill */}
+              <div className="fullscreen-editor-toolbar-pill">
+                <button
+                  type="button"
+                  className={`editor-tool-btn ${activeEditorTool === 'markup' ? 'active-tool' : ''}`}
+                  onClick={() => {
+                    const next = activeEditorTool === 'markup' ? null : 'markup'
+                    setActiveEditorTool(next)
+                    if (next) showToast('Markup mode active — Draw & annotate on image ✏️')
+                  }}
+                  title="Markup"
+                >
+                  <PenLine size={14} className="editor-tool-icon" />
+                  <span>Markup</span>
+                </button>
+                <button
+                  type="button"
+                  className={`editor-tool-btn ${activeEditorTool === 'comment' ? 'active-tool' : ''}`}
+                  onClick={() => {
+                    const next = activeEditorTool === 'comment' ? null : 'comment'
+                    setActiveEditorTool(next)
+                    if (next) showToast('Comment mode — Click anywhere on the image to add notes 💬')
+                  }}
+                  title="Comment"
+                >
+                  <MessageSquarePlus size={14} className="editor-tool-icon" />
+                  <span>Comment</span>
+                  {imageComments.length > 0 && (
+                    <span className="tool-count-badge">{imageComments.length}</span>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  className={`editor-tool-btn ${activeEditorTool === 'removebg' ? 'active-tool' : ''}`}
+                  onClick={() => {
+                    const next = activeEditorTool === 'removebg' ? null : 'removebg'
+                    setActiveEditorTool(next)
+                    if (next) showToast('AI Background Removal Studio ✂️')
+                  }}
+                  title="Remove BG"
+                >
+                  <Scissors size={14} className="editor-tool-icon" />
+                  <span>Remove BG</span>
+                </button>
+                <button
+                  type="button"
+                  className={`editor-tool-btn ${activeEditorTool === 'erase' ? 'active-tool' : ''}`}
+                  onClick={() => {
+                    const next = activeEditorTool === 'erase' ? null : 'erase'
+                    setActiveEditorTool(next)
+                    if (next) showToast('Object Eraser brush active — Highlight objects to erase 🧹')
+                  }}
+                  title="Erase"
+                >
+                  <Eraser size={14} className="editor-tool-icon" />
+                  <span>Erase</span>
+                </button>
+                <button
+                  type="button"
+                  className={`editor-tool-btn ${activeEditorTool === 'resize' ? 'active-tool' : ''}`}
+                  onClick={() => {
+                    const next = activeEditorTool === 'resize' ? null : 'resize'
+                    setActiveEditorTool(next)
+                    if (next) showToast('Resize & Aspect Ratio framing 📐')
+                  }}
+                  title="Resize"
+                >
+                  <Crop size={14} className="editor-tool-icon" />
+                  <span>Resize</span>
+                </button>
+              </div>
+
               <div className="fullscreen-header-actions">
                 <button
                   type="button"
@@ -6594,17 +7312,534 @@ export default function App() {
               </div>
             </div>
 
+            {/* FLOATING TOOL SETTINGS DRAWER */}
+            {activeEditorTool && (
+              <div className="fullscreen-tool-drawer-overlay">
+                {/* 1. MARKUP TOOLBAR */}
+                {activeEditorTool === 'markup' && (
+                  <div className="tool-drawer-card">
+                    <div className="drawer-section">
+                      <span className="drawer-label">Color</span>
+                      <div className="drawer-colors-row">
+                        {['#10b981', '#2563eb', '#ef4444', '#f59e0b', '#ffffff', '#0f172a'].map((c) => (
+                          <button
+                            key={c}
+                            type="button"
+                            className={`color-dot-btn ${markupColor === c ? 'active' : ''}`}
+                            style={{ backgroundColor: c }}
+                            onClick={() => setMarkupColor(c)}
+                            title={c}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="drawer-divider" />
+
+                    <div className="drawer-section">
+                      <span className="drawer-label">Size</span>
+                      <div className="drawer-sizes-row">
+                        {[2, 4, 8, 14].map((s) => (
+                          <button
+                            key={s}
+                            type="button"
+                            className={`size-pill-btn ${markupBrushSize === s ? 'active' : ''}`}
+                            onClick={() => setMarkupBrushSize(s)}
+                          >
+                            <span style={{ width: s * 1.4, height: s * 1.4, borderRadius: '50%', backgroundColor: 'currentColor' }} />
+                            <span>{s}px</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="drawer-divider" />
+
+                    <div className="drawer-actions-row">
+                      <button
+                        type="button"
+                        className="drawer-action-btn"
+                        onClick={() => {
+                          setMarkupStrokes((prev) => prev.slice(0, -1))
+                        }}
+                        disabled={markupStrokes.length === 0}
+                        title="Undo stroke"
+                      >
+                        <Undo2 size={14} />
+                        <span>Undo</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="drawer-action-btn btn-clear-danger"
+                        onClick={() => {
+                          setMarkupStrokes([])
+                          setCurrentStroke(null)
+                          showToast('Markup canvas cleared')
+                        }}
+                        disabled={markupStrokes.length === 0}
+                        title="Clear markup"
+                      >
+                        <RotateCcw size={14} />
+                        <span>Clear</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="drawer-action-btn btn-primary-apply"
+                        onClick={() => {
+                          showToast('Annotations saved to image ✨')
+                        }}
+                      >
+                        <Check size={14} />
+                        <span>Done</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* 2. COMMENT TOOLBAR */}
+                {activeEditorTool === 'comment' && (
+                  <div className="tool-drawer-card">
+                    <div className="drawer-info-text">
+                      <MessageSquarePlus size={15} className="drawer-info-icon" />
+                      <span>Click anywhere on the image to drop a note pin</span>
+                    </div>
+
+                    <div className="drawer-divider" />
+
+                    <div className="drawer-actions-row">
+                      <span className="drawer-badge-count">
+                        {imageComments.length} {imageComments.length === 1 ? 'Pin' : 'Pins'}
+                      </span>
+                      {imageComments.length > 0 && (
+                        <button
+                          type="button"
+                          className="drawer-action-btn btn-clear-danger"
+                          onClick={() => {
+                            setImageComments([])
+                            showToast('All comment pins cleared')
+                          }}
+                        >
+                          <Trash2 size={13} />
+                          <span>Clear All</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* 3. REMOVE BG TOOLBAR */}
+                {activeEditorTool === 'removebg' && (
+                  <div className="tool-drawer-card">
+                    <div className="drawer-section">
+                      <span className="drawer-label">AI Subject Cutout</span>
+                      {!isBgRemoved ? (
+                        <button
+                          type="button"
+                          className="drawer-action-btn btn-primary-apply"
+                          onClick={() => {
+                            setIsBgProcessing(true)
+                            setTimeout(() => {
+                              setIsBgProcessing(false)
+                              setIsBgRemoved(true)
+                              showToast('AI Background removed successfully! ✨')
+                            }, 850)
+                          }}
+                        >
+                          <Scissors size={14} />
+                          <span>{isBgProcessing ? 'Extracting Subject...' : 'Remove Background'}</span>
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          className="drawer-action-btn btn-clear-danger"
+                          onClick={() => {
+                            setIsBgRemoved(false)
+                            showToast('Restored original background')
+                          }}
+                        >
+                          <RotateCcw size={14} />
+                          <span>Restore Original</span>
+                        </button>
+                      )}
+                    </div>
+
+                    {isBgRemoved && (
+                      <>
+                        <div className="drawer-divider" />
+                        <div className="drawer-section">
+                          <span className="drawer-label">Backdrop</span>
+                          <div className="drawer-sizes-row">
+                            {[
+                              { id: 'checkered', label: 'Transparent' },
+                              { id: 'dark', label: 'Dark' },
+                              { id: 'white', label: 'White' }
+                            ].map((b) => (
+                              <button
+                                key={b.id}
+                                type="button"
+                                className={`size-pill-btn ${bgBackdropStyle === b.id ? 'active' : ''}`}
+                                onClick={() => setBgBackdropStyle(b.id)}
+                              >
+                                <span>{b.label}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="drawer-divider" />
+                        <button
+                          type="button"
+                          className="drawer-action-btn btn-primary-apply"
+                          onClick={() => {
+                            handleDirectDownload(fullscreenImageModal.url, `${fullscreenImageModal.originalIdea || 'cutout'}-nobg`)
+                            showToast('Downloading transparent PNG... 📥')
+                          }}
+                        >
+                          <Download size={14} />
+                          <span>Download PNG</span>
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {/* 4. ERASE TOOLBAR */}
+                {activeEditorTool === 'erase' && (
+                  <div className="tool-drawer-card">
+                    <div className="drawer-section">
+                      <span className="drawer-label">Brush Size</span>
+                      <div className="drawer-sizes-row">
+                        {[16, 28, 44].map((s) => (
+                          <button
+                            key={s}
+                            type="button"
+                            className={`size-pill-btn ${eraseBrushSize === s ? 'active' : ''}`}
+                            onClick={() => setEraseBrushSize(s)}
+                          >
+                            <span>{s}px</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="drawer-divider" />
+
+                    <div className="drawer-actions-row">
+                      <button
+                        type="button"
+                        className="drawer-action-btn btn-primary-apply"
+                        disabled={eraseStrokes.length === 0 || isEraseProcessing}
+                        onClick={() => {
+                          setIsEraseProcessing(true)
+                          setTimeout(() => {
+                            setIsEraseProcessing(false)
+                            setIsObjectErased(true)
+                            setEraseStrokes([])
+                            setCurrentEraseStroke(null)
+                            showToast('AI Object erased and inpainted seamlessly ✨')
+                          }, 900)
+                        }}
+                      >
+                        <Sparkles size={14} />
+                        <span>{isEraseProcessing ? 'Inpainting...' : 'Apply AI Erase'}</span>
+                      </button>
+
+                      {eraseStrokes.length > 0 && (
+                        <button
+                          type="button"
+                          className="drawer-action-btn btn-clear-danger"
+                          onClick={() => {
+                            setEraseStrokes([])
+                            setCurrentEraseStroke(null)
+                          }}
+                        >
+                          <RotateCcw size={13} />
+                          <span>Reset Mask</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* 5. RESIZE TOOLBAR */}
+                {activeEditorTool === 'resize' && (
+                  <div className="tool-drawer-card">
+                    <div className="drawer-section">
+                      <span className="drawer-label">Aspect Ratio</span>
+                      <div className="drawer-sizes-row">
+                        {['original', '1:1', '16:9', '9:16', '4:3', '3:2'].map((r) => (
+                          <button
+                            key={r}
+                            type="button"
+                            className={`size-pill-btn ${modalCropRatio === r ? 'active' : ''}`}
+                            onClick={() => {
+                              setModalCropRatio(r)
+                              showToast(`Framed to ${r.toUpperCase()}`)
+                            }}
+                          >
+                            <span>{r === 'original' ? 'Original' : r}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="drawer-divider" />
+
+                    <div className="drawer-section">
+                      <span className="drawer-label">Zoom ({Math.round(modalZoomScale * 100)}%)</span>
+                      <div className="drawer-sizes-row">
+                        {[1.0, 1.25, 1.5, 2.0].map((z) => (
+                          <button
+                            key={z}
+                            type="button"
+                            className={`size-pill-btn ${modalZoomScale === z ? 'active' : ''}`}
+                            onClick={() => setModalZoomScale(z)}
+                          >
+                            <span>{z}x</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Center High-Res Image Stage */}
             <div
               className="fullscreen-image-stage"
-              onClick={() => setFullscreenImageModal(null)}
+              onClick={() => {
+                if (!activeEditorTool) {
+                  setFullscreenImageModal(null)
+                }
+              }}
             >
-              <img
-                src={fullscreenImageModal.url}
-                alt={fullscreenImageModal.originalIdea || fullscreenImageModal.prompt}
-                className="fullscreen-rendered-img"
-                onClick={(e) => e.stopPropagation()}
-              />
+              <div
+                className={`fullscreen-rendered-wrapper ${isBgRemoved ? `bg-removed-mode bg-mode-${bgBackdropStyle}` : ''}`}
+                data-ratio={modalCropRatio !== 'original' ? modalCropRatio : undefined}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  // Drop comment pin if comment tool is active
+                  if (activeEditorTool === 'comment') {
+                    const rect = e.currentTarget.getBoundingClientRect()
+                    const x = Math.round(((e.clientX - rect.left) / rect.width) * 100)
+                    const y = Math.round(((e.clientY - rect.top) / rect.height) * 100)
+                    setPendingComment({ x, y, text: '' })
+                  }
+                }}
+              >
+                {/* Background Removal Scanning Laser Effect */}
+                {isBgProcessing && <div className="ai-bg-scan-beam" />}
+
+                {/* Main Rendered Image */}
+                <img
+                  src={fullscreenImageModal.url}
+                  alt={fullscreenImageModal.originalIdea || fullscreenImageModal.prompt}
+                  className={`fullscreen-rendered-img ${isObjectErased ? 'erased-inpainted-active' : ''}`}
+                  style={{
+                    transform: `scale(${modalZoomScale})`,
+                    transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
+                  }}
+                />
+
+                {/* 1. Interactive Canvas Layer for Freehand Markup Drawing */}
+                {activeEditorTool === 'markup' && (
+                  <canvas
+                    ref={markupCanvasRef}
+                    className="fullscreen-markup-canvas"
+                    width={800}
+                    height={800}
+                    onPointerDown={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect()
+                      const x = (e.clientX - rect.left) * (800 / rect.width)
+                      const y = (e.clientY - rect.top) * (800 / rect.height)
+                      setIsDrawingMarkup(true)
+                      setCurrentStroke({ color: markupColor, size: markupBrushSize, points: [{ x, y }] })
+                    }}
+                    onPointerMove={(e) => {
+                      if (!isDrawingMarkup || !currentStroke) return
+                      const rect = e.currentTarget.getBoundingClientRect()
+                      const x = (e.clientX - rect.left) * (800 / rect.width)
+                      const y = (e.clientY - rect.top) * (800 / rect.height)
+                      setCurrentStroke((prev) => prev ? { ...prev, points: [...prev.points, { x, y }] } : null)
+                    }}
+                    onPointerUp={() => {
+                      if (currentStroke && currentStroke.points.length > 0) {
+                        setMarkupStrokes((prev) => [...prev, currentStroke])
+                      }
+                      setCurrentStroke(null)
+                      setIsDrawingMarkup(false)
+                    }}
+                    onPointerLeave={() => {
+                      if (currentStroke && currentStroke.points.length > 0) {
+                        setMarkupStrokes((prev) => [...prev, currentStroke])
+                      }
+                      setCurrentStroke(null)
+                      setIsDrawingMarkup(false)
+                    }}
+                  />
+                )}
+
+                {/* 2. Interactive Canvas Layer for Object Eraser Brush */}
+                {activeEditorTool === 'erase' && (
+                  <canvas
+                    ref={eraseCanvasRef}
+                    className="fullscreen-erase-canvas"
+                    width={800}
+                    height={800}
+                    onPointerDown={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect()
+                      const x = (e.clientX - rect.left) * (800 / rect.width)
+                      const y = (e.clientY - rect.top) * (800 / rect.height)
+                      setIsErasing(true)
+                      setCurrentEraseStroke({ size: eraseBrushSize, points: [{ x, y }] })
+                    }}
+                    onPointerMove={(e) => {
+                      if (!isErasing || !currentEraseStroke) return
+                      const rect = e.currentTarget.getBoundingClientRect()
+                      const x = (e.clientX - rect.left) * (800 / rect.width)
+                      const y = (e.clientY - rect.top) * (800 / rect.height)
+                      setCurrentEraseStroke((prev) => prev ? { ...prev, points: [...prev.points, { x, y }] } : null)
+                    }}
+                    onPointerUp={() => {
+                      if (currentEraseStroke && currentEraseStroke.points.length > 0) {
+                        setEraseStrokes((prev) => [...prev, currentEraseStroke])
+                      }
+                      setCurrentEraseStroke(null)
+                      setIsErasing(false)
+                    }}
+                    onPointerLeave={() => {
+                      if (currentEraseStroke && currentEraseStroke.points.length > 0) {
+                        setEraseStrokes((prev) => [...prev, currentEraseStroke])
+                      }
+                      setCurrentEraseStroke(null)
+                      setIsErasing(false)
+                    }}
+                  />
+                )}
+
+                {/* 3. Interactive Comment Pins Overlay */}
+                {imageComments.map((comment, idx) => (
+                  <div
+                    key={comment.id}
+                    className="comment-pin-marker"
+                    style={{ left: `${comment.x}%`, top: `${comment.y}%` }}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setActiveCommentCardId(activeCommentCardId === comment.id ? null : comment.id)
+                    }}
+                  >
+                    <div className="comment-pin-badge">
+                      <span>{idx + 1}</span>
+                    </div>
+
+                    {/* Expandable Comment Card Popover */}
+                    {activeCommentCardId === comment.id && (
+                      <div className="comment-pin-popover" onClick={(e) => e.stopPropagation()}>
+                        <div className="popover-header">
+                          <span className="popover-author">{comment.author}</span>
+                          <span className="popover-time">{comment.time}</span>
+                          <button
+                            type="button"
+                            className="btn-delete-comment"
+                            onClick={() => {
+                              setImageComments((prev) => prev.filter((c) => c.id !== comment.id))
+                              setActiveCommentCardId(null)
+                              showToast('Comment deleted')
+                            }}
+                            title="Delete note"
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        </div>
+                        <p className="popover-text">{comment.text}</p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+
+                {/* 4. Pending Comment Input Popover */}
+                {pendingComment && (
+                  <div
+                    className="pending-comment-card"
+                    style={{ left: `${pendingComment.x}%`, top: `${pendingComment.y}%` }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="pending-card-header">
+                      <MessageSquare size={13} />
+                      <span>Add Note Pin</span>
+                    </div>
+                    <input
+                      type="text"
+                      className="pending-comment-input"
+                      placeholder="Type your note here..."
+                      value={pendingComment.text}
+                      onChange={(e) => setPendingComment({ ...pendingComment, text: e.target.value })}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && pendingComment.text.trim()) {
+                          setImageComments((prev) => [
+                            ...prev,
+                            {
+                              id: Date.now(),
+                              x: pendingComment.x,
+                              y: pendingComment.y,
+                              text: pendingComment.text.trim(),
+                              author: currentUser?.name || 'You',
+                              time: 'Just now'
+                            }
+                          ])
+                          setPendingComment(null)
+                          showToast('Note pinned to image! 📌')
+                        }
+                      }}
+                      autoFocus
+                    />
+                    <div className="pending-card-actions">
+                      <button
+                        type="button"
+                        className="btn-cancel-pending"
+                        onClick={() => setPendingComment(null)}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        className="btn-save-pending"
+                        disabled={!pendingComment.text.trim()}
+                        onClick={() => {
+                          if (pendingComment.text.trim()) {
+                            setImageComments((prev) => [
+                              ...prev,
+                              {
+                                id: Date.now(),
+                                x: pendingComment.x,
+                                y: pendingComment.y,
+                                text: pendingComment.text.trim(),
+                                author: currentUser?.name || 'You',
+                                time: 'Just now'
+                              }
+                            ])
+                            setPendingComment(null)
+                            showToast('Note pinned to image! 📌')
+                          }
+                        }}
+                      >
+                        <Send size={12} />
+                        <span>Post</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Watermark Logo */}
+                <div className="fullscreen-watermark-logo" title="Created with Thamili AI">
+                  <img
+                    src={thamiliWatermarkImg}
+                    alt="Thamili"
+                    className="fullscreen-watermark-icon"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>

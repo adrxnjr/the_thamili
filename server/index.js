@@ -2,6 +2,7 @@ import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import generateRouter from './routes/generate.js'
+import historyRouter from './routes/history.js'
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -21,6 +22,7 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/api', generateRouter)
+app.use('/api', historyRouter)
 
 // Health Check Endpoint
 app.get('/api/health', (req, res) => {
@@ -34,9 +36,11 @@ app.get('/api/health', (req, res) => {
 // Start server
 if (process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
-    console.log(`🚀 Thamili Backend API Server running on http://localhost:${PORT}`)
-    console.log(`📡 Endpoint ready: POST http://localhost:${PORT}/api/generate`)
+    console.log(`🚀 Thamili Node.js Express Gateway running on http://localhost:${PORT}`)
+    console.log(`📡 Node API endpoints: http://localhost:${PORT}/api/generate, /api/history, /api/status`)
+    console.log(`⚡ FastAPI Python Engine target: ${process.env.FASTAPI_URL || 'http://127.0.0.1:8000'}`)
   })
 }
 
 export default app
+

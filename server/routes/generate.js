@@ -2,17 +2,11 @@ import { Router } from 'express'
 import { generateImage, SUPPORTED_ASPECT_RATIOS } from '../services/imageService.js'
 
 const router = Router()
+const FASTAPI_URL = process.env.FASTAPI_URL || 'http://127.0.0.1:8000'
 
 /**
  * POST /api/generate
- * 
- * Request Body:
- * {
- *   prompt: string (required),
- *   aspectRatio: string ('1:1', '16:9', '9:16', '4:3', '3:4', '3:2', '2:3'),
- *   selectedModel: string ('Flash', 'Pro', 'Ultra'),
- *   referenceImages: Array<{ name?: string, data: string, type?: string }>
- * }
+ * Routes to FastAPI Python AI engine with resilient Node.js fallback
  */
 router.post('/generate', async (req, res) => {
   try {
@@ -31,17 +25,42 @@ router.post('/generate', async (req, res) => {
       })
     }
 
-    // Validate aspect ratio format
     const validAspectRatio = SUPPORTED_ASPECT_RATIOS.includes(aspectRatio) ? aspectRatio : '1:1'
-
-    // Call asynchronous image generation service
-    const result = await generateImage({
+    const payload = {
       prompt: prompt ? prompt.trim() : '',
       aspectRatio: validAspectRatio,
       selectedModel: typeof selectedModel === 'string' ? selectedModel : 'Flash',
       referenceImages: Array.isArray(referenceImages) ? referenceImages : []
-    })
+    }
 
+    // 1. Attempt generation via high-performance FastAPI Python engine
+    try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 65000)
+
+      const pyResponse = await fetch(`${FASTAPI_URL}/api/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      })
+
+      clearTimeout(timeoutId)
+
+      if (pyResponse.ok) {
+        const pyData = await pyResponse.json()
+        if (pyData && pyData.success && pyData.data) {
+          console.log('[Node Gateway] Generated successfully via FastAPI Python Engine!')
+          return res.status(200).json(pyData)
+        }
+      }
+      console.warn(`[Node Gateway] FastAPI returned status ${pyResponse.status}. Falling back to Node AI engine...`)
+    } catch (fastApiErr) {
+      console.warn(`[Node Gateway] FastAPI engine unreachable (${fastApiErr.message}). Cascading to Node.js AI Engine...`)
+    }
+
+    // 2. Fallback to Node.js asynchronous image service
+    const result = await generateImage(payload)
     return res.status(200).json({
       success: true,
       data: result
@@ -55,4 +74,41 @@ router.post('/generate', async (req, res) => {
   }
 })
 
+/**
+ * GET /api/status
+ * Check status of both Node.js gateway and FastAPI microservice
+ */
+router.get('/status', async (req, res) => {
+  let fastApiOnline = false
+  let fastApiDetails = null
+
+  try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 2000)
+    const resp = await fetch(`${FASTAPI_URL}/api/health`, { signal: controller.signal })
+    clearTimeout(timeoutId)
+    if (resp.ok) {
+      fastApiOnline = true
+      fastApiDetails = await resp.json()
+    }
+  } catch {
+    fastApiOnline = false
+  }
+
+  res.json({
+    status: 'online',
+    nodeGateway: {
+      status: 'online',
+      port: process.env.PORT || 3001,
+      service: 'Node.js Express Gateway & History'
+    },
+    fastApiEngine: {
+      status: fastApiOnline ? 'online' : 'offline',
+      url: FASTAPI_URL,
+      details: fastApiDetails
+    }
+  })
+})
+
 export default router
+
