@@ -6,7 +6,6 @@ import {
   Video,
   GraduationCap,
   LayoutGrid,
-  Sparkles,
   ChevronDown,
   ChevronRight,
   SunMedium,
@@ -63,11 +62,13 @@ import {
   Undo2,
   RotateCcw,
   Send,
-  ZoomIn
+  ZoomIn,
+  ZoomOut,
+  Minus
 } from 'lucide-react'
 import thamiliLogoImg from './assets/thamili-logo.png'
 import sidebarLogoImg from './assets/thamili-logo.png'
-import thamiliWatermarkImg from './assets/thamili-watermark.png'
+import thamiliWatermarkImg from './assets/thamili-watermark.svg'
 import './App.css'
 
 export const LICENSE_TIERS = [
@@ -96,7 +97,7 @@ export const LICENSE_TIERS = [
     desc: 'Commercial project use + training reference prompt embeddings.',
     baseMultiplier: 1.4,
     suggestedPrice: 25,
-    icon: Sparkles
+    icon: Layers
   },
   {
     id: 'extended',
@@ -164,7 +165,7 @@ export const AVAILABLE_AI_MODELS = [
     badge: 'High Detail',
     desc: 'Balanced high-fidelity generation with crisp details',
     category: 'Professional Tier',
-    icon: Sparkles,
+    icon: Zap,
     color: '#8b5cf6',
     engineModel: 'flux'
   },
@@ -176,8 +177,8 @@ export const AVAILABLE_AI_MODELS = [
     desc: 'Supreme UHD photorealism with cinematic studio lighting',
     category: 'Ultra Tier',
     icon: Crown,
-    color: '#ec4899',
-    engineModel: 'flux-realism'
+    color: '#f59e0b',
+    engineModel: 'kontext'
   }
 ]
 
@@ -201,7 +202,7 @@ export const INITIAL_LOGGED_IN_HISTORY = [
         role: 'assistant',
         isTextResponse: true,
         type: 'text',
-        text: 'Vanakkam! Welcome to Thamili AI 2.0 ✨ I can generate high-resolution Dravidian heritage art, cyberpunk temple cities, photorealistic portraits, anime art, and 3D concept renders. What would you like to create today?',
+        text: 'Vanakkam! Welcome to Thamili AI 2.0 I can generate high-resolution Dravidian heritage art, cyberpunk temple cities, photorealistic portraits, anime art, and 3D concept renders. What would you like to create today?',
         suggestions: [
           'Cyberpunk Tanjore Gopuram 2099',
           'Tamil Traditional Temple Wedding',
@@ -636,7 +637,7 @@ export function BackgroundWaves() {
 }
 
 export const REFERENCE_CONCEPT_STYLES = [
-  // Artistic & Street
+  // 1. Artistic & Street
   {
     id: 'ref-paint',
     name: 'Paint',
@@ -655,15 +656,8 @@ export const REFERENCE_CONCEPT_STYLES = [
     image: 'https://images.unsplash.com/photo-1561055657-b9e0bf0fa360?w=480&auto=format&fit=crop&q=80',
     prompt: 'Vibrant large-scale urban street wall mural painting of cheerful person in striped jersey, vivid graffiti art, textured brick wall, street art style'
   },
-  {
-    id: 'ref-mug',
-    name: 'Mug',
-    field: 'Merchandise & Products',
-    categoryGroup: '3D & Cute Goods',
-    tag: 'Custom Mug',
-    image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Cute cartoon character barista drinking coffee illustration printed on white ceramic mug, warm coffee shop table setting, clean merchandise mockup'
-  },
+
+  // 2. 3D & Cute Goods
   {
     id: 'ref-plushie',
     name: 'Plushie',
@@ -672,44 +666,6 @@ export const REFERENCE_CONCEPT_STYLES = [
     tag: 'Soft Plushie',
     image: '/images/basic/concept-plushie.jpg',
     prompt: 'Adorable soft plushie stuffed toy character resting on a cozy bed with warm fairy lights in background, cute kawaii plush doll, detailed fabric texture'
-  },
-  {
-    id: 'ref-arcade',
-    name: 'Arcade',
-    field: 'Retro & Gaming',
-    categoryGroup: 'Retro, Sci-Fi & Action',
-    tag: 'Neon Arcade',
-    image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Fisheye lens wide photograph of a girl laughing enthusiastically in a glowing retro neon arcade gaming hall, colorful illuminated game machines'
-  },
-  {
-    id: 'ref-coach',
-    name: 'Coach',
-    field: 'Sports & Cinematic',
-    categoryGroup: 'Portraits & Characters',
-    tag: 'Team Coach',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Professional athletic sports coach in tailored navy suit holding clipboard on stadium sideline, crowd of spectators in background, intense game focus'
-  },
-
-  // Row 2
-  {
-    id: 'ref-bloom',
-    name: 'Bloom',
-    field: 'Floral & Botanical',
-    categoryGroup: 'Nature & Botanical',
-    tag: 'Flower Bloom',
-    image: '/images/basic/flower-rose.jpg',
-    prompt: 'Smiling female florist holding an extravagant blooming Protea and fresh floral bouquet inside a cozy flower boutique shop, natural sunlight'
-  },
-  {
-    id: 'ref-dappled',
-    name: 'Dappled',
-    field: 'Cinematic Lighting',
-    categoryGroup: 'Portraits & Characters',
-    tag: 'Dappled Light',
-    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Warm smiling person in mustard knit sweater on sun-drenched cobblestone European canal street with dappled natural sunlight and tree shadows'
   },
   {
     id: 'ref-clay',
@@ -721,22 +677,35 @@ export const REFERENCE_CONCEPT_STYLES = [
     prompt: 'Cozy 3D claymation stop-motion animated clay character wearing knitted sweater sipping hot cocoa in a warm cafe library, textured clay figure'
   },
   {
-    id: 'ref-popup',
-    name: 'Pop up',
-    field: 'Papercraft & Storybook',
+    id: 'ref-chibi',
+    name: 'Chibi',
+    field: 'Anime & Kawaii Goods',
     categoryGroup: '3D & Cute Goods',
-    tag: 'Pop-Up Book',
-    image: 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Intricate papercraft 3D pop-up book illustration of a young person in denim jacket emerging from illustrated storybook pages, paper layers'
+    tag: 'Chibi Figure',
+    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Cute acrylic star keychain charm featuring an adorable chibi girl cartoon character with glasses holding coffee, dangling on a pink backpack strap'
   },
+
+  // 3. Portraits & Characters
   {
-    id: 'ref-themepark',
-    name: 'Theme park',
-    field: 'Entertainment & Retro',
-    categoryGroup: 'Retro, Sci-Fi & Action',
-    tag: 'Theme Park',
-    image: 'https://images.unsplash.com/photo-1513889961551-628c1e5e2ee9?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Joyful retro 1980s theme park celebration with friendly purple dragon mascot, confetti, colorful roller coaster decorations, festive retro vibe'
+    id: 'ref-hollywood',
+    name: 'Hollywood',
+    field: 'Vintage Glamour',
+    categoryGroup: 'Portraits & Characters',
+    tag: 'Golden Age Hollywood',
+    image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Classic black and white vintage Golden Age Hollywood glamour portrait of a handsome gentleman in tailored black tuxedo and bow tie, dramatic chiaroscuro film lighting'
+  },
+
+  // 4. Nature & Botanical
+  {
+    id: 'ref-bloom',
+    name: 'Bloom',
+    field: 'Floral & Botanical',
+    categoryGroup: 'Nature & Botanical',
+    tag: 'Flower Bloom',
+    image: '/images/basic/flower-rose.jpg',
+    prompt: 'Smiling female florist holding an extravagant blooming Protea and fresh floral bouquet inside a cozy flower boutique shop, natural sunlight'
   },
   {
     id: 'ref-lavender',
@@ -748,51 +717,24 @@ export const REFERENCE_CONCEPT_STYLES = [
     prompt: 'Fashion editorial of a stylish person in an oversized pastel lavender lilac suit standing in endless blooming purple lavender field at sunset'
   },
 
-  // Row 3
+  // 5. Retro, Sci-Fi & Action
   {
-    id: 'ref-pin',
-    name: 'Pin',
-    field: 'Merchandise & Badges',
-    categoryGroup: '3D & Cute Goods',
-    tag: 'Enamel Pin',
-    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Custom enamel lapel pin badge of a smiling person character pinned onto a vintage blue denim jacket with brass zipper, macro merchandise photo'
+    id: 'ref-arcade',
+    name: 'Arcade',
+    field: 'Retro & Gaming',
+    categoryGroup: 'Retro, Sci-Fi & Action',
+    tag: 'Neon Arcade',
+    image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Fisheye lens wide photograph of a girl laughing enthusiastically in a glowing retro neon arcade gaming hall, colorful illuminated game machines'
   },
   {
-    id: 'ref-monstera',
-    name: 'Monstera',
-    field: 'Nature & Greenhouse',
-    categoryGroup: 'Nature & Botanical',
-    tag: 'Monstera Foliage',
-    image: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Aesthetic portrait of a person peering through vibrant lush green Monstera and tropical jungle foliage in a sunlit botanical greenhouse'
-  },
-  {
-    id: 'ref-elven',
-    name: 'Elven',
-    field: 'Fantasy & Mythology',
-    categoryGroup: 'Portraits & Characters',
-    tag: 'Elven Archer',
-    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Cinematic fantasy elven warrior archer with braided hair and leather armor drawing a bow in a golden sunlit mystical ancient forest, epic fantasy'
-  },
-  {
-    id: 'ref-studio',
-    name: 'Studio',
-    field: 'Studio Photography',
-    categoryGroup: 'Portraits & Characters',
-    tag: 'Studio Portrait',
-    image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Clean high-key professional studio sports portrait of a female soccer athlete in striped jersey holding soccer ball, dramatic rim lighting'
-  },
-  {
-    id: 'ref-yogi',
-    name: 'Yogi',
-    field: 'Mindfulness & Yoga',
-    categoryGroup: 'Portraits & Characters',
-    tag: 'Yoga Master',
-    image: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Serene outdoor yoga master performing advanced arm-balance crow pose on wooden pier over tranquil mist-covered lake at sunrise, zen meditation'
+    id: 'ref-themepark',
+    name: 'Theme park',
+    field: 'Entertainment & Retro',
+    categoryGroup: 'Retro, Sci-Fi & Action',
+    tag: 'Theme Park',
+    image: 'https://images.unsplash.com/photo-1513889961551-628c1e5e2ee9?w=480&auto=format&fit=crop&q=80',
+    prompt: 'Joyful retro 1980s theme park celebration with friendly purple dragon mascot, confetti, colorful roller coaster decorations, festive retro vibe'
   },
   {
     id: 'ref-neon',
@@ -802,156 +744,6 @@ export const REFERENCE_CONCEPT_STYLES = [
     tag: 'Neon Tokyo',
     image: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=480&auto=format&fit=crop&q=80',
     prompt: 'Moody cinematic cyberpunk Tokyo neon rain street portrait of a person holding clear umbrella under glowing red and cyan neon signs, puddle reflections'
-  },
-
-  // Row 4
-  {
-    id: 'ref-hollywood',
-    name: 'Hollywood',
-    field: 'Vintage Glamour',
-    categoryGroup: 'Portraits & Characters',
-    tag: 'Golden Age Hollywood',
-    image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Classic black and white vintage Golden Age Hollywood glamour portrait of a handsome gentleman in tailored black tuxedo and bow tie, dramatic chiaroscuro film lighting'
-  },
-  {
-    id: 'ref-jump',
-    name: 'Jump',
-    field: 'Action & Extreme',
-    categoryGroup: 'Retro, Sci-Fi & Action',
-    tag: 'Skydiving Jump',
-    image: 'https://images.unsplash.com/photo-1521673461164-de300ebcfb17?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Exciting first-person extreme skydiver freefalling with safety goggles and open smile above sweeping green coastal landscape, action GoPro shot'
-  },
-  {
-    id: 'ref-marble',
-    name: 'Marble',
-    field: 'Sculpture & Classical',
-    categoryGroup: 'Artistic & Street',
-    tag: 'Marble Sculpture',
-    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Classical ancient Greek Roman carved white marble statue of a goddess standing gracefully in museum gallery with warm ambient gallery spotlights'
-  },
-  {
-    id: 'ref-pulp',
-    name: 'Pulp',
-    field: 'Vintage Comic & Poster',
-    categoryGroup: 'Artistic & Street',
-    tag: 'Pulp Thriller',
-    image: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Vintage 1970s pulp horror comedy movie poster style illustration of a screaming man with glasses and retro typography title, distressed paper grain'
-  },
-  {
-    id: 'ref-origami',
-    name: 'Origami',
-    field: 'Geometric & Low-Poly',
-    categoryGroup: 'Artistic & Street',
-    tag: 'Paper Origami',
-    image: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Modern geometric 3D papercraft origami sculpture mask of a human face with precise polygonal faceted planes in golden yellow and beige'
-  },
-  {
-    id: 'ref-slide',
-    name: 'Slide',
-    field: 'Sports Celebrations',
-    categoryGroup: 'Retro, Sci-Fi & Action',
-    tag: 'Goal Slide',
-    image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Triumphant soccer player sliding on knees on wet stadium turf celebrating a winning goal in front of roaring cheering stadium crowd, dynamic action'
-  },
-
-  // Row 5
-  {
-    id: 'ref-headshot',
-    name: 'Headshot',
-    field: 'Corporate & Editorial',
-    categoryGroup: 'Portraits & Characters',
-    tag: 'Executive Headshot',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Crisp contemporary corporate headshot of a confident professional woman wearing glasses and black turtleneck in modern sunlit office atrium'
-  },
-  {
-    id: 'ref-bento',
-    name: 'Bento',
-    field: 'Miniature & Culinary',
-    categoryGroup: '3D & Cute Goods',
-    tag: 'Sushi Bento',
-    image: 'https://images.unsplash.com/photo-1553621042-f6e147245754?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Cute miniature diorama doll character seated inside a traditional Japanese wooden bento box surrounded by fresh sushi rolls and onigiri rice balls'
-  },
-  {
-    id: 'ref-nyc',
-    name: 'NYC',
-    field: 'City Life & Dance',
-    categoryGroup: 'Retro, Sci-Fi & Action',
-    tag: 'NYC Street',
-    image: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Dynamic street style photo of a joyful dancer leaping across a sunny New York City crosswalk between historic brownstones, breezy summer light'
-  },
-  {
-    id: 'ref-claw',
-    name: 'Claw',
-    field: 'Arcade & Whimsical',
-    categoryGroup: '3D & Cute Goods',
-    tag: 'Claw Machine',
-    image: 'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Whimsical miniature cute chibi doll character being lifted by a metal crane claw inside a glowing neon illuminated arcade claw machine filled with plushies'
-  },
-  {
-    id: 'ref-zen',
-    name: 'Zen',
-    field: 'Surreal & Spiritual',
-    categoryGroup: 'Nature & Botanical',
-    tag: 'Zen Floating',
-    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Surreal dreamlike peaceful zero-gravity weightless floating figure in white flowing robes levitating above a serene Japanese rock zen garden and calm ocean at twilight'
-  },
-  {
-    id: 'ref-chibi',
-    name: 'Chibi',
-    field: 'Anime & Kawaii Goods',
-    categoryGroup: '3D & Cute Goods',
-    tag: 'Chibi Keychain',
-    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Cute acrylic star keychain charm featuring an adorable chibi girl cartoon character with glasses holding coffee, dangling on a pink backpack strap'
-  },
-
-  // Row 6
-  {
-    id: 'ref-bronze',
-    name: 'Bronze',
-    field: 'Historical & Sculptural',
-    categoryGroup: 'Artistic & Street',
-    tag: 'Bronze Bust',
-    image: 'https://images.unsplash.com/photo-1549887534-1541e9326642?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Intricately embossed weathered antique bronze statue bust of a commanding warrior commander in ornate armor, historic museum lighting, greenish patina'
-  },
-  {
-    id: 'ref-sitcom',
-    name: 'Sitcom',
-    field: 'Retro Television',
-    categoryGroup: 'Portraits & Characters',
-    tag: '90s Sitcom',
-    image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Nostalgic 1990s retro TV sitcom intro scene with smiling actor in vibrant neon color-block jacket and stonewashed denim in a checkerboard floor retro kitchen with GUEST STAR yellow text'
-  },
-  {
-    id: 'ref-frontrow',
-    name: 'Front row',
-    field: 'Haute Couture & Runway',
-    categoryGroup: 'Retro, Sci-Fi & Action',
-    tag: 'Fashion Front Row',
-    image: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Edgy avant-garde high fashion portrait of a model sitting in the front row of Paris Fashion Week runway surrounded by flashing paparazzi strobe lights, blurred background'
-  },
-  {
-    id: 'ref-pastel',
-    name: 'Pastel',
-    field: 'Anime & Illustration',
-    categoryGroup: 'Artistic & Street',
-    tag: 'Pastel Bakery',
-    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Heartwarming cozy anime illustration of a cheerful young baker in apron holding fresh warm cookies in a quaint pastel French bakery filled with artisan breads'
   }
 ]
 
@@ -961,43 +753,28 @@ const REFERENCE_TEMPLATE_SLOTS = [
   // Slot 0
   [
     REFERENCE_CONCEPT_STYLES[0], // Paint
-    REFERENCE_CONCEPT_STYLES[6], // Bloom
-    REFERENCE_CONCEPT_STYLES[12], // Pin
-    REFERENCE_CONCEPT_STYLES[18], // Hollywood
-    REFERENCE_CONCEPT_STYLES[29] // Chibi
+    REFERENCE_CONCEPT_STYLES[6]  // Bloom
   ],
   // Slot 1
   [
     REFERENCE_CONCEPT_STYLES[1], // Mural
-    REFERENCE_CONCEPT_STYLES[7], // Dappled
-    REFERENCE_CONCEPT_STYLES[13], // Monstera
-    REFERENCE_CONCEPT_STYLES[19], // Jump
-    REFERENCE_CONCEPT_STYLES[30] // Bronze
+    REFERENCE_CONCEPT_STYLES[5]  // Hollywood
   ],
   // Slot 2
   [
-    REFERENCE_CONCEPT_STYLES[2], // Mug
-    REFERENCE_CONCEPT_STYLES[8], // Clay
-    REFERENCE_CONCEPT_STYLES[14], // Elven
-    REFERENCE_CONCEPT_STYLES[20], // Marble
-    REFERENCE_CONCEPT_STYLES[31] // Sitcom
+    REFERENCE_CONCEPT_STYLES[2], // Plushie
+    REFERENCE_CONCEPT_STYLES[9]  // Theme park
   ],
   // Slot 3
   [
-    REFERENCE_CONCEPT_STYLES[3], // Plushie
-    REFERENCE_CONCEPT_STYLES[9], // Pop up
-    REFERENCE_CONCEPT_STYLES[15], // Studio
-    REFERENCE_CONCEPT_STYLES[21], // Pulp
-    REFERENCE_CONCEPT_STYLES[32] // Front row
+    REFERENCE_CONCEPT_STYLES[3], // Clay
+    REFERENCE_CONCEPT_STYLES[4]  // Chibi
   ],
   // Slot 4
   [
-    REFERENCE_CONCEPT_STYLES[4], // Arcade
-    REFERENCE_CONCEPT_STYLES[10], // Theme park
-    REFERENCE_CONCEPT_STYLES[16], // Yogi
-    REFERENCE_CONCEPT_STYLES[17], // Neon
-    REFERENCE_CONCEPT_STYLES[28], // Zen
-    REFERENCE_CONCEPT_STYLES[33] // Pastel
+    REFERENCE_CONCEPT_STYLES[8], // Arcade
+    REFERENCE_CONCEPT_STYLES[10], // Neon
+    REFERENCE_CONCEPT_STYLES[7]  // Lavender
   ]
 ]
 
@@ -1716,7 +1493,7 @@ function detectConversationalIntent(rawText) {
   // 2. How are you / What's up
   if (/^(how\s*are\s*you|how\s*r\s*u|how\s*is\s*it\s*going|whats\s*up|what's\s*up|wassup|sup)(\s+today)?$/i.test(clean)) {
     return {
-      text: "I'm doing great and ready to create! ✨ What imaginative scene or artwork can I generate for you?",
+      text: "I'm doing great and ready to create! What imaginative scene or artwork can I generate for you?",
       suggestions: [
         'Futuristic Tokyo night street',
         'Ancient Dravidian temple mandapam',
@@ -2001,6 +1778,17 @@ export default function App() {
   const [fullscreenImageModal, setFullscreenImageModal] = useState(null)
   const chatScrollRef = useRef(null)
 
+  // Auto-scroll chat thread to bottom when new messages arrive or generation state changes
+  useEffect(() => {
+    if (chatScrollRef.current) {
+      const scrollEl = chatScrollRef.current
+      const t = setTimeout(() => {
+        scrollEl.scrollTo({ top: scrollEl.scrollHeight, behavior: 'smooth' })
+      }, 80)
+      return () => clearTimeout(t)
+    }
+  }, [chatMessages, isGenerating])
+
   // ESC key listener to close fullscreen image modal
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -2035,6 +1823,12 @@ export default function App() {
   const [isBgProcessing, setIsBgProcessing] = useState(false)
   const [bgRemovedImageUrl, setBgRemovedImageUrl] = useState(null)
   const [bgBackdropStyle, setBgBackdropStyle] = useState('checkered') // 'checkered' | 'dark' | 'white'
+  const [bgRemovalMode, setBgRemovalMode] = useState('auto') // 'auto' | 'select'
+  const [bgSelectBrushSize, setBgSelectBrushSize] = useState(36)
+  const [bgSelectStrokes, setBgSelectStrokes] = useState([])
+  const [currentBgSelectStroke, setCurrentBgSelectStroke] = useState(null)
+  const [isDrawingBgSelect, setIsDrawingBgSelect] = useState(false)
+  const bgSelectCanvasRef = useRef(null)
 
   // 4. Erase Tool State
   const [eraseBrushSize, setEraseBrushSize] = useState(28)
@@ -2044,6 +1838,8 @@ export default function App() {
   const [isEraseProcessing, setIsEraseProcessing] = useState(false)
   const [isObjectErased, setIsObjectErased] = useState(false)
   const [erasedImageUrl, setErasedImageUrl] = useState(null)
+  const [eraseMode, setEraseMode] = useState('cutout') // 'cutout' (Reveal Background) | 'inpaint'
+  const [eraseBackdropStyle, setEraseBackdropStyle] = useState('checkered') // 'checkered' | 'dark' | 'white'
   const eraseCanvasRef = useRef(null)
 
   // 5. Resize / Aspect Tool State
@@ -2063,12 +1859,18 @@ export default function App() {
       setIsBgRemoved(false)
       setIsBgProcessing(false)
       setBgRemovedImageUrl(null)
+      setBgRemovalMode('auto')
+      setBgSelectStrokes([])
+      setCurrentBgSelectStroke(null)
+      setIsDrawingBgSelect(false)
       setEraseStrokes([])
       setCurrentEraseStroke(null)
       setIsErasing(false)
       setIsEraseProcessing(false)
       setIsObjectErased(false)
       setErasedImageUrl(null)
+      setEraseMode('cutout')
+      setEraseBackdropStyle('checkered')
       setModalCropRatio('original')
       setModalZoomScale(1.0)
     }
@@ -2084,14 +1886,15 @@ export default function App() {
     const allStrokes = currentStroke ? [...markupStrokes, currentStroke] : markupStrokes
     allStrokes.forEach((stroke) => {
       if (!stroke.points || stroke.points.length === 0) return
-      ctx.beginPath()
       ctx.strokeStyle = stroke.color
-      ctx.fillStyle = stroke.color
       ctx.lineWidth = stroke.size
       ctx.lineCap = 'round'
       ctx.lineJoin = 'round'
+
+      ctx.beginPath()
       if (stroke.points.length === 1) {
         ctx.arc(stroke.points[0].x, stroke.points[0].y, stroke.size / 2, 0, Math.PI * 2)
+        ctx.fillStyle = stroke.color
         ctx.fill()
       } else {
         ctx.moveTo(stroke.points[0].x, stroke.points[0].y)
@@ -2110,17 +1913,18 @@ export default function App() {
     const ctx = canvas.getContext('2d')
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-    const allErase = currentEraseStroke ? [...eraseStrokes, currentEraseStroke] : eraseStrokes
-    allErase.forEach((stroke) => {
+    const allStrokes = currentEraseStroke ? [...eraseStrokes, currentEraseStroke] : eraseStrokes
+    allStrokes.forEach((stroke) => {
       if (!stroke.points || stroke.points.length === 0) return
-      ctx.beginPath()
-      ctx.strokeStyle = 'rgba(239, 68, 68, 0.55)'
-      ctx.fillStyle = 'rgba(239, 68, 68, 0.55)'
+      ctx.strokeStyle = 'rgba(239, 68, 68, 0.75)'
       ctx.lineWidth = stroke.size
       ctx.lineCap = 'round'
       ctx.lineJoin = 'round'
+
+      ctx.beginPath()
       if (stroke.points.length === 1) {
         ctx.arc(stroke.points[0].x, stroke.points[0].y, stroke.size / 2, 0, Math.PI * 2)
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.75)'
         ctx.fill()
       } else {
         ctx.moveTo(stroke.points[0].x, stroke.points[0].y)
@@ -2132,7 +1936,37 @@ export default function App() {
     })
   }, [eraseStrokes, currentEraseStroke])
 
-  // Smart AI Background Removal Processor
+  // Redraw select strokes on bgSelectCanvasRef
+  useEffect(() => {
+    const canvas = bgSelectCanvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+    const allStrokes = currentBgSelectStroke ? [...bgSelectStrokes, currentBgSelectStroke] : bgSelectStrokes
+    allStrokes.forEach((stroke) => {
+      if (!stroke.points || stroke.points.length === 0) return
+      ctx.strokeStyle = 'rgba(59, 130, 246, 0.65)'
+      ctx.lineWidth = stroke.size
+      ctx.lineCap = 'round'
+      ctx.lineJoin = 'round'
+
+      ctx.beginPath()
+      if (stroke.points.length === 1) {
+        ctx.arc(stroke.points[0].x, stroke.points[0].y, stroke.size / 2, 0, Math.PI * 2)
+        ctx.fillStyle = 'rgba(59, 130, 246, 0.65)'
+        ctx.fill()
+      } else {
+        ctx.moveTo(stroke.points[0].x, stroke.points[0].y)
+        for (let i = 1; i < stroke.points.length; i++) {
+          ctx.lineTo(stroke.points[i].x, stroke.points[i].y)
+        }
+        ctx.stroke()
+      }
+    })
+  }, [bgSelectStrokes, currentBgSelectStroke])
+
+  // Smart Background Removal Processor (Whole Subject Auto or Drawn Object Select Mode)
   const handleRemoveBackground = async () => {
     if (isBgProcessing) return
     setIsBgProcessing(true)
@@ -2159,64 +1993,110 @@ export default function App() {
       const imgData = ctx.getImageData(0, 0, width, height)
       const data = imgData.data
 
-      // Sample background from borders & corners
-      const cornerCoords = [
-        [0, 0], [width - 1, 0], [0, height - 1], [width - 1, height - 1],
-        [Math.floor(width / 2), 0], [0, Math.floor(height / 2)],
-        [width - 1, Math.floor(height / 2)], [Math.floor(width / 2), height - 1]
-      ]
+      if (bgRemovalMode === 'select' && bgSelectStrokes.length > 0) {
+        // Draw user strokes to a full-res mask canvas
+        const maskCanvas = document.createElement('canvas')
+        maskCanvas.width = width
+        maskCanvas.height = height
+        const maskCtx = maskCanvas.getContext('2d')
+        maskCtx.fillStyle = '#000000'
+        maskCtx.fillRect(0, 0, width, height)
 
-      let avgR = 0, avgG = 0, avgB = 0
-      cornerCoords.forEach(([cx, cy]) => {
-        const idx = (cy * width + cx) * 4
-        avgR += data[idx]
-        avgG += data[idx + 1]
-        avgB += data[idx + 2]
-      })
-      avgR /= cornerCoords.length
-      avgG /= cornerCoords.length
-      avgB /= cornerCoords.length
+        const scaleX = width / 800
+        const scaleY = height / 800
 
-      const threshold = 52
-      const feather = 24
-      const centerX = width / 2
-      const centerY = height / 2
-      const maxDistFromCenter = Math.sqrt(centerX * centerX + centerY * centerY)
+        bgSelectStrokes.forEach((stroke) => {
+          if (!stroke.points || stroke.points.length === 0) return
+          maskCtx.strokeStyle = '#ffffff'
+          maskCtx.fillStyle = '#ffffff'
+          maskCtx.lineWidth = stroke.size * Math.max(scaleX, scaleY)
+          maskCtx.lineCap = 'round'
+          maskCtx.lineJoin = 'round'
 
-      for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-          const idx = (y * width + x) * 4
-          const r = data[idx]
-          const g = data[idx + 1]
-          const b = data[idx + 2]
+          maskCtx.beginPath()
+          if (stroke.points.length === 1) {
+            maskCtx.arc(stroke.points[0].x * scaleX, stroke.points[0].y * scaleY, (stroke.size * Math.max(scaleX, scaleY)) / 2, 0, Math.PI * 2)
+            maskCtx.fill()
+          } else {
+            maskCtx.moveTo(stroke.points[0].x * scaleX, stroke.points[0].y * scaleY)
+            for (let i = 1; i < stroke.points.length; i++) {
+              maskCtx.lineTo(stroke.points[i].x * scaleX, stroke.points[i].y * scaleY)
+            }
+            maskCtx.stroke()
+          }
+        })
 
-          let minColorDist = Infinity
-          cornerCoords.forEach(([cx, cy]) => {
-            const cidx = (cy * width + cx) * 4
-            const cd = Math.sqrt(
-              Math.pow(r - data[cidx], 2) +
-              Math.pow(g - data[cidx + 1], 2) +
-              Math.pow(b - data[cidx + 2], 2)
-            )
-            if (cd < minColorDist) minColorDist = cd
-          })
+        const maskData = maskCtx.getImageData(0, 0, width, height).data
 
-          const avgDist = Math.sqrt(
-            Math.pow(r - avgR, 2) +
-            Math.pow(g - avgG, 2) +
-            Math.pow(b - avgB, 2)
-          )
+        for (let i = 0; i < data.length; i += 4) {
+          const maskVal = maskData[i] // 255 = drawn object to keep, 0 = background
+          if (maskVal < 30) {
+            data[i + 3] = 0 // Remove unpainted background
+          } else if (maskVal < 230) {
+            data[i + 3] = Math.round(data[i + 3] * (maskVal / 255))
+          }
+        }
+      } else {
+        // Auto background flood-fill removal starting from borders
+        const cornerCoords = [
+          [0, 0], [width - 1, 0], [0, height - 1], [width - 1, height - 1],
+          [Math.floor(width / 2), 0], [0, Math.floor(height / 2)],
+          [width - 1, Math.floor(height / 2)], [Math.floor(width / 2), height - 1]
+        ]
+        let avgR = 0, avgG = 0, avgB = 0
+        cornerCoords.forEach(([cx, cy]) => {
+          const idx = (cy * width + cx) * 4
+          avgR += data[idx]
+          avgG += data[idx + 1]
+          avgB += data[idx + 2]
+        })
+        avgR /= cornerCoords.length
+        avgG /= cornerCoords.length
+        avgB /= cornerCoords.length
 
-          const colorDist = Math.min(minColorDist, avgDist)
-          const distFromCenter = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2))
-          const centerFactor = distFromCenter / maxDistFromCenter
-          const effectiveThreshold = threshold * (0.8 + centerFactor * 0.45)
+        const colorDist = (r, g, b) => Math.sqrt((r - avgR) ** 2 + (g - avgG) ** 2 + (b - avgB) ** 2)
+        const visited = new Uint8Array(width * height)
+        const queue = []
+        const threshold = 48
+        const feather = 20
 
-          if (colorDist < effectiveThreshold) {
-            data[idx + 3] = 0 // Transparent
-          } else if (colorDist < effectiveThreshold + feather) {
-            const alphaRatio = (colorDist - effectiveThreshold) / feather
-            data[idx + 3] = Math.round(data[idx + 3] * alphaRatio)
+        for (let x = 0; x < width; x += 2) {
+          queue.push([x, 0])
+          queue.push([x, height - 1])
+        }
+        for (let y = 0; y < height; y += 2) {
+          queue.push([0, y])
+          queue.push([width - 1, y])
+        }
+
+        let head = 0
+        while (head < queue.length) {
+          const [cx, cy] = queue[head++]
+          const pidx = (cy * width + cx) * 4
+          const pr = data[pidx]
+          const pg = data[pidx + 1]
+          const pb = data[pidx + 2]
+
+          const cd = colorDist(pr, pg, pb)
+          if (cd <= threshold) {
+            data[pidx + 3] = 0
+          } else if (cd <= threshold + feather) {
+            const ratio = (cd - threshold) / feather
+            data[pidx + 3] = Math.round(data[pidx + 3] * ratio)
+          } else {
+            continue
+          }
+
+          const neighbors = [[cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]]
+          for (let i = 0; i < neighbors.length; i++) {
+            const [nx, ny] = neighbors[i]
+            if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+              const nidx = ny * width + nx
+              if (!visited[nidx]) {
+                visited[nidx] = 1
+                queue.push([nx, ny])
+              }
+            }
           }
         }
       }
@@ -2225,18 +2105,18 @@ export default function App() {
       const cutoutDataUrl = canvas.toDataURL('image/png')
       setBgRemovedImageUrl(cutoutDataUrl)
       setIsBgRemoved(true)
-      showToast('AI Background removed successfully! ✨')
+      showToast(bgRemovalMode === 'select' ? 'Object isolated & background removed! 🎯' : 'Background removed successfully!')
     } catch (e) {
       console.error('BG removal fallback:', e)
       setIsBgRemoved(true)
-      showToast('Background cutout applied ✨')
+      showToast('Background cutout applied')
     } finally {
       setIsBgProcessing(false)
     }
   }
 
-  // Smart AI Object Inpainting & Erase Processor
-  const handleApplyEraseInpaint = async () => {
+  // Smart Object Erase Processor (Supports both Cutout to Reveal Background & AI Inpaint)
+  const handleApplyErase = async (mode = 'cutout') => {
     if (eraseStrokes.length === 0 || isEraseProcessing) return
     setIsEraseProcessing(true)
     try {
@@ -2254,107 +2134,152 @@ export default function App() {
       const width = img.naturalWidth || 800
       const height = img.naturalHeight || 800
 
-      // 1. Build mask canvas from erase strokes
-      const maskCanvas = document.createElement('canvas')
-      maskCanvas.width = width
-      maskCanvas.height = height
-      const maskCtx = maskCanvas.getContext('2d')
-      maskCtx.fillStyle = 'black'
-      maskCtx.fillRect(0, 0, width, height)
+      if (mode === 'cutout') {
+        // Direct pixel alpha transparent erasing to reveal underlying background
+        const canvas = document.createElement('canvas')
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(img, 0, 0, width, height)
 
-      eraseStrokes.forEach((stroke) => {
-        if (!stroke.points || stroke.points.length === 0) return
-        maskCtx.strokeStyle = 'white'
-        maskCtx.fillStyle = 'white'
+        ctx.save()
+        ctx.globalCompositeOperation = 'destination-out'
         const scaleX = width / 800
         const scaleY = height / 800
-        const scaledSize = stroke.size * Math.max(scaleX, scaleY)
-        maskCtx.lineWidth = scaledSize
-        maskCtx.lineCap = 'round'
-        maskCtx.lineJoin = 'round'
 
-        if (stroke.points.length === 1) {
-          maskCtx.beginPath()
-          maskCtx.arc(stroke.points[0].x * scaleX, stroke.points[0].y * scaleY, scaledSize / 2, 0, Math.PI * 2)
-          maskCtx.fill()
-        } else {
-          maskCtx.beginPath()
-          maskCtx.moveTo(stroke.points[0].x * scaleX, stroke.points[0].y * scaleY)
-          for (let i = 1; i < stroke.points.length; i++) {
-            maskCtx.lineTo(stroke.points[i].x * scaleX, stroke.points[i].y * scaleY)
+        eraseStrokes.forEach((stroke) => {
+          if (!stroke.points || stroke.points.length === 0) return
+          const scaledSize = stroke.size * Math.max(scaleX, scaleY)
+          ctx.lineWidth = scaledSize
+          ctx.lineCap = 'round'
+          ctx.lineJoin = 'round'
+
+          if (stroke.points.length === 1) {
+            ctx.beginPath()
+            ctx.arc(stroke.points[0].x * scaleX, stroke.points[0].y * scaleY, scaledSize / 2, 0, Math.PI * 2)
+            ctx.fill()
+          } else {
+            ctx.beginPath()
+            ctx.moveTo(stroke.points[0].x * scaleX, stroke.points[0].y * scaleY)
+            for (let i = 1; i < stroke.points.length; i++) {
+              ctx.lineTo(stroke.points[i].x * scaleX, stroke.points[i].y * scaleY)
+            }
+            ctx.stroke()
           }
-          maskCtx.stroke()
-        }
-      })
+        })
+        ctx.restore()
 
-      const maskData = maskCtx.getImageData(0, 0, width, height).data
+        const cutoutDataUrl = canvas.toDataURL('image/png')
+        setErasedImageUrl(cutoutDataUrl)
+        setIsObjectErased(true)
+        setEraseStrokes([])
+        setCurrentEraseStroke(null)
+        showToast('Object erased! Background is now visible through the cutout ')
+      } else {
+        // 1. Build mask canvas from erase strokes for AI Inpainting
+        const maskCanvas = document.createElement('canvas')
+        maskCanvas.width = width
+        maskCanvas.height = height
+        const maskCtx = maskCanvas.getContext('2d')
+        maskCtx.fillStyle = 'black'
+        maskCtx.fillRect(0, 0, width, height)
 
-      // 2. Draw base image onto working canvas
-      const canvas = document.createElement('canvas')
-      canvas.width = width
-      canvas.height = height
-      const ctx = canvas.getContext('2d')
-      ctx.drawImage(img, 0, 0, width, height)
-      const imgData = ctx.getImageData(0, 0, width, height)
-      const data = imgData.data
+        eraseStrokes.forEach((stroke) => {
+          if (!stroke.points || stroke.points.length === 0) return
+          maskCtx.strokeStyle = 'white'
+          maskCtx.fillStyle = 'white'
+          const scaleX = width / 800
+          const scaleY = height / 800
+          const scaledSize = stroke.size * Math.max(scaleX, scaleY)
+          maskCtx.lineWidth = scaledSize
+          maskCtx.lineCap = 'round'
+          maskCtx.lineJoin = 'round'
 
-      // 3. Texture synthesis / directional neighbor fill inpainting
-      const maxRadius = Math.min(50, Math.floor(Math.max(width, height) * 0.08))
+          if (stroke.points.length === 1) {
+            maskCtx.beginPath()
+            maskCtx.arc(stroke.points[0].x * scaleX, stroke.points[0].y * scaleY, scaledSize / 2, 0, Math.PI * 2)
+            maskCtx.fill()
+          } else {
+            maskCtx.beginPath()
+            maskCtx.moveTo(stroke.points[0].x * scaleX, stroke.points[0].y * scaleY)
+            for (let i = 1; i < stroke.points.length; i++) {
+              maskCtx.lineTo(stroke.points[i].x * scaleX, stroke.points[i].y * scaleY)
+            }
+            maskCtx.stroke()
+          }
+        })
 
-      for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-          const idx = (y * width + x) * 4
-          if (maskData[idx] > 60) {
-            let totalWeight = 0
-            let sumR = 0, sumG = 0, sumB = 0, sumA = 0
-            const rays = 16
+        const maskData = maskCtx.getImageData(0, 0, width, height).data
 
-            for (let a = 0; a < rays; a++) {
-              const theta = (a * 2 * Math.PI) / rays
-              const dx = Math.cos(theta)
-              const dy = Math.sin(theta)
+        // 2. Draw base image onto working canvas
+        const canvas = document.createElement('canvas')
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(img, 0, 0, width, height)
+        const imgData = ctx.getImageData(0, 0, width, height)
+        const data = imgData.data
 
-              for (let r = 1; r <= maxRadius; r += 2) {
-                const nx = Math.round(x + dx * r)
-                const ny = Math.round(y + dy * r)
-                if (nx < 0 || nx >= width || ny < 0 || ny >= height) break
-                const nidx = (ny * width + nx) * 4
-                if (maskData[nidx] <= 50) {
-                  const weight = 1 / (r * r)
-                  sumR += data[nidx] * weight
-                  sumG += data[nidx + 1] * weight
-                  sumB += data[nidx + 2] * weight
-                  sumA += data[nidx + 3] * weight
-                  totalWeight += weight
-                  break
+        // 3. Texture synthesis inpainting
+        const maxRadius = Math.min(50, Math.floor(Math.max(width, height) * 0.08))
+
+        for (let y = 0; y < height; y++) {
+          for (let x = 0; x < width; x++) {
+            const idx = (y * width + x) * 4
+            if (maskData[idx] > 60) {
+              let totalWeight = 0
+              let sumR = 0, sumG = 0, sumB = 0, sumA = 0
+              const rays = 16
+
+              for (let a = 0; a < rays; a++) {
+                const theta = (a * 2 * Math.PI) / rays
+                const dx = Math.cos(theta)
+                const dy = Math.sin(theta)
+
+                for (let r = 1; r <= maxRadius; r += 2) {
+                  const nx = Math.round(x + dx * r)
+                  const ny = Math.round(y + dy * r)
+                  if (nx < 0 || nx >= width || ny < 0 || ny >= height) break
+                  const nidx = (ny * width + nx) * 4
+                  if (maskData[nidx] <= 50) {
+                    const weight = 1 / (r * r)
+                    sumR += data[nidx] * weight
+                    sumG += data[nidx + 1] * weight
+                    sumB += data[nidx + 2] * weight
+                    sumA += data[nidx + 3] * weight
+                    totalWeight += weight
+                    break
+                  }
                 }
               }
-            }
 
-            if (totalWeight > 0) {
-              data[idx] = Math.round(sumR / totalWeight)
-              data[idx + 1] = Math.round(sumG / totalWeight)
-              data[idx + 2] = Math.round(sumB / totalWeight)
-              data[idx + 3] = Math.round(sumA / totalWeight)
+              if (totalWeight > 0) {
+                data[idx] = Math.round(sumR / totalWeight)
+                data[idx + 1] = Math.round(sumG / totalWeight)
+                data[idx + 2] = Math.round(sumB / totalWeight)
+                data[idx + 3] = Math.round(sumA / totalWeight)
+              }
             }
           }
         }
-      }
 
-      ctx.putImageData(imgData, 0, 0)
-      const inpaintedDataUrl = canvas.toDataURL('image/png')
-      setErasedImageUrl(inpaintedDataUrl)
-      setIsObjectErased(true)
-      setEraseStrokes([])
-      setCurrentEraseStroke(null)
-      showToast('AI Object erased and inpainted seamlessly ✨')
+        ctx.putImageData(imgData, 0, 0)
+        const inpaintedDataUrl = canvas.toDataURL('image/png')
+        setErasedImageUrl(inpaintedDataUrl)
+        setIsObjectErased(true)
+        setEraseStrokes([])
+        setCurrentEraseStroke(null)
+        showToast('AI Object erased and inpainted seamlessly ')
+      }
     } catch (e) {
-      console.error('Erase inpainting error:', e)
-      showToast('Object erase completed ✨')
+      console.error('Erase error:', e)
+      showToast('Object erase completed ')
     } finally {
       setIsEraseProcessing(false)
     }
   }
+
+  const handleApplyEraseInpaint = () => handleApplyErase('inpaint')
 
   // Studio Lightbox Multi-Layer Export & Download
   const handleStudioExportDownload = async () => {
@@ -2449,37 +2374,7 @@ export default function App() {
         })
       }
 
-      // Watermark stamp (if not pure transparent cutout or if needed)
-      if (!isBgRemoved || bgBackdropStyle !== 'checkered') {
-        try {
-          const wm = new Image()
-          wm.crossOrigin = 'anonymous'
-          wm.src = thamiliWatermarkImg
-          await new Promise((res) => {
-            wm.onload = res
-            wm.onerror = res
-          })
-          if (wm.complete && wm.naturalWidth > 0) {
-            const wmRatio = wm.naturalWidth / wm.naturalHeight
-            const wmWidth = Math.max(140, Math.round(canvas.width * 0.16))
-            const wmHeight = Math.round(wmWidth / wmRatio)
-            const padding = Math.max(18, Math.round(canvas.width * 0.022))
-            const x = canvas.width - wmWidth - padding
-            const y = canvas.height - wmHeight - padding
-
-            ctx.save()
-            ctx.globalAlpha = 0.88
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)'
-            ctx.shadowBlur = 10
-            ctx.shadowOffsetX = 0
-            ctx.shadowOffsetY = 3
-            ctx.drawImage(wm, x, y, wmWidth, wmHeight)
-            ctx.restore()
-          }
-        } catch (e) {
-          console.warn('Watermark stamp skipped:', e)
-        }
-      }
+      
 
       canvas.toBlob((blob) => {
         if (!blob) return
@@ -2892,7 +2787,7 @@ export default function App() {
         }))
         setIsAnalyzingUpload(false)
         setUploadAnalysisCompleted(true)
-        showToast('✨ AI Image Analysis Complete: Category, tags, & resolution auto-detected!')
+        showToast('AI Image Analysis Complete: Category, tags, & resolution auto-detected!')
       }, 450)
     }
 
@@ -3077,46 +2972,97 @@ export default function App() {
     })
   }, [selectedCategoryField, categorySearchQuery])
 
+// Intelligent AI Reference Prompt Synthesizer
+function generateCreativeReferencePrompt(concept, fileName = '') {
+  let cleanSubject = (fileName || '')
+    .replace(/\.[^/.]+$/, '')
+    .replace(/[-_0-9]/g, ' ')
+    .trim()
+
+  if (!cleanSubject || cleanSubject.length < 2 || /^(image|photo|img|picture|upload|dsc|screenshot)/i.test(cleanSubject)) {
+    cleanSubject = 'the subject in the uploaded reference photo'
+  }
+
+  const cName = (concept?.name || '').toLowerCase()
+
+  if (cName.includes('hollywood')) {
+    return `Classic black and white vintage Golden Age Hollywood glamour portrait of ${cleanSubject}, handsome tailored black tuxedo and bow tie, dramatic chiaroscuro film lighting, 8k cinematic masterpiece, fine film grain`
+  }
+  if (cName.includes('chibi')) {
+    return `Cute 3D anime chibi kawaii keychain figure of ${cleanSubject}, big expressive sparkling eyes, soft pastel lighting, miniature acrylic charm on strap, 8k octane render`
+  }
+  if (cName.includes('bronze')) {
+    return `Intricately embossed weathered antique bronze statue bust of ${cleanSubject}, commanding warrior presence, museum gallery spotlight, greenish patina details, 8k sculpture`
+  }
+  if (cName.includes('sitcom')) {
+    return `Nostalgic 1990s retro TV sitcom intro scene of ${cleanSubject}, smiling in vibrant neon color-block jacket, checkerboard floor retro kitchen with GUEST STAR yellow text, 90s television aesthetic`
+  }
+  if (cName.includes('front row') || cName.includes('frontrow')) {
+    return `Edgy avant-garde high fashion portrait of ${cleanSubject} sitting in the front row of Paris Fashion Week runway, flashing paparazzi strobe lights, blurred audience, haute couture editorial`
+  }
+  if (cName.includes('zen')) {
+    return `Surreal dreamlike peaceful zero-gravity floating ${cleanSubject} in flowing white robes levitating above a serene Japanese rock zen garden and tranquil ocean at twilight, peaceful meditation`
+  }
+  if (cName.includes('paint')) {
+    return `Expressive textured impressionist oil painting master portrait of ${cleanSubject}, visible palette knife brushstrokes, rich canvas texture, master fine art, warm museum lighting`
+  }
+  if (cName.includes('mural')) {
+    return `Vibrant large-scale urban street wall mural painting of ${cleanSubject}, vivid graffiti art, textured brick wall, street art style, dynamic spray paint splatters`
+  }
+  if (cName.includes('mug')) {
+    return `Cute custom cartoon illustration of ${cleanSubject} printed on a clean white ceramic coffee mug, warm wooden cafe table setting, morning coffee steam, merchandise mockup`
+  }
+  if (cName.includes('plushie')) {
+    return `Adorable soft plushie stuffed toy character of ${cleanSubject} resting on a cozy bed with warm fairy lights in background, cute kawaii plush doll, detailed fabric texture`
+  }
+  if (cName.includes('arcade')) {
+    return `Moody wide-angle photograph of ${cleanSubject} in a glowing retro neon arcade gaming hall, illuminated neon game machines, cyan and magenta reflections`
+  }
+  if (cName.includes('clay')) {
+    return `Cozy 3D claymation stop-motion animated clay figure of ${cleanSubject} with hand-sculpted clay texture, soft studio pastel lighting, detailed claymation character`
+  }
+  if (cName.includes('pop up') || cName.includes('popup')) {
+    return `Intricate papercraft 3D pop-up storybook illustration of ${cleanSubject} emerging from folded illustrated storybook pages, delicate layered papercraft art`
+  }
+  if (cName.includes('neon')) {
+    return `Moody cinematic cyberpunk Tokyo neon rain street portrait of ${cleanSubject} holding umbrella under glowing red and cyan neon signs, wet asphalt puddle reflections`
+  }
+  if (cName.includes('origami')) {
+    return `Modern geometric 3D papercraft origami sculpture of ${cleanSubject} with precise polygonal faceted planes in golden yellow and beige, clean low-poly art`
+  }
+  if (cName.includes('marble')) {
+    return `Classical ancient Greek Roman carved white marble statue of ${cleanSubject} standing gracefully in a grand museum gallery with warm ambient gallery spotlights`
+  }
+  if (cName.includes('elven')) {
+    return `Cinematic fantasy elven warrior portrait of ${cleanSubject} with braided hair and leather armor in a golden sunlit mystical ancient forest, epic fantasy masterpiece`
+  }
+  if (cName.includes('studio')) {
+    return `Clean high-key professional studio sports portrait of ${cleanSubject} with dramatic rim lighting, sharp focus, 8k commercial photography`
+  }
+  if (cName.includes('bloom')) {
+    return `Extravagant blooming Protea and fresh floral bouquet surrounding ${cleanSubject} inside a sunlit flower boutique shop, soft natural morning sunlight`
+  }
+  if (cName.includes('pastel')) {
+    return `Heartwarming cozy anime illustration of ${cleanSubject} in a quaint pastel French bakery surrounded by artisan pastries, warm sunny aesthetic`
+  }
+
+  if (concept?.prompt) {
+    return `${concept.prompt}, featuring ${cleanSubject}`
+  }
+  return `High quality ${concept?.name || 'artistic'} style render of ${cleanSubject}, 8k resolution, detailed lighting`
+}
+
   // Handle applying reference concept directly into composer on main page
   const handleApplyCategoryPrompt = (cat) => {
     setActiveTab('AI Image')
     setImagesSubTab('studio')
-    // Keep search bar clean - do not show preset prompt in search box
-    setAttachedReferences([
-      {
-        id: createId('ref-concept'),
-        name: cat.name,
-        preview: cat.image,
-        domain: cat.field || 'Reference Concept',
-        isTemplate: true,
-        isReferenceConcept: true,
-        type: 'reference',
-        conceptName: cat.name,
-        conceptPrompt: cat.prompt
-      }
-    ])
     setIsCategoriesModalOpen(false)
-    showToast(`Attached "${cat.name}" as Reference Image ✨`)
-    setTimeout(() => {
-      searchInputRef.current?.focus()
-    }, 80)
+    handleTemplateReferenceClick(cat)
   }
 
   // Handle attaching category image as reference
   const handleAttachCategoryReference = (cat) => {
-    const newRef = {
-      id: createId('ref-concept'),
-      name: cat.name,
-      preview: cat.image,
-      domain: cat.field || 'Reference Concept',
-      isTemplate: true,
-      isReferenceConcept: true,
-      type: 'reference',
-      conceptName: cat.name,
-      conceptPrompt: cat.prompt
-    }
-    setAttachedReferences([newRef])
-    showToast(`Attached "${cat.name}" as Reference Image ✨`)
+    handleTemplateReferenceClick(cat)
   }
 
   // Model & Voice state
@@ -3127,6 +3073,10 @@ export default function App() {
   // Refs for DOM and Cancellation token
   const searchInputRef = useRef(null)
   const fileInputRef = useRef(null)
+  const referenceCardFileInputRef = useRef(null)
+  const pendingReferenceConceptRef = useRef(null)
+  const [selectedReferenceConcept, setSelectedReferenceConcept] = useState(null)
+  const [generatedPromptBanner, setGeneratedPromptBanner] = useState(null)
   const plusMenuRef = useRef(null)
   const downloadMenuRef = useRef(null)
   const activeGenerationIdRef = useRef(null)
@@ -3278,60 +3228,61 @@ export default function App() {
     })
   }
 
-  // Template Reference Card Click -> FLIP Shared-Element Animation to Prompt Composer (Single active reference image)
+  // Template Reference Card Click -> 1. Trigger File Explorer, 2. Upload Image, 3. AI Generates Prompt, 4. Ready to Generate/Copy/Edit
   const handleTemplateReferenceClick = (tmpl, e) => {
-    const cardEl = e.currentTarget
-    const imgEl =
-      cardEl.querySelector('.template-card-img.template-img-active') ||
-      cardEl.querySelector('.template-card-img') ||
-      cardEl
-    const rect = imgEl.getBoundingClientRect()
-
-    // Find destination exact dropzone position in composer
-    const composerCard = document.querySelector('.prompt-composer-glass-card')
-    let endTop = rect.top - 140
-    let endLeft = rect.left
-
-    if (composerCard) {
-      const compRect = composerCard.getBoundingClientRect()
-      // Position to the single reference attachment slot
-      endTop = compRect.top + 15
-      endLeft = compRect.left + 18
+    if (e) {
+      e.preventDefault?.()
+      e.stopPropagation?.()
     }
+    pendingReferenceConceptRef.current = tmpl
+    setSelectedReferenceConcept(tmpl)
+    showToast(`Select an image to create in "${tmpl.name}" style 📂`)
+    referenceCardFileInputRef.current?.click()
+  }
 
-    const flyId = createId('fly')
-    setFlyingImage({
-      id: flyId,
-      src: tmpl.image,
-      startTop: rect.top,
-      startLeft: rect.left,
-      startWidth: rect.width,
-      startHeight: rect.height,
-      endTop: endTop,
-      endLeft: endLeft,
-      endWidth: 52,
-      endHeight: 52
-    })
+  // Handle uploaded image for Reference Concept Style
+  const handleReferenceCardFileUpload = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    e.target.value = ''
 
-    const newRef = {
-      id: createId('ref-tmpl'),
-      name: tmpl.name,
-      preview: tmpl.image,
-      domain: tmpl.domain || 'Reference Concept',
-      isTemplate: true,
-      isReferenceConcept: true,
-      type: 'reference',
-      conceptName: tmpl.name,
-      conceptPrompt: tmpl.prompt
-    }
+    const concept = pendingReferenceConceptRef.current || REFERENCE_CONCEPT_STYLES[0]
+    const reader = new FileReader()
 
-    // Settle into composer as single reference image
-    setTimeout(() => {
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result
+      const newRef = {
+        id: createId('ref-user-concept'),
+        name: `${concept.name} Ref`,
+        preview: dataUrl,
+        domain: concept.field || `${concept.name} Style`,
+        isUploaded: true,
+        isTemplate: false,
+        isReferenceConcept: true,
+        type: 'reference',
+        conceptName: concept.name,
+        conceptPrompt: concept.prompt
+      }
+
+      // Generate AI prompt combining user uploaded image and chosen style
+      const generatedPrompt = generateCreativeReferencePrompt(concept, file.name)
+
+      // Attach reference and set generated prompt in composer
       setAttachedReferences([newRef])
-      setFlyingImage(null)
-      showToast(`Attached "${tmpl.name}" as Reference Image ✨`)
-      setTimeout(() => searchInputRef.current?.focus(), 50)
-    }, 450)
+      setIdeaText(generatedPrompt)
+      setGeneratedPromptBanner({
+        conceptName: concept.name,
+        prompt: generatedPrompt,
+        copied: false
+      })
+
+      showToast(`Generated AI prompt for "${concept.name}" style! You can copy, edit, or click Generate.`)
+      setTimeout(() => {
+        searchInputRef.current?.focus()
+      }, 100)
+    }
+
+    reader.readAsDataURL(file)
   }
 
   // Remove attached reference
@@ -3400,7 +3351,7 @@ export default function App() {
     setSelectedFolderId(newFolder.id)
     setNewFolderName('')
     setIsCreatingFolder(false)
-    showToast(`Created folder "${newFolder.name}" ✨`)
+    showToast(`Created folder "${newFolder.name}" `)
   }
 
   // Delete manual folder
@@ -3655,7 +3606,7 @@ export default function App() {
 
       setGalleryImages((prev) => [newImg, ...prev])
       setIsGenerating(false)
-      showToast(`✨ Generated with ${selectedModel} Engine (${newImg.ratio})!`)
+      showToast(`Generated with ${selectedModel} Engine (${newImg.ratio})!`)
 
       const revealTimer = setTimeout(() => {
         if (activeGenerationIdRef.current === generationId) {
@@ -3729,7 +3680,7 @@ export default function App() {
   // Regenerate image
   const handleRegenerateMessage = (msg) => {
     handleGenerateFromIdea(msg.originalIdea || msg.prompt)
-    showToast('Regenerating image... ✨')
+    showToast('Regenerating image... ')
   }
 
   // Direct High-Res Image Download
@@ -3748,36 +3699,6 @@ export default function App() {
       canvas.height = img.naturalHeight || 1024
       const ctx = canvas.getContext('2d')
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-
-      // Overlay Thamili watermark in bottom-right corner
-      try {
-        const wm = new Image()
-        wm.crossOrigin = 'anonymous'
-        wm.src = thamiliWatermarkImg
-        await new Promise((resolve) => {
-          wm.onload = resolve
-          wm.onerror = resolve
-        })
-        if (wm.complete && wm.naturalWidth > 0) {
-          const wmRatio = wm.naturalWidth / wm.naturalHeight
-          const wmWidth = Math.max(140, Math.round(canvas.width * 0.16))
-          const wmHeight = Math.round(wmWidth / wmRatio)
-          const padding = Math.max(18, Math.round(canvas.width * 0.022))
-          const x = canvas.width - wmWidth - padding
-          const y = canvas.height - wmHeight - padding
-
-          ctx.save()
-          ctx.globalAlpha = 0.88
-          ctx.shadowColor = 'rgba(0, 0, 0, 0.8)'
-          ctx.shadowBlur = 10
-          ctx.shadowOffsetX = 0
-          ctx.shadowOffsetY = 3
-          ctx.drawImage(wm, x, y, wmWidth, wmHeight)
-          ctx.restore()
-        }
-      } catch (e) {
-        console.warn('Watermark stamp skipped:', e)
-      }
       canvas.toBlob((blob) => {
         if (!blob) return
         const downloadUrl = URL.createObjectURL(blob)
@@ -3937,7 +3858,7 @@ export default function App() {
     if (existingChat.messages && Array.isArray(existingChat.messages) && existingChat.messages.length > 0) {
       setChatMessages(existingChat.messages)
       setCurrentGeneration(existingChat.generation || null)
-      showToast(`Switched to: "${existingChat.title || queryText}" ✨`)
+      showToast(`Switched to: "${existingChat.title || queryText}" `)
     } else {
       // 2. Construct clean conversational message history from the saved chat metadata
       const promptText = existingChat.query || existingChat.title || 'Creative artwork'
@@ -3965,7 +3886,7 @@ export default function App() {
       const restoredMessages = [userMessage, assistantMessage]
       setChatMessages(restoredMessages)
       setCurrentGeneration(assistantMessage)
-      showToast(`Switched to: "${existingChat.title || promptText}" ✨`)
+      showToast(`Switched to: "${existingChat.title || promptText}" `)
     }
 
     setTimeout(() => {
@@ -3985,7 +3906,7 @@ export default function App() {
     setCurrentGeneration(null)
     setIdeaText('')
     setAttachedReferences([])
-    showToast('Started new image chat session ✨')
+    showToast('Started new image chat session ')
   }
 
   // Navigate to Home Page / Studio from any tab or view
@@ -4094,36 +4015,6 @@ export default function App() {
       }
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
 
-      // Overlay Thamili watermark in bottom-right corner
-      try {
-        const wm = new Image()
-        wm.crossOrigin = 'anonymous'
-        wm.src = thamiliWatermarkImg
-        await new Promise((resolve) => {
-          wm.onload = resolve
-          wm.onerror = resolve
-        })
-        if (wm.complete && wm.naturalWidth > 0) {
-          const wmRatio = wm.naturalWidth / wm.naturalHeight
-          const wmWidth = Math.max(140, Math.round(canvas.width * 0.16))
-          const wmHeight = Math.round(wmWidth / wmRatio)
-          const padding = Math.max(18, Math.round(canvas.width * 0.022))
-          const x = canvas.width - wmWidth - padding
-          const y = canvas.height - wmHeight - padding
-
-          ctx.save()
-          ctx.globalAlpha = 0.88
-          ctx.shadowColor = 'rgba(0, 0, 0, 0.8)'
-          ctx.shadowBlur = 10
-          ctx.shadowOffsetX = 0
-          ctx.shadowOffsetY = 3
-          ctx.drawImage(wm, x, y, wmWidth, wmHeight)
-          ctx.restore()
-        }
-      } catch (e) {
-        console.warn('Watermark stamp skipped:', e)
-      }
-
       const mimeType =
         format === 'jpg' || format === 'jpeg'
           ? 'image/jpeg'
@@ -4206,6 +4097,14 @@ export default function App() {
         multiple
         style={{ display: 'none' }}
         onChange={handleReferenceUpload}
+      />
+      {/* Hidden File Input for Reference Concept Style Image Upload */}
+      <input
+        type="file"
+        ref={referenceCardFileInputRef}
+        accept="image/*"
+        style={{ display: 'none' }}
+        onChange={handleReferenceCardFileUpload}
       />
 
       {/* ================= SIDEBAR (Stable Structural Anchor) ================= */}
@@ -4345,7 +4244,7 @@ export default function App() {
           <div className="pro-card pro-card-auto-fade">
             <div className="pro-card-title">
               <span>Upgrade to Pro</span>
-              <Sparkles size={14} className="sparkle-accent" />
+              
             </div>
             <p className="pro-card-desc">
               Unlock more power, more models, and more possibilities.
@@ -4466,7 +4365,7 @@ export default function App() {
             </div>
 
             <div className="footer-powered">
-              Powered by advanced AI technology <Sparkles size={14} color="#8b5cf6" />
+              Powered by advanced AI technology 
             </div>
           </main>
         )}
@@ -4528,7 +4427,7 @@ export default function App() {
                                   >
                                     {isRefConcept ? (
                                       <>
-                                        <Sparkles size={8} className="ref-tag-sparkle" />
+                                        
                                         <span>Ref Img</span>
                                       </>
                                     ) : (
@@ -4553,6 +4452,46 @@ export default function App() {
                                 </div>
                               )
                             })}
+                          </div>
+                        )}
+
+                        {/* Generated AI Prompt Action Banner */}
+                        {generatedPromptBanner && (
+                          <div className="generated-prompt-action-strip">
+                            <div className="prompt-strip-left">
+                              
+                              <span>AI Prompt for <strong>{generatedPromptBanner.conceptName}</strong></span>
+                            </div>
+                            <div className="prompt-strip-actions">
+                              <button
+                                type="button"
+                                className="prompt-strip-copy-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  navigator.clipboard.writeText(ideaText || generatedPromptBanner.prompt)
+                                  setGeneratedPromptBanner((prev) => prev ? { ...prev, copied: true } : null)
+                                  showToast('Prompt copied to clipboard! 📋')
+                                  setTimeout(() => {
+                                    setGeneratedPromptBanner((prev) => prev ? { ...prev, copied: false } : null)
+                                  }, 2500)
+                                }}
+                                title="Copy prompt for future use"
+                              >
+                                {generatedPromptBanner.copied ? <Check size={12} /> : <Copy size={12} />}
+                                <span>{generatedPromptBanner.copied ? 'Copied' : 'Copy Prompt'}</span>
+                              </button>
+                              <button
+                                type="button"
+                                className="prompt-strip-dismiss-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setGeneratedPromptBanner(null)
+                                }}
+                                title="Dismiss banner"
+                              >
+                                <X size={12} />
+                              </button>
+                            </div>
                           </div>
                         )}
 
@@ -4695,7 +4634,7 @@ export default function App() {
                               {isModelDropdownOpen && (
                                 <div className="model-dropdown-menu">
                                   <div className="model-dropdown-header">
-                                    <Sparkles size={13} className="header-sparkle-icon" />
+                                    
                                     <span>Select AI Model Engine</span>
                                   </div>
                                   <div className="model-dropdown-list">
@@ -4710,7 +4649,7 @@ export default function App() {
                                           onClick={() => {
                                             setSelectedModel(model.name)
                                             setIsModelDropdownOpen(false)
-                                            showToast(`Switched to ${model.name} (${model.badge}) ✨`)
+                                            showToast(`Switched to ${model.name} (${model.badge}) `)
                                           }}
                                         >
                                           <div className="model-item-left">
@@ -4745,7 +4684,7 @@ export default function App() {
                               title="Generate image"
                             >
                               <span className="btn-generate-sheen" />
-                              <Sparkles size={15} className={`btn-sparkle-icon ${isGenerating ? 'sparkle-spin-fast' : 'sparkle-twinkle'}`} />
+                              
                               <span className="generate-btn-text">Generate</span>
                             </button>
                           </div>
@@ -4785,10 +4724,6 @@ export default function App() {
                               </div>
                               <div className="template-card-gradient" />
                               <div className="template-card-sheen" />
-                              <div className="template-card-badge">
-                                <Sparkles size={10} className="template-badge-sparkle" />
-                                <span>Ref</span>
-                              </div>
                               <div className="template-card-label-wrap">
                                 <span key={activeTmpl.id} className="template-card-label animated-title-fade">
                                   {activeTmpl.name}
@@ -4798,11 +4733,11 @@ export default function App() {
                           )
                         })}
 
-                        {/* DEDICATED SEE ALL / EXPLORE 34 REFERENCE CONCEPTS CARD */}
+                        {/* DEDICATED MORE / EXPLORE 11 REFERENCE CONCEPTS CARD */}
                         <div
                           className="template-card template-card-see-all"
                           onClick={() => setIsCategoriesModalOpen(true)}
-                          title="Explore all 34 reference image concept styles"
+                          title="Explore all 11 reference image concept styles"
                           role="button"
                           tabIndex={0}
                         >
@@ -4820,13 +4755,13 @@ export default function App() {
                               loading="eager"
                             />
                             <img
-                              src={REFERENCE_CONCEPT_STYLES[3].image}
+                              src={REFERENCE_CONCEPT_STYLES[2].image}
                               alt="Plushie Reference"
                               className="see-all-mosaic-img"
                               loading="eager"
                             />
                             <img
-                              src={REFERENCE_CONCEPT_STYLES[8].image}
+                              src={REFERENCE_CONCEPT_STYLES[3].image}
                               alt="Clay Reference"
                               className="see-all-mosaic-img"
                               loading="eager"
@@ -4835,16 +4770,12 @@ export default function App() {
                           <div className="see-all-dark-overlay" />
                           <div className="template-card-sheen" />
                           <div className="see-all-content-overlay">
-                            <div className="template-card-badge see-all-top-badge">
-                              <Sparkles size={10} className="see-all-badge-sparkle" />
-                              <span>34 Concepts</span>
-                            </div>
                             <div className="see-all-bottom-bar">
                               <div className="see-all-pill-btn">
                                 <LayoutGrid size={13} className="see-all-grid-icon" />
-                                <span>See All</span>
+                                <span>More</span>
                               </div>
-                              <span className="see-all-sub-caption">34 Styles ➔</span>
+                              <span className="see-all-sub-caption">11 Styles ➔</span>
                             </div>
                           </div>
                         </div>
@@ -4899,7 +4830,7 @@ export default function App() {
                             <div key={msg.id} className="chat-assistant-message-row text-response-row">
                               <div className="assistant-text-bubble">
                                 <div className="assistant-bubble-header">
-                                  <Sparkles size={16} className="assistant-sparkle-icon" />
+                                  
                                   <span className="assistant-brand-name">Thamili AI</span>
                                 </div>
                                 <div className="assistant-bubble-body">
@@ -4916,7 +4847,7 @@ export default function App() {
                                             handleGenerateFromIdea(sug)
                                           }}
                                         >
-                                          <Sparkles size={12} />
+                                          
                                           <span>{sug}</span>
                                         </button>
                                       ))}
@@ -5048,12 +4979,12 @@ export default function App() {
                                   </div>
                                 )}
 
-                                {/* Original Thamili Watermark Logo in Bottom-Right Corner */}
+                                {/* Official Thamili Watermark Logo (Bottom-Right Corner) */}
                                 {hasImage && (
                                   <div className="chat-img-watermark-logo" title="Created with Thamili AI">
                                     <img
-                                      src={thamiliWatermarkImg}
-                                      alt="Thamili"
+                                      src={thamiliLogoImg}
+                                      alt="Thamili AI"
                                       className="chat-img-watermark-icon"
                                     />
                                   </div>
@@ -5145,7 +5076,7 @@ export default function App() {
                                   >
                                     {isRefConcept ? (
                                       <>
-                                        <Sparkles size={8} className="ref-tag-sparkle" />
+                                        
                                         <span>Ref Img</span>
                                       </>
                                     ) : (
@@ -5170,6 +5101,46 @@ export default function App() {
                                 </div>
                               )
                             })}
+                          </div>
+                        )}
+
+                        {/* Generated AI Prompt Action Banner */}
+                        {generatedPromptBanner && (
+                          <div className="generated-prompt-action-strip">
+                            <div className="prompt-strip-left">
+                              
+                              <span>AI Prompt for <strong>{generatedPromptBanner.conceptName}</strong></span>
+                            </div>
+                            <div className="prompt-strip-actions">
+                              <button
+                                type="button"
+                                className="prompt-strip-copy-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  navigator.clipboard.writeText(ideaText || generatedPromptBanner.prompt)
+                                  setGeneratedPromptBanner((prev) => prev ? { ...prev, copied: true } : null)
+                                  showToast('Prompt copied to clipboard! 📋')
+                                  setTimeout(() => {
+                                    setGeneratedPromptBanner((prev) => prev ? { ...prev, copied: false } : null)
+                                  }, 2500)
+                                }}
+                                title="Copy prompt for future use"
+                              >
+                                {generatedPromptBanner.copied ? <Check size={12} /> : <Copy size={12} />}
+                                <span>{generatedPromptBanner.copied ? 'Copied' : 'Copy Prompt'}</span>
+                              </button>
+                              <button
+                                type="button"
+                                className="prompt-strip-dismiss-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setGeneratedPromptBanner(null)
+                                }}
+                                title="Dismiss banner"
+                              >
+                                <X size={12} />
+                              </button>
+                            </div>
                           </div>
                         )}
 
@@ -5312,7 +5283,7 @@ export default function App() {
                               {isModelDropdownOpen && (
                                 <div className="model-dropdown-menu">
                                   <div className="model-dropdown-header">
-                                    <Sparkles size={13} className="header-sparkle-icon" />
+                                    
                                     <span>Select AI Model Engine</span>
                                   </div>
                                   <div className="model-dropdown-list">
@@ -5327,7 +5298,7 @@ export default function App() {
                                           onClick={() => {
                                             setSelectedModel(model.name)
                                             setIsModelDropdownOpen(false)
-                                            showToast(`Switched to ${model.name} (${model.badge}) ✨`)
+                                            showToast(`Switched to ${model.name} (${model.badge}) `)
                                           }}
                                         >
                                           <div className="model-item-left">
@@ -5362,7 +5333,7 @@ export default function App() {
                               title="Generate image"
                             >
                               <span className="btn-generate-sheen" />
-                              <Sparkles size={15} className={`btn-sparkle-icon ${isGenerating ? 'sparkle-spin-fast' : 'sparkle-twinkle'}`} />
+                              
                               <span className="generate-btn-text">Generate</span>
                             </button>
                           </div>
@@ -5726,11 +5697,11 @@ export default function App() {
                               onClick={() => {
                                 setIdeaText(img.prompt)
                                 setImagesSubTab('studio')
-                                showToast('Loaded prompt into studio! ✨')
+                                showToast('Loaded prompt into studio! ')
                               }}
                               title="Remix Prompt in Studio"
                             >
-                              <Sparkles size={13} />
+                              
                               <span>Remix</span>
                             </button>
                           </div>
@@ -6261,11 +6232,11 @@ export default function App() {
                                           setIsFolderModalOpen(false)
                                           setIsGalleryOpen(false)
                                           setViewingFolder(null)
-                                          showToast('Prompt loaded into Studio! ✨')
+                                          showToast('Prompt loaded into Studio! ')
                                         }}
                                         title="Use this prompt in Studio"
                                       >
-                                        <Sparkles size={11} />
+                                        
                                         <span>Use Prompt</span>
                                       </button>
                                     </div>
@@ -6322,7 +6293,7 @@ export default function App() {
             <div className="ref-modal-header">
               <div className="ref-modal-header-left">
                 <div className="ref-modal-badge-icon">
-                  <Sparkles size={18} />
+                  
                 </div>
                 <div>
                   <div className="ref-modal-title-row">
@@ -6453,7 +6424,7 @@ export default function App() {
             {/* Modal Clean Footer */}
             <div className="ref-modal-footer">
               <span className="ref-footer-hint">
-                ✨ Click any visual style to apply it to your AI Prompt Composer
+                Click any visual style to apply it to your AI Prompt Composer
               </span>
               <button
                 type="button"
@@ -6749,7 +6720,7 @@ export default function App() {
                 ) : uploadAnalysisCompleted && (
                   <div className="ai-analysis-banner">
                     <div className="ai-analysis-header">
-                      <Sparkles size={15} />
+                      
                       <span>AI Image Analysis Complete — Auto-categorized & tagged (Editable below)</span>
                     </div>
                     <div className="ai-analysis-chips-row">
@@ -7586,12 +7557,7 @@ export default function App() {
           >
             {/* Top Bar Controls */}
             <div className="fullscreen-lightbox-header">
-              <div className="fullscreen-prompt-badge">
-                <Sparkles size={14} className="badge-sparkle" />
-                <span className="fullscreen-prompt-text">
-                  {fullscreenImageModal.originalIdea || fullscreenImageModal.prompt}
-                </span>
-              </div>
+              <div className="fullscreen-header-left-spacer" />
 
               {/* Top Center Editor Toolbar Pill */}
               <div className="fullscreen-editor-toolbar-pill">
@@ -7776,7 +7742,7 @@ export default function App() {
                         className="drawer-action-btn btn-primary-apply"
                         onClick={() => {
                           setActiveEditorTool(null)
-                          showToast('Annotations saved to image ✨')
+                          showToast('Annotations saved to image ')
                         }}
                       >
                         <Check size={14} />
@@ -7820,17 +7786,73 @@ export default function App() {
                 {/* 3. REMOVE BG TOOLBAR */}
                 {activeEditorTool === 'removebg' && (
                   <div className="tool-drawer-card">
+                    {/* Removal Mode: Auto Cutout or Select */}
                     <div className="drawer-section">
-                      <span className="drawer-label">AI Subject Cutout</span>
+                      <span className="drawer-label">Mode</span>
+                      <div className="drawer-sizes-row">
+                        <button
+                          type="button"
+                          className={`size-pill-btn ${bgRemovalMode === 'auto' ? 'active' : ''}`}
+                          onClick={() => {
+                            setBgRemovalMode('auto')
+                            showToast('Auto Mode: Detects full subject')
+                          }}
+                        >
+                          <span>Auto Cutout</span>
+                        </button>
+                        <button
+                          type="button"
+                          className={`size-pill-btn ${bgRemovalMode === 'select' ? 'active' : ''}`}
+                          onClick={() => {
+                            setBgRemovalMode('select')
+                            showToast('Select Mode: Draw / paint over the object you want to keep 🎯')
+                          }}
+                        >
+                          <span>Select</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {bgRemovalMode === 'select' && (
+                      <>
+                        <div className="drawer-divider" />
+                        <div className="drawer-section">
+                          <span className="drawer-label">Brush Size ({bgSelectBrushSize}px)</span>
+                          <div className="drawer-sizes-row">
+                            {[18, 32, 50, 70].map((s) => (
+                              <button
+                                key={s}
+                                type="button"
+                                className={`size-pill-btn ${bgSelectBrushSize === s ? 'active' : ''}`}
+                                onClick={() => setBgSelectBrushSize(s)}
+                              >
+                                <span>{s}px</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    <div className="drawer-divider" />
+
+                    {/* Action button */}
+                    <div className="drawer-actions-row">
                       {!isBgRemoved ? (
                         <button
                           type="button"
                           className="drawer-action-btn btn-primary-apply"
-                          disabled={isBgProcessing}
+                          disabled={isBgProcessing || (bgRemovalMode === 'select' && bgSelectStrokes.length === 0)}
                           onClick={handleRemoveBackground}
                         >
                           <Scissors size={14} />
-                          <span>{isBgProcessing ? 'Extracting Subject...' : 'Remove Background'}</span>
+                          <span>
+                            {isBgProcessing
+                              ? 'Removing BG...'
+                              : bgRemovalMode === 'select'
+                              ? 'Remove Background'
+                              : 'Remove Background'}
+                          </span>
                         </button>
                       ) : (
                         <button
@@ -7844,6 +7866,35 @@ export default function App() {
                         >
                           <RotateCcw size={14} />
                           <span>Restore Original</span>
+                        </button>
+                      )}
+
+                      {bgRemovalMode === 'select' && !isBgRemoved && bgSelectStrokes.length > 0 && (
+                        <button
+                          type="button"
+                          className="drawer-action-btn"
+                          onClick={() => {
+                            setBgSelectStrokes((prev) => prev.slice(0, -1))
+                          }}
+                          title="Undo stroke"
+                        >
+                          <Undo2 size={13} />
+                          <span>Undo</span>
+                        </button>
+                      )}
+
+                      {bgRemovalMode === 'select' && !isBgRemoved && bgSelectStrokes.length > 0 && (
+                        <button
+                          type="button"
+                          className="drawer-action-btn btn-clear-danger"
+                          onClick={() => {
+                            setBgSelectStrokes([])
+                            setCurrentBgSelectStroke(null)
+                          }}
+                          title="Clear mask"
+                        >
+                          <RotateCcw size={13} />
+                          <span>Clear</span>
                         </button>
                       )}
                     </div>
@@ -7888,10 +7939,42 @@ export default function App() {
                 {/* 4. ERASE TOOLBAR */}
                 {activeEditorTool === 'erase' && (
                   <div className="tool-drawer-card">
+                    {/* Erase Mode Selector */}
                     <div className="drawer-section">
-                      <span className="drawer-label">Brush Size</span>
+                      <span className="drawer-label">Erase Mode</span>
                       <div className="drawer-sizes-row">
-                        {[16, 28, 44].map((s) => (
+                        <button
+                          type="button"
+                          className={`size-pill-btn ${eraseMode === 'cutout' ? 'active' : ''}`}
+                          onClick={() => {
+                            setEraseMode('cutout')
+                            showToast('Mode: Reveal Background (Cutout)')
+                          }}
+                        >
+                          
+                          <span>Reveal Background</span>
+                        </button>
+                        <button
+                          type="button"
+                          className={`size-pill-btn ${eraseMode === 'inpaint' ? 'active' : ''}`}
+                          onClick={() => {
+                            setEraseMode('inpaint')
+                            showToast('Mode: AI Inpaint Texture')
+                          }}
+                        >
+                          <Zap size={12} />
+                          <span>AI Inpaint</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="drawer-divider" />
+
+                    {/* Brush Size */}
+                    <div className="drawer-section">
+                      <span className="drawer-label">Brush Size ({eraseBrushSize}px)</span>
+                      <div className="drawer-sizes-row">
+                        {[12, 24, 36, 50, 70].map((s) => (
                           <button
                             key={s}
                             type="button"
@@ -7906,16 +7989,59 @@ export default function App() {
 
                     <div className="drawer-divider" />
 
+                    {/* Backdrop Pattern when Erased */}
+                    <div className="drawer-section">
+                      <span className="drawer-label">Background Pattern</span>
+                      <div className="drawer-sizes-row">
+                        {[
+                          { id: 'checkered', label: 'Transparent Grid' },
+                          { id: 'dark', label: 'Dark Studio' },
+                          { id: 'white', label: 'White Canvas' }
+                        ].map((b) => (
+                          <button
+                            key={b.id}
+                            type="button"
+                            className={`size-pill-btn ${eraseBackdropStyle === b.id ? 'active' : ''}`}
+                            onClick={() => setEraseBackdropStyle(b.id)}
+                          >
+                            <span>{b.label}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="drawer-divider" />
+
                     <div className="drawer-actions-row">
                       <button
                         type="button"
                         className="drawer-action-btn btn-primary-apply"
                         disabled={eraseStrokes.length === 0 || isEraseProcessing}
-                        onClick={handleApplyEraseInpaint}
+                        onClick={() => handleApplyErase(eraseMode)}
                       >
-                        <Sparkles size={14} />
-                        <span>{isEraseProcessing ? 'Inpainting...' : 'Apply AI Erase'}</span>
+                        <Eraser size={14} />
+                        <span>
+                          {isEraseProcessing
+                            ? 'Erasing...'
+                            : eraseMode === 'cutout'
+                            ? 'Apply Erase (Cutout)'
+                            : 'Apply AI Inpaint'}
+                        </span>
                       </button>
+
+                      {eraseStrokes.length > 0 && (
+                        <button
+                          type="button"
+                          className="drawer-action-btn"
+                          onClick={() => {
+                            setEraseStrokes((prev) => prev.slice(0, -1))
+                          }}
+                          title="Undo last stroke"
+                        >
+                          <Undo2 size={13} />
+                          <span>Undo</span>
+                        </button>
+                      )}
 
                       {eraseStrokes.length > 0 && (
                         <button
@@ -7934,10 +8060,11 @@ export default function App() {
                       {isObjectErased && (
                         <button
                           type="button"
-                          className="drawer-action-btn"
+                          className="drawer-action-btn btn-clear-danger"
                           onClick={() => {
                             setErasedImageUrl(null)
                             setIsObjectErased(false)
+                            setEraseStrokes([])
                             showToast('Restored original image')
                           }}
                         >
@@ -7949,9 +8076,9 @@ export default function App() {
                   </div>
                 )}
 
-                {/* 5. RESIZE TOOLBAR */}
+                {/* 5. RESIZE & ZOOM TOOLBAR */}
                 {activeEditorTool === 'resize' && (
-                  <div className="tool-drawer-card">
+                  <div className="tool-drawer-card resize-compact-drawer">
                     <div className="drawer-section">
                       <span className="drawer-label">Aspect Ratio</span>
                       <div className="drawer-sizes-row">
@@ -7973,19 +8100,39 @@ export default function App() {
 
                     <div className="drawer-divider" />
 
-                    <div className="drawer-section">
-                      <span className="drawer-label">Zoom ({Math.round(modalZoomScale * 100)}%)</span>
-                      <div className="drawer-sizes-row">
-                        {[1.0, 1.25, 1.5, 2.0].map((z) => (
-                          <button
-                            key={z}
-                            type="button"
-                            className={`size-pill-btn ${modalZoomScale === z ? 'active' : ''}`}
-                            onClick={() => setModalZoomScale(z)}
-                          >
-                            <span>{z}x</span>
-                          </button>
-                        ))}
+                    {/* Compact Zoom Pill Widget */}
+                    <div className="compact-zoom-widget">
+                      <div className="compact-zoom-label-group">
+                        <Search size={15} className="compact-zoom-icon" />
+                        <span className="compact-zoom-label">Zoom</span>
+                      </div>
+                      <div className="compact-zoom-stepper">
+                        <button
+                          type="button"
+                          className="compact-zoom-btn"
+                          onClick={() => setModalZoomScale((prev) => Math.max(0.25, parseFloat((prev - 0.1).toFixed(2))))}
+                          title="Zoom out (-10%)"
+                          disabled={modalZoomScale <= 0.25}
+                        >
+                          <Minus size={14} />
+                        </button>
+                        <button
+                          type="button"
+                          className="compact-zoom-percent-pill"
+                          onClick={() => setModalZoomScale(1.0)}
+                          title="Click to reset to 100%"
+                        >
+                          {Math.round(modalZoomScale * 100)}%
+                        </button>
+                        <button
+                          type="button"
+                          className="compact-zoom-btn"
+                          onClick={() => setModalZoomScale((prev) => Math.min(4.0, parseFloat((prev + 0.1).toFixed(2))))}
+                          title="Zoom in (+10%)"
+                          disabled={modalZoomScale >= 4.0}
+                        >
+                          <Plus size={14} />
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -7995,7 +8142,7 @@ export default function App() {
 
             {/* Center High-Res Image Stage */}
             <div
-              className="fullscreen-image-stage"
+              className={`fullscreen-image-stage ${activeEditorTool ? 'has-active-tool-drawer' : ''}`}
               onClick={() => {
                 if (!activeEditorTool && !pendingComment) {
                   setFullscreenImageModal(null)
@@ -8003,7 +8150,7 @@ export default function App() {
               }}
             >
               <div
-                className={`fullscreen-rendered-wrapper ${isBgRemoved ? `bg-removed-mode bg-mode-${bgBackdropStyle}` : ''} ${activeEditorTool === 'comment' ? 'tool-comment-active' : ''}`}
+                className={`fullscreen-rendered-wrapper ${isBgRemoved ? `bg-removed-mode bg-mode-${bgBackdropStyle}` : (isObjectErased || activeEditorTool === 'erase' ? `bg-removed-mode bg-mode-${eraseBackdropStyle}` : '')} ${activeEditorTool === 'comment' ? 'tool-comment-active' : ''} ${activeEditorTool ? 'has-active-tool-drawer' : ''}`}
                 data-ratio={modalCropRatio !== 'original' ? modalCropRatio : undefined}
                 onClick={(e) => {
                   e.stopPropagation()
@@ -8107,6 +8254,49 @@ export default function App() {
                       setIsErasing(false)
                     }}
                   />
+                )}
+
+                {/* 3. Interactive Canvas Layer for Freehand Object Selection in Remove BG Mode */}
+                {activeEditorTool === 'removebg' && bgRemovalMode === 'select' && !isBgRemoved && (
+                  <>
+                    <canvas
+                      ref={bgSelectCanvasRef}
+                      className="fullscreen-bg-select-canvas"
+                      width={800}
+                      height={800}
+                      onPointerDown={(e) => {
+                        const rect = e.currentTarget.getBoundingClientRect()
+                        const x = (e.clientX - rect.left) * (800 / rect.width)
+                        const y = (e.clientY - rect.top) * (800 / rect.height)
+                        setIsDrawingBgSelect(true)
+                        setCurrentBgSelectStroke({ size: bgSelectBrushSize, points: [{ x, y }] })
+                      }}
+                      onPointerMove={(e) => {
+                        if (!isDrawingBgSelect || !currentBgSelectStroke) return
+                        const rect = e.currentTarget.getBoundingClientRect()
+                        const x = (e.clientX - rect.left) * (800 / rect.width)
+                        const y = (e.clientY - rect.top) * (800 / rect.height)
+                        setCurrentBgSelectStroke((prev) => (prev ? { ...prev, points: [...prev.points, { x, y }] } : null))
+                      }}
+                      onPointerUp={() => {
+                        if (currentBgSelectStroke && currentBgSelectStroke.points.length > 0) {
+                          setBgSelectStrokes((prev) => [...prev, currentBgSelectStroke])
+                        }
+                        setCurrentBgSelectStroke(null)
+                        setIsDrawingBgSelect(false)
+                      }}
+                      onPointerLeave={() => {
+                        if (currentBgSelectStroke && currentBgSelectStroke.points.length > 0) {
+                          setBgSelectStrokes((prev) => [...prev, currentBgSelectStroke])
+                        }
+                        setCurrentBgSelectStroke(null)
+                        setIsDrawingBgSelect(false)
+                      }}
+                    />
+                    <div className="bg-selection-hint-pill">
+                      <span>Draw / paint over the object you want to keep</span>
+                    </div>
+                  </>
                 )}
 
                 {/* 3. Interactive Comment Pins Overlay */}
@@ -8222,11 +8412,11 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Watermark Logo */}
+                {/* Official Thamili Watermark Logo */}
                 <div className="fullscreen-watermark-logo" title="Created with Thamili AI">
                   <img
-                    src={thamiliWatermarkImg}
-                    alt="Thamili"
+                    src={thamiliLogoImg}
+                    alt="Thamili AI"
                     className="fullscreen-watermark-icon"
                   />
                 </div>
@@ -8454,7 +8644,7 @@ export default function App() {
                   })
                 }
               >
-                <Sparkles size={16} className="demo-login-sparkle" />
+                
                 <span>1-Click Instant Demo Login (as Adrin)</span>
                 <span className="demo-tag">Instant</span>
               </button>
@@ -8548,7 +8738,7 @@ export default function App() {
       {/* Toast notification */}
       {toast && (
         <div className="toast-notification">
-          <Sparkles size={15} className="toast-sparkle" />
+          
           <span>{toast}</span>
         </div>
       )}

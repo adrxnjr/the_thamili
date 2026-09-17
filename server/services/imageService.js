@@ -1,5 +1,4 @@
 import dotenv from 'dotenv'
-import path from 'path'
 
 // Load .env initially
 dotenv.config()
@@ -7,18 +6,16 @@ dotenv.config()
 // Supported Aspect Ratios for Image Generation
 export const SUPPORTED_ASPECT_RATIOS = ['1:1', '16:9', '9:16', '4:3', '3:4', '3:2', '2:3']
 
-// Aspect Ratio to Pixel Dimensions Mapping (optimized for diffusion models within safe free boundaries)
+// Aspect Ratio to Pixel Dimensions Mapping
 export const ASPECT_RATIO_DIMENSIONS = {
-  '1:1': { width: 512, height: 512, size: '512x512' },
-  '16:9': { width: 512, height: 320, size: '512x320' },
-  '9:16': { width: 320, height: 512, size: '320x512' },
-  '4:3': { width: 512, height: 384, size: '512x384' },
-  '3:4': { width: 384, height: 512, size: '384x512' },
-  '3:2': { width: 512, height: 320, size: '512x320' },
-  '2:3': { width: 320, height: 512, size: '320x512' }
+  '1:1': { width: 1024, height: 1024, size: '1024x1024' },
+  '16:9': { width: 1024, height: 576, size: '1024x576' },
+  '9:16': { width: 576, height: 1024, size: '576x1024' },
+  '4:3': { width: 1024, height: 768, size: '1024x768' },
+  '3:4': { width: 768, height: 1024, size: '768x1024' },
+  '3:2': { width: 1024, height: 680, size: '1024x680' },
+  '2:3': { width: 680, height: 1024, size: '680x1024' }
 }
-
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
 /**
  * Enhance user prompt with model-tailored aesthetic attributes
@@ -30,8 +27,8 @@ function enhancePrompt(rawPrompt, selectedModel) {
   const modelLower = (selectedModel || '').toLowerCase()
   let enhancements = []
 
-  if (modelLower.includes('pro+') || modelLower.includes('proplus') || modelLower.includes('pro-plus') || modelLower.includes('ultra') || modelLower.includes('realism')) {
-    enhancements.push('8k UHD masterpiece, shot on Hasselblad H6D-100c, 85mm f/1.4 lens, natural lighting, ultra high detail')
+  if (modelLower.includes('pro+') || modelLower.includes('proplus') || modelLower.includes('ultra') || modelLower.includes('realism')) {
+    enhancements.push('8k UHD masterpiece, shot on 85mm f/1.4 lens, natural lighting, ultra high detail, photorealistic')
   } else if (modelLower === 'pro' || modelLower.includes('pro')) {
     enhancements.push('highly detailed, professional composition, vivid lighting, sharp focus, 4k master quality')
   } else {
@@ -49,92 +46,57 @@ function enhancePrompt(rawPrompt, selectedModel) {
 }
 
 /**
- * Free Watermark-Free AI Image Provider using Decentralized Neural Diffusion Cluster
- * Produces clean, watermark-free images without requiring user API keys.
+ * Fast, Accurate, Watermark-Free AI Image Generator (FLUX / Turbo Engine)
  */
-async function generateWithFreeNeuralCore({ prompt, width = 512, height = 512, selectedModel = 'Basic' }) {
-  const isPro = (selectedModel || '').toLowerCase().includes('pro')
-  const models = isPro
-    ? ['ICBINP - I Can\'t Believe It\'s Not Photography', 'Realistic Vision', 'Dreamshaper', 'stable_diffusion']
-    : ['stable_diffusion', 'Deliberate', 'Dreamshaper', 'Altdiffusion']
-
-  // Clamp within free anonymous limits (max 512x512, min 320x320, 64-multiples)
-  const safeW = Math.max(320, Math.min(512, Math.floor(width / 64) * 64))
-  const safeH = Math.max(320, Math.min(512, Math.floor(height / 64) * 64))
-  const apiKey = (process.env.AI_HORDE_API_KEY || '0000000000').trim()
-
-  console.log(`[ImageService] Generating with Free Neural Engine (${safeW}x${safeH}, model: ${selectedModel})...`)
-
-  const postRes = await fetch('https://aihorde.net/api/v2/generate/async', {
-    method: 'POST',
-    headers: {
-      'apikey': apiKey,
-      'Content-Type': 'application/json',
-      'Client-Agent': 'thamili:2.0:adrxnjr'
-    },
-    body: JSON.stringify({
-      prompt,
-      params: {
-        sampler_name: 'k_euler',
-        cfg_scale: 7.0,
-        steps: 18,
-        width: safeW,
-        height: safeH
-      },
-      models,
-      r2: true,
-      nsfw: false,
-      censor_nsfw: true
-    })
-  })
-
-  const postData = await postRes.json()
-  if (!postData.id) {
-    throw new Error(`Neural cluster job creation failed: ${postData.message || JSON.stringify(postData)}`)
+async function generateFastFlux({ prompt, width = 1024, height = 1024, selectedModel = 'Basic' }) {
+  const modelLower = (selectedModel || '').toLowerCase()
+  let aiModel = 'flux'
+  if (modelLower === 'basic' || modelLower.includes('turbo')) {
+    aiModel = 'turbo'
+  } else if (modelLower.includes('pro+') || modelLower.includes('realism')) {
+    aiModel = 'flux-realism'
   }
 
-  const jobId = postData.id
-  const startTime = Date.now()
+  const seed = Math.floor(Math.random() * 9999999)
+  const encodedPrompt = encodeURIComponent(prompt)
+  
+  // Notice: nologo=true ensures 100% NO WATERMARK
+  const endpointUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${width}&height=${height}&seed=${seed}&model=${aiModel}&nologo=true&enhance=false`
 
-  while (Date.now() - startTime < 65000) {
-    await sleep(3500)
-    try {
-      const checkRes = await fetch(`https://aihorde.net/api/v2/generate/check/${jobId}`, {
-        headers: { 'Client-Agent': 'thamili:2.0:adrxnjr' }
-      })
-      const checkData = await checkRes.json()
-
-      if (checkData.done || (checkData.finished && checkData.finished > 0)) {
-        const statusRes = await fetch(`https://aihorde.net/api/v2/generate/status/${jobId}`, {
-          headers: { 'Client-Agent': 'thamili:2.0:adrxnjr' }
-        })
-        const statusData = await statusRes.json()
-        if (statusData.generations && statusData.generations.length > 0) {
-          const imgUrl = statusData.generations[0].img
-          const imgFetch = await fetch(imgUrl)
-          const buf = await imgFetch.arrayBuffer()
-          const b64 = Buffer.from(buf).toString('base64')
-          const contentType = imgFetch.headers.get('content-type') || 'image/webp'
-          const dataUrl = `data:${contentType};base64,${b64}`
-
-          return {
-            imageUrl: dataUrl,
-            rawUrl: dataUrl,
-            model: `Thamili ${selectedModel || 'Basic'} AI (${statusData.generations[0].model || 'Neural Diffusion'})`,
-            provider: 'Thamili Free Neural Core (No Watermark)'
-          }
-        }
+  try {
+    const response = await fetch(endpointUrl)
+    if (!response.ok) {
+      // Fallback to flux if custom model fails
+      const fallbackUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${width}&height=${height}&seed=${seed}&model=flux&nologo=true`
+      const fallbackRes = await fetch(fallbackUrl)
+      if (!fallbackRes.ok) {
+        throw new Error(`Rendering failed with status ${response.status}`)
       }
-    } catch {
-      // Continue loop on transient network hiccup
+      const buf = await fallbackRes.arrayBuffer()
+      const b64 = Buffer.from(buf).toString('base64')
+      const contentType = fallbackRes.headers.get('content-type') || 'image/jpeg'
+      return {
+        imageUrl: `data:${contentType};base64,${b64}`,
+        model: `FLUX (${selectedModel})`,
+        provider: 'FLUX Fast Engine'
+      }
     }
+
+    const buf = await response.arrayBuffer()
+    const b64 = Buffer.from(buf).toString('base64')
+    const contentType = response.headers.get('content-type') || 'image/jpeg'
+    return {
+      imageUrl: `data:${contentType};base64,${b64}`,
+      model: `${aiModel.toUpperCase()} (${selectedModel})`,
+      provider: 'High-Speed Neural Engine'
+    }
+  } catch (err) {
+    throw new Error(`Image generation error: ${err.message}`)
   }
-  throw new Error('Image generation timed out. Please retry.')
 }
 
 /**
  * Main Image Generation Entrypoint
- * Dedicated solely to the 100% free, clean, watermark-free neural engine
  */
 export async function generateImage({
   prompt,
@@ -148,49 +110,38 @@ export async function generateImage({
     throw new Error('A prompt text or reference image is required for image generation.')
   }
 
-  const validAspectRatio = SUPPORTED_ASPECT_RATIOS.includes(aspectRatio) ? aspectRatio : '1:1'
-  const mapping = ASPECT_RATIO_DIMENSIONS[validAspectRatio] || { width: 512, height: 512, size: '512x512' }
-  const enhancedPromptText = enhancePrompt(cleanPrompt, selectedModel)
-
-  let result = null
-  let lastError = null
-
-  try {
-    result = await generateWithFreeNeuralCore({
-      prompt: enhancedPromptText,
-      width: mapping.width,
-      height: mapping.height,
-      selectedModel
-    })
-  } catch (err) {
-    console.warn(`[ImageService] Primary attempt failed (${err.message}). Retrying with simplified prompt...`)
-    lastError = err
-
-    try {
-      result = await generateWithFreeNeuralCore({
-        prompt: cleanPrompt,
-        width: mapping.width,
-        height: mapping.height,
-        selectedModel: 'Basic'
-      })
-    } catch (retryErr) {
-      lastError = retryErr
+  // Incorporate reference concept / style if attached
+  let promptWithRefs = cleanPrompt
+  if (Array.isArray(referenceImages) && referenceImages.length > 0) {
+    const refStyles = referenceImages
+      .map((r) => r.styleContext || r.name)
+      .filter(Boolean)
+      .join(', ')
+    if (refStyles && !cleanPrompt.toLowerCase().includes(refStyles.toLowerCase())) {
+      promptWithRefs = `${cleanPrompt ? cleanPrompt + ', ' : ''}in the artistic visual style of ${refStyles}`
     }
   }
 
-  if (!result) {
-    throw new Error(`Image generation failed: ${lastError?.message || 'Neural engine unavailable'}`)
-  }
+  const validAspectRatio = SUPPORTED_ASPECT_RATIOS.includes(aspectRatio) ? aspectRatio : '1:1'
+  const mapping = ASPECT_RATIO_DIMENSIONS[validAspectRatio] || { width: 1024, height: 1024, size: '1024x1024' }
+  const enhancedPromptText = enhancePrompt(promptWithRefs, selectedModel)
+
+  const result = await generateFastFlux({
+    prompt: enhancedPromptText,
+    width: mapping.width,
+    height: mapping.height,
+    selectedModel
+  })
 
   return {
     id: `gen_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
     imageUrl: result.imageUrl,
     prompt: cleanPrompt,
-    enhancedPrompt: result.enhancedPrompt || enhancedPromptText,
+    enhancedPrompt: enhancedPromptText,
     aspectRatio: validAspectRatio,
     dimensions: `${mapping.width} x ${mapping.height}`,
-    model: result.model || `Thamili ${selectedModel} AI`,
-    provider: result.provider || 'Thamili Neural Engine',
+    model: result.model || `FLUX (${selectedModel})`,
+    provider: result.provider || 'High-Speed Neural Engine (No Watermark)',
     referenceCount: referenceImages.length,
     createdAt: new Date().toISOString()
   }

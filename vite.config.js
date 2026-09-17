@@ -64,6 +64,7 @@ function apiDevPlugin() {
           })
         })
 
+
         // POST /api/generate
         if (pathname === '/api/generate' && req.method === 'POST') {
           try {
