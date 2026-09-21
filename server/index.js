@@ -3,6 +3,7 @@ import express from 'express'
 import cors from 'cors'
 import generateRouter from './routes/generate.js'
 import historyRouter from './routes/history.js'
+import chatRouter from './routes/chat.js'
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -23,6 +24,7 @@ app.use((req, res, next) => {
 // Routes
 app.use('/api', generateRouter)
 app.use('/api', historyRouter)
+app.use('/api', chatRouter)
 
 // Health Check Endpoint
 app.get('/api/health', (req, res) => {

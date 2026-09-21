@@ -4,6 +4,7 @@ import path from 'path'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { generateImage, SUPPORTED_ASPECT_RATIOS } from './server/services/imageService.js'
+import { sendHuggingFaceChat, expandPromptViaHuggingFace, DEFAULT_HF_CHAT_MODEL } from './server/services/huggingfaceChatService.js'
 
 const dataDir = path.resolve(process.cwd(), 'server', 'data')
 const historyFilePath = path.join(dataDir, 'history.json')
@@ -151,6 +152,69 @@ function apiDevPlugin() {
             res.end(JSON.stringify({ success: true, message: 'History cleared' }))
             return
           }
+        }
+
+        // POST /api/chat or /api/chat/completions
+        if ((pathname === '/api/chat' || pathname === '/api/chat/completions') && req.method === 'POST') {
+          try {
+            const body = await readBody()
+            const {
+              messages,
+              model = DEFAULT_HF_CHAT_MODEL,
+              temperature = 0.7,
+              max_tokens = 500,
+              prompt
+            } = body
+
+            let formattedMessages = messages
+            if (!formattedMessages && prompt) {
+              formattedMessages = [
+                { role: 'system', content: 'You are Thamili AI, a helpful creative and cultural AI assistant.' },
+                { role: 'user', content: prompt }
+              ]
+            }
+
+            const result = await sendHuggingFaceChat({
+              messages: formattedMessages,
+              model,
+              temperature,
+              max_tokens
+            })
+
+            res.setHeader('Content-Type', 'application/json')
+            res.statusCode = 200
+            res.end(JSON.stringify(result.data))
+          } catch (err) {
+            console.error('[API Dev Plugin] Chat completion error:', err.message)
+            res.setHeader('Content-Type', 'application/json')
+            res.statusCode = 500
+            res.end(JSON.stringify({ success: false, error: err.message }))
+          }
+          return
+        }
+
+        // POST /api/chat/enrich-prompt
+        if (pathname === '/api/chat/enrich-prompt' && req.method === 'POST') {
+          try {
+            const body = await readBody()
+            const { prompt, model } = body
+            if (!prompt) {
+              res.setHeader('Content-Type', 'application/json')
+              res.statusCode = 400
+              res.end(JSON.stringify({ success: false, error: 'prompt is required' }))
+              return
+            }
+            const enriched = await expandPromptViaHuggingFace(prompt, model)
+            res.setHeader('Content-Type', 'application/json')
+            res.statusCode = 200
+            res.end(JSON.stringify({ success: true, originalPrompt: prompt, enrichedPrompt: enriched }))
+          } catch (err) {
+            console.error('[API Dev Plugin] Prompt enrich error:', err.message)
+            res.setHeader('Content-Type', 'application/json')
+            res.statusCode = 500
+            res.end(JSON.stringify({ success: false, error: err.message }))
+          }
+          return
         }
 
         // GET /api/health or /api/status

@@ -64,1685 +64,48 @@ import {
   Send,
   ZoomIn,
   ZoomOut,
-  Minus
+  Minus,
+  Dices,
+  Wand2,
+  Sparkles
 } from 'lucide-react'
 import thamiliLogoImg from './assets/thamili-logo.png'
 import sidebarLogoImg from './assets/thamili-logo.png'
-import thamiliWatermarkImg from './assets/thamili-watermark.svg'
+import thamiliWatermarkImg from './assets/thamili-watermark.png'
 import './App.css'
 
-export const LICENSE_TIERS = [
-  {
-    id: 'commercial',
-    title: 'Commercial Use',
-    tag: 'Recommended',
-    desc: 'Marketing, social media, advertising, merchandise & web branding.',
-    baseMultiplier: 1.0,
-    suggestedPrice: 18,
-    icon: ShoppingBag
-  },
-  {
-    id: 'personal',
-    title: 'Personal Use',
-    tag: 'Basic',
-    desc: 'Single non-commercial personal wallpaper, avatar profile & personal print.',
-    baseMultiplier: 0.6,
-    suggestedPrice: 10,
-    icon: UserCheck
-  },
-  {
-    id: 'ai_reference',
-    title: 'Commercial + AI Reference',
-    tag: 'Popular',
-    desc: 'Commercial project use + training reference prompt embeddings.',
-    baseMultiplier: 1.4,
-    suggestedPrice: 25,
-    icon: Layers
-  },
-  {
-    id: 'extended',
-    title: 'Extended License',
-    tag: 'Full Rights',
-    desc: 'Unlimited mass merchandising, broadcast, and global resale distribution.',
-    baseMultiplier: 2.5,
-    suggestedPrice: 45,
-    icon: ShieldCheck
-  }
-]
 
-export const SAMPLE_UPLOAD_PRESETS = [
-  {
-    title: 'Tamil Traditional Temple Wedding Mandapam',
-    category: 'Tamil Culture & Festivals',
-    tags: 'tamil wedding, temple, mandapam, kanjivaram, traditional, jasmine, hindu',
-    description: 'Golden hour South Indian Hindu wedding ceremony inside ancient Dravidian stone temple mandapam with traditional Kanjivaram silk saree and floral jasmine garland.',
-    image: '/images/tamil/pongal-girl.jpg',
-    resolution: '4096 x 2304 (8K UHD)',
-    orientation: 'Landscape (16:9)',
-    fileFormat: 'PNG Master',
-    fileSize: '4.2 MB'
-  },
-  {
-    title: 'Cyberpunk Tanjore Gopuram 2099',
-    category: 'Sci-Fi & Concept Art',
-    tags: 'cyberpunk, temple, tanjore, sci-fi, neon, gopuram, dravidian, future',
-    description: 'Futuristic sci-fi reimagination of Brihadisvara Temple with neon holographic gopuram lights, floating energy spires, and flying chariots at twilight.',
-    image: '/images/tamil/madurai-temple.jpg',
-    resolution: '3840 x 2160 (4K UHD)',
-    orientation: 'Landscape (16:9)',
-    fileFormat: 'PNG Master',
-    fileSize: '3.8 MB'
-  },
-  {
-    title: 'Nilgiris Misty Tea Plantation Sunrise',
-    category: 'Nature & Landscapes',
-    tags: 'nilgiris, tea, plantation, ooty, nature, mist, sunrise, landscape, hills',
-    description: 'Rolling emerald tea hills shrouded in morning valley mist with solitary tea plucker and golden horizon sunlight in Ooty Western Ghats.',
-    image: '/images/tamil/chettinad-thinnai.jpg',
-    resolution: '4500 x 3000 (Hasselblad 8K)',
-    orientation: 'Landscape (3:2)',
-    fileFormat: 'RAW Hi-Res',
-    fileSize: '5.1 MB'
-  }
-]
-
-export const AVAILABLE_AI_MODELS = [
-  {
-    id: 'Basic',
-    name: 'Basic',
-    shortName: 'Basic',
-    badge: 'Fast & Free',
-    desc: 'Ultra-fast generation for rapid concepts & drafts',
-    category: 'Standard Tier',
-    icon: Zap,
-    color: '#06b6d4',
-    engineModel: 'turbo'
-  },
-  {
-    id: 'Pro',
-    name: 'Pro',
-    shortName: 'Pro',
-    badge: 'High Detail',
-    desc: 'Balanced high-fidelity generation with crisp details',
-    category: 'Professional Tier',
-    icon: Zap,
-    color: '#8b5cf6',
-    engineModel: 'flux'
-  },
-  {
-    id: 'Pro+',
-    name: 'Pro+',
-    shortName: 'Pro+',
-    badge: 'Master 8K',
-    desc: 'Supreme UHD photorealism with cinematic studio lighting',
-    category: 'Ultra Tier',
-    icon: Crown,
-    color: '#f59e0b',
-    engineModel: 'kontext'
-  }
-]
-
-export const INITIAL_LOGGED_IN_HISTORY = [
-  {
-    id: 'chat-1',
-    title: 'Casual Greeting',
-    query: 'Hello Thamili AI! What can you create for me today?',
-    timeTag: 'Today',
-    dateBucket: 'today',
-    createdAt: 'Today, 6:15 PM',
-    messages: [
-      {
-        id: 'msg-c1-user',
-        role: 'user',
-        text: 'Hello Thamili AI! What can you create for me today?',
-        createdAt: 'Today, 6:15 PM'
-      },
-      {
-        id: 'msg-c1-ai',
-        role: 'assistant',
-        isTextResponse: true,
-        type: 'text',
-        text: 'Vanakkam! Welcome to Thamili AI 2.0 I can generate high-resolution Dravidian heritage art, cyberpunk temple cities, photorealistic portraits, anime art, and 3D concept renders. What would you like to create today?',
-        suggestions: [
-          'Cyberpunk Tanjore Gopuram 2099',
-          'Tamil Traditional Temple Wedding',
-          'Neon sports car in midnight rain'
-        ],
-        createdAt: 'Today, 6:15 PM'
-      }
-    ]
-  },
-  {
-    id: 'chat-2',
-    title: 'Electric Sedan Coastal Drive',
-    query: 'Electric Sedan Coastal Drive at sunset 8k cinematic wallpaper',
-    timeTag: 'Today',
-    dateBucket: 'today',
-    createdAt: 'Today, 4:20 PM',
-    image: '/images/basic/car-sports-red.jpg',
-    ratio: '16:9',
-    messages: [
-      {
-        id: 'msg-c2-user',
-        role: 'user',
-        text: 'Electric Sedan Coastal Drive at sunset 8k cinematic wallpaper',
-        createdAt: 'Today, 4:20 PM'
-      },
-      {
-        id: 'msg-c2-ai',
-        role: 'assistant',
-        originalIdea: 'Electric Sedan Coastal Drive at sunset 8k cinematic wallpaper',
-        prompt: 'Electric Sedan Coastal Drive at sunset 8k cinematic wallpaper, golden hour horizon, sleek aerodynamic lines, wet reflections',
-        domain: 'Flux 1.0 Pro Engine',
-        ratio: '16:9',
-        dimensions: '1024 x 576',
-        url: '/images/basic/car-sports-red.jpg',
-        isGenerating: false,
-        saved: true,
-        liked: true,
-        disliked: false,
-        createdAt: 'Today, 4:20 PM'
-      }
-    ]
-  },
-  {
-    id: 'chat-3',
-    title: 'Coastal Tesla Sunset Drive',
-    query: 'Coastal Tesla Sunset Drive aesthetic highway wallpaper',
-    timeTag: 'Today',
-    dateBucket: 'today',
-    createdAt: 'Today, 2:05 PM',
-    image: '/images/basic/car-supercar.jpg',
-    ratio: '16:9',
-    messages: [
-      {
-        id: 'msg-c3-user',
-        role: 'user',
-        text: 'Coastal Tesla Sunset Drive aesthetic highway wallpaper',
-        createdAt: 'Today, 2:05 PM'
-      },
-      {
-        id: 'msg-c3-ai',
-        role: 'assistant',
-        originalIdea: 'Coastal Tesla Sunset Drive aesthetic highway wallpaper',
-        prompt: 'Coastal Tesla Sunset Drive aesthetic highway wallpaper, ocean view, dusk lighting, ultra detailed',
-        domain: 'Flux Fast Engine',
-        ratio: '16:9',
-        dimensions: '1024 x 576',
-        url: '/images/basic/car-supercar.jpg',
-        isGenerating: false,
-        saved: false,
-        liked: false,
-        disliked: false,
-        createdAt: 'Today, 2:05 PM'
-      }
-    ]
-  },
-  {
-    id: 'chat-4',
-    title: 'HHD Table Lab Guide',
-    query: 'HHD Table Lab Guide visual technical diagram and schematic',
-    timeTag: '29 Aug',
-    dateBucket: 'older',
-    createdAt: '29 Aug 2026',
-    image: '/images/tamil/madurai-temple.jpg',
-    ratio: '16:9',
-    messages: [
-      {
-        id: 'msg-c4-user',
-        role: 'user',
-        text: 'HHD Table Lab Guide visual technical diagram and schematic',
-        createdAt: '29 Aug 2026'
-      },
-      {
-        id: 'msg-c4-ai',
-        role: 'assistant',
-        originalIdea: 'HHD Table Lab Guide visual technical diagram and schematic',
-        prompt: 'HHD Table Lab Guide visual technical diagram, isometric architectural perspective, detailed Dravidian stone engineering',
-        domain: 'Flux 1.0 Pro Engine',
-        ratio: '16:9',
-        dimensions: '1024 x 576',
-        url: '/images/tamil/madurai-temple.jpg',
-        isGenerating: false,
-        saved: false,
-        liked: false,
-        disliked: false,
-        createdAt: '29 Aug 2026'
-      }
-    ]
-  },
-  {
-    id: 'chat-5',
-    title: 'Futuristic Cyberpunk Metropolis',
-    query: 'Futuristic cyberpunk city at dusk 8k volumetric neon rain',
-    timeTag: '25 Aug',
-    dateBucket: 'older',
-    createdAt: '25 Aug 2026',
-    image: '/images/tamil/madurai-temple.jpg',
-    ratio: '16:9',
-    messages: [
-      {
-        id: 'msg-c5-user',
-        role: 'user',
-        text: 'Futuristic cyberpunk city at dusk 8k volumetric neon rain',
-        createdAt: '25 Aug 2026'
-      },
-      {
-        id: 'msg-c5-ai',
-        role: 'assistant',
-        originalIdea: 'Futuristic cyberpunk city at dusk 8k volumetric neon rain',
-        prompt: 'Futuristic cyberpunk city at dusk 8k volumetric neon rain, towering Dravidian gopuram spires with neon holographic signs',
-        domain: 'Flux Realism Engine',
-        ratio: '16:9',
-        dimensions: '1024 x 576',
-        url: '/images/tamil/madurai-temple.jpg',
-        isGenerating: false,
-        saved: false,
-        liked: true,
-        disliked: false,
-        createdAt: '25 Aug 2026'
-      }
-    ]
-  },
-  {
-    id: 'chat-6',
-    title: 'Lotus Flower Macro Droplets',
-    query: 'Lotus flower water droplets macro close up photography',
-    timeTag: '18 Aug',
-    dateBucket: 'older',
-    createdAt: '18 Aug 2026',
-    image: '/images/basic/flower-lotus.jpg',
-    ratio: '1:1',
-    messages: [
-      {
-        id: 'msg-c6-user',
-        role: 'user',
-        text: 'Lotus flower water droplets macro close up photography',
-        createdAt: '18 Aug 2026'
-      },
-      {
-        id: 'msg-c6-ai',
-        role: 'assistant',
-        originalIdea: 'Lotus flower water droplets macro close up photography',
-        prompt: 'Lotus flower water droplets macro close up photography, soft morning light, hyper detailed dew drops, bokeh background',
-        domain: 'Flux Realism Engine',
-        ratio: '1:1',
-        dimensions: '1024 x 1024',
-        url: '/images/basic/flower-lotus.jpg',
-        isGenerating: false,
-        saved: true,
-        liked: true,
-        disliked: false,
-        createdAt: '18 Aug 2026'
-      }
-    ]
-  },
-  {
-    id: 'chat-7',
-    title: '3D Clay Style Mascot Character',
-    query: '3D cute clay style smiling mascot character design',
-    timeTag: '12 Aug',
-    dateBucket: 'older',
-    createdAt: '12 Aug 2026',
-    image: '/images/basic/concept-plushie.jpg',
-    ratio: '1:1',
-    messages: [
-      {
-        id: 'msg-c7-user',
-        role: 'user',
-        text: '3D cute clay style smiling mascot character design',
-        createdAt: '12 Aug 2026'
-      },
-      {
-        id: 'msg-c7-ai',
-        role: 'assistant',
-        originalIdea: '3D cute clay style smiling mascot character design',
-        prompt: '3D cute clay style smiling mascot character design, soft claymation texture, pastel lighting, studio render',
-        domain: 'Flux 3D Render Engine',
-        ratio: '1:1',
-        dimensions: '1024 x 1024',
-        url: '/images/basic/concept-plushie.jpg',
-        isGenerating: false,
-        saved: false,
-        liked: true,
-        disliked: false,
-        createdAt: '12 Aug 2026'
-      }
-    ]
-  }
-]
-
-export const INITIAL_GUEST_HISTORY = [
-  {
-    id: 'guest-1',
-    title: 'Futuristic cyberpunk city at dusk',
-    query: 'Futuristic cyberpunk city at dusk 8k',
-    timeTag: 'Session',
-    dateBucket: 'session',
-    createdAt: 'Just now',
-    image: '/images/tamil/madurai-temple.jpg',
-    ratio: '16:9',
-    messages: [
-      {
-        id: 'msg-g1-user',
-        role: 'user',
-        text: 'Futuristic cyberpunk city at dusk 8k volumetric neon rain',
-        createdAt: 'Just now'
-      },
-      {
-        id: 'msg-g1-ai',
-        role: 'assistant',
-        originalIdea: 'Futuristic cyberpunk city at dusk 8k volumetric neon rain',
-        prompt: 'Futuristic cyberpunk city at dusk 8k volumetric neon rain, neon holographic gopuram lights, floating energy spires',
-        domain: 'Flux 1.0 Pro Engine',
-        ratio: '16:9',
-        dimensions: '1024 x 576',
-        url: '/images/tamil/madurai-temple.jpg',
-        isGenerating: false,
-        saved: false,
-        liked: true,
-        disliked: false,
-        createdAt: 'Just now'
-      }
-    ]
-  },
-  {
-    id: 'guest-2',
-    title: 'Neon sports car in midnight rain',
-    query: 'Neon sports car in midnight rain',
-    timeTag: 'Session',
-    dateBucket: 'session',
-    createdAt: '1h ago',
-    image: '/images/basic/car-supercar.jpg',
-    ratio: '16:9',
-    messages: [
-      {
-        id: 'msg-g2-user',
-        role: 'user',
-        text: 'Neon sports car in midnight rain glowing reflections 4k',
-        createdAt: '1h ago'
-      },
-      {
-        id: 'msg-g2-ai',
-        role: 'assistant',
-        originalIdea: 'Neon sports car in midnight rain glowing reflections 4k',
-        prompt: 'Neon sports car in midnight rain glowing reflections 4k, wet asphalt, cinematic purple neon bokeh',
-        domain: 'Basic Engine',
-        ratio: '16:9',
-        dimensions: '1024 x 576',
-        url: '/images/basic/car-supercar.jpg',
-        isGenerating: false,
-        saved: false,
-        liked: false,
-        disliked: false,
-        createdAt: '1h ago'
-      }
-    ]
-  }
-]
-
-export function ThamiliLogoIcon({ className = 'logo-icon-svg' }) {
-  return (
-    <svg className={className} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="thamiliV2BodyGrad" x1="12%" y1="12%" x2="88%" y2="88%">
-          <stop offset="0%" stopColor="#00e5ff" />
-          <stop offset="26%" stopColor="#0099ff" />
-          <stop offset="52%" stopColor="#4f46e5" />
-          <stop offset="78%" stopColor="#9333ea" />
-          <stop offset="100%" stopColor="#d946ef" />
-        </linearGradient>
-
-        <linearGradient id="thamiliV2RingBack" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#00d4ff" stopOpacity="0.4" />
-          <stop offset="50%" stopColor="#3b82f6" stopOpacity="0.75" />
-          <stop offset="100%" stopColor="#a855f7" stopOpacity="0.9" />
-        </linearGradient>
-
-        <linearGradient id="thamiliV2RingFront" x1="0%" y1="50%" x2="100%" y2="50%">
-          <stop offset="0%" stopColor="#00f5ff" />
-          <stop offset="40%" stopColor="#38bdf8" />
-          <stop offset="75%" stopColor="#818cf8" />
-          <stop offset="100%" stopColor="#c084fc" />
-        </linearGradient>
-
-        <linearGradient id="thamiliV2Gloss" x1="0%" y1="0%" x2="50%" y2="100%">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.85" />
-          <stop offset="35%" stopColor="#ffffff" stopOpacity="0.15" />
-          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-        </linearGradient>
-
-        <filter id="thamiliV2RingGlow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="1.6" result="blur" />
-          <feComposite in="SourceGraphic" in2="blur" operator="over" />
-        </filter>
-      </defs>
-
-      {/* Orbit Ring (Back Segment) */}
-      <path
-        d="M 16 63 C 14 49, 36 34, 67 31 C 82 29, 93 33, 96 39"
-        stroke="url(#thamiliV2RingBack)"
-        strokeWidth="4.6"
-        strokeLinecap="round"
-        fill="none"
-      />
-
-      {/* 3D Stylized 'A' Body */}
-      <path
-        d="M 50 13
-           C 54.5 13, 58 16.5, 60 21
-           L 86 76
-           C 87.8 80, 85.5 85, 80.5 86
-           C 75.8 87, 72 83.5, 70 79
-           L 63.5 64
-           L 36.5 64
-           L 30 79
-           C 28 83.5, 24.2 87, 19.5 86
-           C 14.5 85, 12.2 80, 14 76
-           L 40 21
-           C 42 16.5, 45.5 13, 50 13 Z"
-        fill="url(#thamiliV2BodyGrad)"
-      />
-
-      {/* Inner Triangular Depth Cutout */}
-      <path
-        d="M 50 33
-           L 59 53
-           L 41 53 Z"
-        fill="#080b14"
-        fillOpacity="0.38"
-      />
-
-      {/* Crossbar Glow */}
-      <path
-        d="M 36.5 63.5
-           C 43 60, 57 60, 63.5 63.5
-           L 60 55
-           L 40 55 Z"
-        fill="url(#thamiliV2RingFront)"
-        fillOpacity="0.9"
-      />
-
-      {/* Gloss Highlight Reflection */}
-      <path
-        d="M 50 15
-           C 52.5 15, 54.5 17, 55.5 20.5
-           L 39 58
-           C 37 55, 36 49, 37 45
-           L 46 20
-           C 47.2 16.5, 48.5 15, 50 15 Z"
-        fill="url(#thamiliV2Gloss)"
-      />
-
-      {/* Orbit Ring (Front Segment) */}
-      <path
-        d="M 96 39
-           C 98.5 44, 94 53, 79 62.5
-           C 62.5 73.5, 38 78.5, 20.5 75
-           C 14.5 73.8, 12.5 69.5, 16 63"
-        stroke="url(#thamiliV2RingFront)"
-        strokeWidth="4.6"
-        strokeLinecap="round"
-        fill="none"
-        filter="url(#thamiliV2RingGlow)"
-      />
-
-      {/* Satellite Node */}
-      <circle cx="86" cy="42" r="3.2" fill="#ffffff" />
-      <circle cx="86" cy="42" r="5.2" stroke="#00f5ff" strokeWidth="1.4" fill="none" opacity="0.9" />
-    </svg>
-  )
-}
-
-export function ThamiliWordmark({ className = 'brand-title', isHero = false }) {
-  return (
-    <span className={`thamili-brand-text ${className} ${isHero ? 'hero-brand-text' : ''}`}>
-      <span className="thamili-letters">THAM</span>
-      <span className="thamili-i-wrap">
-        <span className="thamili-i-glyph">I</span>
-        <svg className="thamili-i-sparkle" viewBox="0 0 20 20" fill="none">
-          <defs>
-            <linearGradient id="thamiliISparkleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#00e5ff" />
-              <stop offset="100%" stopColor="#c084fc" />
-            </linearGradient>
-          </defs>
-          <path
-            d="M 10 1 Q 10 10, 1 10 Q 10 10, 10 19 Q 10 10, 19 10 Q 10 10, 10 1 Z"
-            fill="url(#thamiliISparkleGrad)"
-          />
-        </svg>
-      </span>
-      <span className="thamili-letters">LI</span>
-    </span>
-  )
-}
-
-// =========================================================================
-// ULTRA-SMOOTH HARDWARE-ACCELERATED AMBIENT AURORA (Zero Pixelation / Zero Banding)
-// =========================================================================
-export function BackgroundWaves() {
-  return (
-    <div className="ambient-waves-layer" aria-hidden="true">
-      <div className="ambient-aurora-container">
-        <div className="aurora-orb aurora-orb-1" />
-        <div className="aurora-orb aurora-orb-2" />
-        <div className="aurora-orb aurora-orb-3" />
-        <div className="aurora-orb aurora-orb-4" />
-        <div className="aurora-orb aurora-orb-5" />
-      </div>
-      <div className="ambient-dither-grain" />
-    </div>
-  )
-}
-
-export const REFERENCE_CONCEPT_STYLES = [
-  // 1. Artistic & Street
-  {
-    id: 'ref-paint',
-    name: 'Paint',
-    field: 'Artistic Styles',
-    categoryGroup: 'Artistic & Street',
-    tag: 'Oil & Watercolor',
-    image: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Expressive textured impressionist oil painting portrait of an elder lady in sun hat on city street, fine visible brushstrokes, rich canvas texture, master fine art'
-  },
-  {
-    id: 'ref-mural',
-    name: 'Mural',
-    field: 'Street & Urban Art',
-    categoryGroup: 'Artistic & Street',
-    tag: 'Graffiti & Murals',
-    image: 'https://images.unsplash.com/photo-1561055657-b9e0bf0fa360?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Vibrant large-scale urban street wall mural painting of cheerful person in striped jersey, vivid graffiti art, textured brick wall, street art style'
-  },
-
-  // 2. 3D & Cute Goods
-  {
-    id: 'ref-plushie',
-    name: 'Plushie',
-    field: 'Cute & Kawaii Figures',
-    categoryGroup: '3D & Cute Goods',
-    tag: 'Soft Plushie',
-    image: '/images/basic/concept-plushie.jpg',
-    prompt: 'Adorable soft plushie stuffed toy character resting on a cozy bed with warm fairy lights in background, cute kawaii plush doll, detailed fabric texture'
-  },
-  {
-    id: 'ref-clay',
-    name: 'Clay',
-    field: 'Claymation & 3D',
-    categoryGroup: '3D & Cute Goods',
-    tag: 'Clay Figure',
-    image: 'https://images.unsplash.com/photo-1563089145-599997674d42?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Cozy 3D claymation stop-motion animated clay character wearing knitted sweater sipping hot cocoa in a warm cafe library, textured clay figure'
-  },
-  {
-    id: 'ref-chibi',
-    name: 'Chibi',
-    field: 'Anime & Kawaii Goods',
-    categoryGroup: '3D & Cute Goods',
-    tag: 'Chibi Figure',
-    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Cute acrylic star keychain charm featuring an adorable chibi girl cartoon character with glasses holding coffee, dangling on a pink backpack strap'
-  },
-
-  // 3. Portraits & Characters
-  {
-    id: 'ref-hollywood',
-    name: 'Hollywood',
-    field: 'Vintage Glamour',
-    categoryGroup: 'Portraits & Characters',
-    tag: 'Golden Age Hollywood',
-    image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Classic black and white vintage Golden Age Hollywood glamour portrait of a handsome gentleman in tailored black tuxedo and bow tie, dramatic chiaroscuro film lighting'
-  },
-
-  // 4. Nature & Botanical
-  {
-    id: 'ref-bloom',
-    name: 'Bloom',
-    field: 'Floral & Botanical',
-    categoryGroup: 'Nature & Botanical',
-    tag: 'Flower Bloom',
-    image: '/images/basic/flower-rose.jpg',
-    prompt: 'Smiling female florist holding an extravagant blooming Protea and fresh floral bouquet inside a cozy flower boutique shop, natural sunlight'
-  },
-  {
-    id: 'ref-lavender',
-    name: 'Lavender',
-    field: 'Fashion & Scenic',
-    categoryGroup: 'Nature & Botanical',
-    tag: 'Lavender Field',
-    image: 'https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Fashion editorial of a stylish person in an oversized pastel lavender lilac suit standing in endless blooming purple lavender field at sunset'
-  },
-
-  // 5. Retro, Sci-Fi & Action
-  {
-    id: 'ref-arcade',
-    name: 'Arcade',
-    field: 'Retro & Gaming',
-    categoryGroup: 'Retro, Sci-Fi & Action',
-    tag: 'Neon Arcade',
-    image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Fisheye lens wide photograph of a girl laughing enthusiastically in a glowing retro neon arcade gaming hall, colorful illuminated game machines'
-  },
-  {
-    id: 'ref-themepark',
-    name: 'Theme park',
-    field: 'Entertainment & Retro',
-    categoryGroup: 'Retro, Sci-Fi & Action',
-    tag: 'Theme Park',
-    image: 'https://images.unsplash.com/photo-1513889961551-628c1e5e2ee9?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Joyful retro 1980s theme park celebration with friendly purple dragon mascot, confetti, colorful roller coaster decorations, festive retro vibe'
-  },
-  {
-    id: 'ref-neon',
-    name: 'Neon',
-    field: 'Cyberpunk & Night',
-    categoryGroup: 'Retro, Sci-Fi & Action',
-    tag: 'Neon Tokyo',
-    image: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=480&auto=format&fit=crop&q=80',
-    prompt: 'Moody cinematic cyberpunk Tokyo neon rain street portrait of a person holding clear umbrella under glowing red and cyan neon signs, puddle reflections'
-  }
-]
-
-export const ALL_CREATIVE_CATEGORIES = REFERENCE_CONCEPT_STYLES
-
-const REFERENCE_TEMPLATE_SLOTS = [
-  // Slot 0
-  [
-    REFERENCE_CONCEPT_STYLES[0], // Paint
-    REFERENCE_CONCEPT_STYLES[6]  // Bloom
-  ],
-  // Slot 1
-  [
-    REFERENCE_CONCEPT_STYLES[1], // Mural
-    REFERENCE_CONCEPT_STYLES[5]  // Hollywood
-  ],
-  // Slot 2
-  [
-    REFERENCE_CONCEPT_STYLES[2], // Plushie
-    REFERENCE_CONCEPT_STYLES[9]  // Theme park
-  ],
-  // Slot 3
-  [
-    REFERENCE_CONCEPT_STYLES[3], // Clay
-    REFERENCE_CONCEPT_STYLES[4]  // Chibi
-  ],
-  // Slot 4
-  [
-    REFERENCE_CONCEPT_STYLES[8], // Arcade
-    REFERENCE_CONCEPT_STYLES[10], // Neon
-    REFERENCE_CONCEPT_STYLES[7]  // Lavender
-  ]
-]
-
-const IMAGE_TEMPLATES = REFERENCE_TEMPLATE_SLOTS.map((slot) => slot[0])
-
-const INITIAL_IMAGES = [
-  {
-    id: 'sample-flower-1',
-    originalIdea: 'Vibrant pink blooming lotus in water pond',
-    prompt: 'Close-up photograph of a vibrant pink blooming lotus flower in a serene water pond with crystal clear dew drops on petals, warm soft morning sunlight, 8k resolution',
-    domain: 'Floral & Botanical Art',
-    ratio: '4:3',
-    url: '/images/basic/flower-lotus.jpg',
-    saved: true,
-    createdAt: 'Just now'
-  },
-  {
-    id: 'sample-car-1',
-    originalIdea: 'Futuristic blue cyber supercar in neon city street',
-    prompt: 'Futuristic sleek modern blue and cyan supercar parked in an aesthetic neon-lit city street at dusk, gleaming reflections, ultra high detail, 8k render',
-    domain: 'Automobiles & Supercars',
-    ratio: '4:3',
-    url: '/images/basic/car-supercar.jpg',
-    saved: true,
-    createdAt: 'Just now'
-  },
-  {
-    id: 'sample-bike-1',
-    originalIdea: 'Royal Enfield Bullet cruiser on scenic Ooty mountain road',
-    prompt: 'Classic vintage Royal Enfield Bullet cruiser motorcycle parked on a picturesque green mountain road in Ooty, gleaming chrome tank, golden sunrise mist, 8k photography',
-    domain: 'Motorcycles & Superbikes',
-    ratio: '4:3',
-    url: '/images/basic/bike-bullet.jpg',
-    saved: false,
-    createdAt: 'Just now'
-  },
-  {
-    id: 'sample-nature-1',
-    originalIdea: 'Scenic Courtallam cascading waterfall in rainforest',
-    prompt: 'Breathtaking scenic cascading Courtallam waterfall surrounded by lush green tropical rainforest, misty water spray with gentle rainbow, 8k landscape photography',
-    domain: 'Scenic Nature & Landscapes',
-    ratio: '4:3',
-    url: '/images/basic/nature-waterfall.jpg',
-    saved: true,
-    createdAt: 'Just now'
-  },
-  {
-    id: 'sample-1',
-    originalIdea: 'Chettinad vintage house with teak pillars and Athangudi tiles',
-    prompt: 'Authentic 19th-century Chettinad vintage ancestral mansion with massive carved Burma teak wood pillars, hand-crafted Athangudi geometric tiles, sunlit central courtyard thinnai, vintage brass urns, 8k Hasselblad photography',
-    domain: 'Tamil Vintage Houses',
-    ratio: '1:1',
-    url: '/images/tamil/chettinad-mansion.jpg',
-    saved: true,
-    createdAt: 'Aug 24'
-  },
-  {
-    id: 'sample-2',
-    originalIdea: 'Vintage Ambassador car on 1970s Madras street',
-    prompt: 'Vintage 1970s Hindustan Ambassador car parked on an old Madras colonial street under rain trees, vintage typography shop boards, morning chai stall, nostalgic warm Kodachrome film color grading, 8k',
-    domain: 'Tamil Vintage Cars & Streets',
-    ratio: '1:1',
-    url: '/images/tamil/vintage-ambassador-1.jpg',
-    saved: false,
-    createdAt: 'Aug 24'
-  },
-  {
-    id: 'sample-3',
-    originalIdea: 'Traditional village Thai Pongal with overflowing clay pot',
-    prompt: 'Traditional village Thai Pongal celebration in ancestral house open courtyard, decorated terracotta clay pot with boiling milk overflowing, open woodfire stove, tall fresh sugarcane, colorful rice flour Kolam, 8k National Geographic',
-    domain: 'Tamil Pongal Festival',
-    ratio: '16:9',
-    url: '/images/tamil/pongal-pot.jpg',
-    saved: true,
-    createdAt: 'Aug 24'
-  }
-]
-
-const INITIAL_MARKETPLACE_ASSETS = [
-  {
-    id: 'mkt-tamil-wedding-1',
-    title: 'Tamil Traditional Temple Wedding',
-    description: 'Golden hour South Indian Hindu wedding ceremony inside ancient Dravidian stone temple mandapam with traditional Kanjivaram silk saree and floral jasmine garland.',
-    category: 'Tamil Culture & Festivals',
-    tags: ['tamil wedding', 'wedding', 'kanjivaram', 'temple', 'mandapam', 'traditional', 'jasmine', 'hindu'],
-    priceCredits: 18,
-    creatorName: 'Kavitha Ramaswamy',
-    creatorHandle: '@KavithaLens',
-    creatorAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
-    image: '/images/tamil/pongal-girl.jpg',
-    licensedCount: 42,
-    createdAt: '2 days ago',
-    isVerified: true,
-    status: 'live',
-    dimensions: '3840 x 2160',
-    format: 'RAW / PNG'
-  },
-  {
-    id: 'mkt-tamil-wedding-2',
-    title: 'Bridal Muhurtham Saree Portrait',
-    description: 'Cinematic portrait of Tamil bride in royal crimson temple jewelry and golden border silk saree during auspicious morning Muhurtham rituals.',
-    category: 'Tamil Culture & Festivals',
-    tags: ['tamil wedding', 'bride', 'muhurtham', 'saree', 'jewelry', 'culture', 'portrait'],
-    priceCredits: 22,
-    creatorName: 'Sundar Vadivel',
-    creatorHandle: '@MaduraiFrames',
-    creatorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80',
-    image: '/images/tamil/pongal-cooking.jpg',
-    licensedCount: 68,
-    createdAt: '3 days ago',
-    isVerified: true,
-    status: 'live',
-    dimensions: '4096 x 2730',
-    format: '4K Ultra HD'
-  },
-  {
-    id: 'mkt-cyberpunk-temple',
-    title: 'Cyberpunk Tanjore Temple 2099',
-    description: 'Futuristic sci-fi reimagination of Brihadisvara Temple with neon holographic gopuram lights, floating energy spires, and flying chariots at twilight.',
-    category: 'Sci-Fi & Concept Art',
-    tags: ['cyberpunk', 'temple', 'tanjore', 'sci-fi', 'neon', 'future', 'concept art'],
-    priceCredits: 25,
-    creatorName: 'Dravidian Futurism Lab',
-    creatorHandle: '@DravidCyber',
-    creatorAvatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&auto=format&fit=crop&q=80',
-    image: '/images/tamil/madurai-temple.jpg',
-    licensedCount: 95,
-    createdAt: '5 days ago',
-    isVerified: true,
-    status: 'live',
-    dimensions: '4096 x 2304',
-    format: '8K Octane Render'
-  },
-  {
-    id: 'mkt-jallikattu-bull',
-    title: 'Jallikattu Heritage Bull Fest',
-    description: 'Dynamic high-speed cultural action shot of Kangayam bull in festive Pongal colors amidst cheering village stadium dust and golden afternoon light.',
-    category: 'Tamil Culture & Festivals',
-    tags: ['jallikattu', 'bull', 'pongal', 'tamil festival', 'heritage', 'village', 'action'],
-    priceCredits: 20,
-    creatorName: 'Madurai Lensman',
-    creatorHandle: '@AlanganallurArt',
-    creatorAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80',
-    image: '/images/tamil/alanganallur-jallikattu.jpg',
-    licensedCount: 37,
-    createdAt: '1 week ago',
-    isVerified: true,
-    status: 'live',
-    dimensions: '3840 x 2160',
-    format: 'RAW Hi-Res'
-  },
-  {
-    id: 'mkt-chettinad-palace',
-    title: 'Chettinad Heritage Mansion Courtyard',
-    description: 'Architectural symmetry of 19th-century Chettinad heritage palace with Burma teak carved pillars, Athangudi handmade floor tiles, and open sky thinnai.',
-    category: 'Architecture',
-    tags: ['chettinad', 'palace', 'mansion', 'architecture', 'heritage', 'pillars', 'athangudi'],
-    priceCredits: 15,
-    creatorName: 'Anand Arch Studio',
-    creatorHandle: '@AnandSpaces',
-    creatorAvatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=120&auto=format&fit=crop&q=80',
-    image: '/images/tamil/chettinad-mansion.jpg',
-    licensedCount: 51,
-    createdAt: '4 days ago',
-    isVerified: true,
-    status: 'live',
-    dimensions: '4000 x 3000',
-    format: 'Ultra-Res HDR'
-  },
-  {
-    id: 'mkt-nilgiris-tea',
-    title: 'Nilgiris Misty Tea Plantation Sunrise',
-    description: 'Rolling emerald tea hills shrouded in morning valley mist with solitary tea plucker and golden horizon sunlight in Ooty Western Ghats.',
-    category: 'Nature & Landscapes',
-    tags: ['nilgiris', 'tea', 'plantation', 'ooty', 'nature', 'mist', 'sunrise', 'landscape', 'hills'],
-    priceCredits: 14,
-    creatorName: 'Priya Narayanan',
-    creatorHandle: '@GhatsExplorer',
-    creatorAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80',
-    image: '/images/tamil/chettinad-thinnai.jpg',
-    licensedCount: 63,
-    createdAt: '1 week ago',
-    isVerified: true,
-    status: 'live',
-    dimensions: '4500 x 3000',
-    format: 'Hasselblad 8K'
-  },
-  {
-    id: 'mkt-marina-fishermen',
-    title: 'Marina Beach Dawn Catamaran Fishermen',
-    description: 'Silhouetted Tamil fishermen launching traditional wooden catamaran into glowing turquoise Bay of Bengal waves at sunrise.',
-    category: 'Nature & Landscapes',
-    tags: ['marina beach', 'chennai', 'fishermen', 'catamaran', 'sea', 'sunrise', 'ocean'],
-    priceCredits: 12,
-    creatorName: 'Chennai Shutter Co.',
-    creatorHandle: '@ChennaiStreet',
-    creatorAvatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=120&auto=format&fit=crop&q=80',
-    image: '/images/tamil/agraharam-street.jpg',
-    licensedCount: 29,
-    createdAt: '6 days ago',
-    isVerified: true,
-    status: 'live',
-    dimensions: '3840 x 2400',
-    format: '4K Cinematic'
-  },
-  {
-    id: 'mkt-bharatanatyam-mudra',
-    title: 'Bharatanatyam Classical Mudra in Spotlight',
-    description: 'Striking stage lighting capturing intricate temple dance hand mudra with temple jewelry bells and crimson alta dye accents.',
-    category: 'Culture & Arts',
-    tags: ['bharatanatyam', 'dance', 'mudra', 'culture', 'classical', 'temple', 'art'],
-    priceCredits: 16,
-    creatorName: 'Meenakshi Natya Art',
-    creatorHandle: '@NatyaLens',
-    creatorAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&auto=format&fit=crop&q=80',
-    image: '/images/tamil/kuthuvilakku-brass.jpg',
-    licensedCount: 54,
-    createdAt: '3 days ago',
-    isVerified: true,
-    status: 'live',
-    dimensions: '3840 x 2160',
-    format: 'Pro Studio 8K'
-  }
-]
-
-const INITIAL_CREATOR_TRANSACTIONS = [
-  {
-    id: 'tx-1',
-    assetId: 'mkt-tamil-wedding-1',
-    assetTitle: 'Tamil Traditional Temple Wedding',
-    buyerName: 'Vikram S.',
-    totalPrice: 18,
-    creatorEarnings: 14.4,
-    platformFee: 3.6,
-    date: 'Today, 2:45 PM',
-    status: 'Completed'
-  },
-  {
-    id: 'tx-2',
-    assetId: 'mkt-tamil-wedding-2',
-    assetTitle: 'Bridal Muhurtham Saree Portrait',
-    buyerName: 'Aishwarya K.',
-    totalPrice: 22,
-    creatorEarnings: 17.6,
-    platformFee: 4.4,
-    date: 'Yesterday, 6:12 PM',
-    status: 'Completed'
-  },
-  {
-    id: 'tx-3',
-    assetId: 'mkt-cyberpunk-temple',
-    assetTitle: 'Cyberpunk Tanjore Temple 2099',
-    buyerName: 'Studio Dravida AI',
-    totalPrice: 25,
-    creatorEarnings: 20.0,
-    platformFee: 5.0,
-    date: 'Sep 2, 2026',
-    status: 'Completed'
-  },
-  {
-    id: 'tx-4',
-    assetId: 'mkt-nilgiris-tea',
-    assetTitle: 'Nilgiris Misty Tea Plantation Sunrise',
-    buyerName: 'Rohit Menon',
-    totalPrice: 14,
-    creatorEarnings: 11.2,
-    platformFee: 2.8,
-    date: 'Aug 30, 2026',
-    status: 'Completed'
-  }
-]
-
-const MARKETPLACE_CATEGORIES = [
-  'All',
-  'Tamil Culture & Festivals',
-  'Sci-Fi & Concept Art',
-  'Architecture',
-  'Nature & Landscapes',
-  'Culture & Arts',
-  'E-Commerce & Products'
-]
-
-// Dynamic Folder Color & Theme Engine (Unique vibrant styling based on folder name/category)
-export function getFolderTheme(folderName = '') {
-  const name = (folderName || '').toLowerCase().trim()
-
-  if (/e-commerce|product|skincare|cosmetic|beauty|fashion|clothing|dress|shoe|mockup/i.test(name)) {
-    return {
-      name: 'Rose Pink',
-      iconColor: '#ec4899',
-      accent: '#ec4899',
-      border: 'rgba(236, 72, 153, 0.32)',
-      hoverBorder: 'rgba(236, 72, 153, 0.65)',
-      bg: 'rgba(253, 242, 248, 0.85)',
-      hoverBg: 'rgba(253, 242, 248, 0.98)',
-      glow: 'rgba(236, 72, 153, 0.22)',
-      badgeBg: 'rgba(236, 72, 153, 0.14)',
-      badgeText: '#db2777',
-      pillGrad: 'linear-gradient(135deg, #ec4899, #db2777)'
-    }
-  }
-  if (/anime|character|manga|portrait|illustration|avatar|figure|comic/i.test(name)) {
-    return {
-      name: 'Violet Purple',
-      iconColor: '#a855f7',
-      accent: '#a855f7',
-      border: 'rgba(168, 85, 247, 0.32)',
-      hoverBorder: 'rgba(168, 85, 247, 0.65)',
-      bg: 'rgba(250, 245, 255, 0.85)',
-      hoverBg: 'rgba(250, 245, 255, 0.98)',
-      glow: 'rgba(168, 85, 247, 0.22)',
-      badgeBg: 'rgba(168, 85, 247, 0.14)',
-      badgeText: '#7e22ce',
-      pillGrad: 'linear-gradient(135deg, #a855f7, #7e22ce)'
-    }
-  }
-  if (/sport|fitness|gym|football|soccer|cricket|athletic|racing|auto|car|bike|vehicle/i.test(name)) {
-    return {
-      name: 'Sunset Orange',
-      iconColor: '#f97316',
-      accent: '#f97316',
-      border: 'rgba(249, 115, 22, 0.32)',
-      hoverBorder: 'rgba(249, 115, 22, 0.65)',
-      bg: 'rgba(255, 247, 237, 0.85)',
-      hoverBg: 'rgba(255, 247, 237, 0.98)',
-      glow: 'rgba(249, 115, 22, 0.22)',
-      badgeBg: 'rgba(249, 115, 22, 0.14)',
-      badgeText: '#c2410c',
-      pillGrad: 'linear-gradient(135deg, #f97316, #c2410c)'
-    }
-  }
-  if (/flower|nature|botanical|garden|plant|forest|landscape|leaf|tree|rose/i.test(name)) {
-    return {
-      name: 'Emerald Green',
-      iconColor: '#10b981',
-      accent: '#10b981',
-      border: 'rgba(16, 185, 129, 0.32)',
-      hoverBorder: 'rgba(16, 185, 129, 0.65)',
-      bg: 'rgba(236, 253, 245, 0.85)',
-      hoverBg: 'rgba(236, 253, 245, 0.98)',
-      glow: 'rgba(16, 185, 129, 0.22)',
-      badgeBg: 'rgba(16, 185, 129, 0.14)',
-      badgeText: '#047857',
-      pillGrad: 'linear-gradient(135deg, #10b981, #047857)'
-    }
-  }
-  if (/cyberpunk|sci-fi|future|tech|neon|abstract|space|robot|quantum/i.test(name)) {
-    return {
-      name: 'Cyan Teal',
-      iconColor: '#06b6d4',
-      accent: '#06b6d4',
-      border: 'rgba(6, 182, 212, 0.32)',
-      hoverBorder: 'rgba(6, 182, 212, 0.65)',
-      bg: 'rgba(236, 254, 255, 0.85)',
-      hoverBg: 'rgba(236, 254, 255, 0.98)',
-      glow: 'rgba(6, 182, 212, 0.22)',
-      badgeBg: 'rgba(6, 182, 212, 0.14)',
-      badgeText: '#0e7490',
-      pillGrad: 'linear-gradient(135deg, #06b6d4, #0e7490)'
-    }
-  }
-  if (/architecture|3d|building|interior|house|structure|minimal/i.test(name)) {
-    return {
-      name: 'Sky Blue',
-      iconColor: '#0ea5e9',
-      accent: '#0ea5e9',
-      border: 'rgba(14, 165, 233, 0.32)',
-      hoverBorder: 'rgba(14, 165, 233, 0.65)',
-      bg: 'rgba(240, 249, 255, 0.85)',
-      hoverBg: 'rgba(240, 249, 255, 0.98)',
-      glow: 'rgba(14, 165, 233, 0.22)',
-      badgeBg: 'rgba(14, 165, 233, 0.14)',
-      badgeText: '#0369a1',
-      pillGrad: 'linear-gradient(135deg, #0ea5e9, #0369a1)'
-    }
-  }
-  if (/tamil|culture|festival|temple|tradition|gold|heritage|saree|wedding/i.test(name)) {
-    return {
-      name: 'Golden Amber',
-      iconColor: '#eab308',
-      accent: '#eab308',
-      border: 'rgba(234, 179, 8, 0.32)',
-      hoverBorder: 'rgba(234, 179, 8, 0.65)',
-      bg: 'rgba(254, 252, 232, 0.85)',
-      hoverBg: 'rgba(254, 252, 232, 0.98)',
-      glow: 'rgba(234, 179, 8, 0.22)',
-      badgeBg: 'rgba(234, 179, 8, 0.14)',
-      badgeText: '#a16207',
-      pillGrad: 'linear-gradient(135deg, #eab308, #a16207)'
-    }
-  }
-  if (/private|personal|favorites|favorite|saved|custom|secret/i.test(name)) {
-    return {
-      name: 'Rose Coral',
-      iconColor: '#f43f5e',
-      accent: '#f43f5e',
-      border: 'rgba(244, 63, 94, 0.32)',
-      hoverBorder: 'rgba(244, 63, 94, 0.65)',
-      bg: 'rgba(255, 241, 242, 0.85)',
-      hoverBg: 'rgba(255, 241, 242, 0.98)',
-      glow: 'rgba(244, 63, 94, 0.22)',
-      badgeBg: 'rgba(244, 63, 94, 0.14)',
-      badgeText: '#be123c',
-      pillGrad: 'linear-gradient(135deg, #f43f5e, #be123c)'
-    }
-  }
-
-  // Deterministic palette rotation for user-created custom folders
-  const dynamicPalettes = [
-    {
-      iconColor: '#6366f1',
-      accent: '#6366f1',
-      border: 'rgba(99, 102, 241, 0.32)',
-      hoverBorder: 'rgba(99, 102, 241, 0.65)',
-      bg: 'rgba(238, 242, 255, 0.85)',
-      hoverBg: 'rgba(238, 242, 255, 0.98)',
-      glow: 'rgba(99, 102, 241, 0.22)',
-      badgeBg: 'rgba(99, 102, 241, 0.14)',
-      badgeText: '#4f46e5',
-      pillGrad: 'linear-gradient(135deg, #6366f1, #4f46e5)'
-    },
-    {
-      iconColor: '#ec4899',
-      accent: '#ec4899',
-      border: 'rgba(236, 72, 153, 0.32)',
-      hoverBorder: 'rgba(236, 72, 153, 0.65)',
-      bg: 'rgba(253, 242, 248, 0.85)',
-      hoverBg: 'rgba(253, 242, 248, 0.98)',
-      glow: 'rgba(236, 72, 153, 0.22)',
-      badgeBg: 'rgba(236, 72, 153, 0.14)',
-      badgeText: '#db2777',
-      pillGrad: 'linear-gradient(135deg, #ec4899, #db2777)'
-    },
-    {
-      iconColor: '#10b981',
-      accent: '#10b981',
-      border: 'rgba(16, 185, 129, 0.32)',
-      hoverBorder: 'rgba(16, 185, 129, 0.65)',
-      bg: 'rgba(236, 253, 245, 0.85)',
-      hoverBg: 'rgba(236, 253, 245, 0.98)',
-      glow: 'rgba(16, 185, 129, 0.22)',
-      badgeBg: 'rgba(16, 185, 129, 0.14)',
-      badgeText: '#047857',
-      pillGrad: 'linear-gradient(135deg, #10b981, #047857)'
-    },
-    {
-      iconColor: '#f97316',
-      accent: '#f97316',
-      border: 'rgba(249, 115, 22, 0.32)',
-      hoverBorder: 'rgba(249, 115, 22, 0.65)',
-      bg: 'rgba(255, 247, 237, 0.85)',
-      hoverBg: 'rgba(255, 247, 237, 0.98)',
-      glow: 'rgba(249, 115, 22, 0.22)',
-      badgeBg: 'rgba(249, 115, 22, 0.14)',
-      badgeText: '#c2410c',
-      pillGrad: 'linear-gradient(135deg, #f97316, #c2410c)'
-    },
-    {
-      iconColor: '#8b5cf6',
-      accent: '#8b5cf6',
-      border: 'rgba(139, 92, 246, 0.32)',
-      hoverBorder: 'rgba(139, 92, 246, 0.65)',
-      bg: 'rgba(245, 243, 255, 0.85)',
-      hoverBg: 'rgba(245, 243, 255, 0.98)',
-      glow: 'rgba(139, 92, 246, 0.22)',
-      badgeBg: 'rgba(139, 92, 246, 0.14)',
-      badgeText: '#6d28d9',
-      pillGrad: 'linear-gradient(135deg, #8b5cf6, #6d28d9)'
-    },
-    {
-      iconColor: '#0ea5e9',
-      accent: '#0ea5e9',
-      border: 'rgba(14, 165, 233, 0.32)',
-      hoverBorder: 'rgba(14, 165, 233, 0.65)',
-      bg: 'rgba(240, 249, 255, 0.85)',
-      hoverBg: 'rgba(240, 249, 255, 0.98)',
-      glow: 'rgba(14, 165, 233, 0.22)',
-      badgeBg: 'rgba(14, 165, 233, 0.14)',
-      badgeText: '#0369a1',
-      pillGrad: 'linear-gradient(135deg, #0ea5e9, #0369a1)'
-    },
-    {
-      iconColor: '#14b8a6',
-      accent: '#14b8a6',
-      border: 'rgba(20, 184, 166, 0.32)',
-      hoverBorder: 'rgba(20, 184, 166, 0.65)',
-      bg: 'rgba(240, 253, 250, 0.85)',
-      hoverBg: 'rgba(240, 253, 250, 0.98)',
-      glow: 'rgba(20, 184, 166, 0.22)',
-      badgeBg: 'rgba(20, 184, 166, 0.14)',
-      badgeText: '#0f766e',
-      pillGrad: 'linear-gradient(135deg, #14b8a6, #0f766e)'
-    }
-  ]
-
-  let hash = 0
-  for (let i = 0; i < folderName.length; i++) {
-    hash = (hash << 5) - hash + folderName.charCodeAt(i)
-    hash |= 0
-  }
-  return dynamicPalettes[Math.abs(hash) % dynamicPalettes.length]
-}
-
-// AI Idea-to-Prompt Expansion Engine & Domain Classifier (With Smart Reference Concepts & Culture Intelligence)
-function analyzeAndExpandIdea(rawIdea) {
-  const idea = rawIdea.trim()
-  const lower = idea.toLowerCase()
-
-  let detectedDomain = 'Thamili Creative Art'
-  let samplePool = []
-
-  // Check against specific Reference Concept Styles first
-  const matchedConcept = REFERENCE_CONCEPT_STYLES.find((c) => {
-    const cName = c.name.toLowerCase()
-    const regex = new RegExp(`\\b${cName}\\b`, 'i')
-    return regex.test(lower)
-  })
-
-  if (matchedConcept) {
-    detectedDomain = matchedConcept.field || `${matchedConcept.name} Style`
-    samplePool = [matchedConcept.image]
-  }
-  // 1. Flowers & Floral Art (Lotus, Rose, Jasmine, Sunflower, Marigold, Gardens, Bouquets)
-  else if (
-    /(flower|flowers|rose|roses|lotus|thamarai|jasmine|malli|malligai|sunflower|sunflowers|suriyagandhi|marigold|sammanthi|genda|bouquet|blossom|blossoms|petal|petals|hibiscus|floral|garden|botanical|orchid|tulip|daisy|poo|malar)/i.test(
-      lower
-    )
-  ) {
-    detectedDomain = 'Floral & Botanical Art'
-    if (/lotus|thamarai|water lily/i.test(lower)) {
-      samplePool = ['/images/basic/flower-lotus.jpg']
-    } else {
-      samplePool = [
-        '/images/basic/flower-lotus.jpg',
-        '/images/basic/flower-rose.jpg'
-      ]
-    }
-  }
-  // 2. Cars, Supercars & Modern/Vintage Automobiles
-  else if (
-    /(car|cars|supercar|supercars|sports car|sportscar|ferrari|lamborghini|porsche|bmw|audi|mercedes|automobile|automobiles|hypercar|racing car|sedan|convertible|vintage car|ambassador|padmini|taxi)/i.test(
-      lower
-    )
-  ) {
-    detectedDomain = 'Automobiles & Supercars'
-    if (/supercar|cyber|futuristic|neon|hypercar|lamborghini|porsche|racing/i.test(lower)) {
-      samplePool = ['/images/basic/car-supercar.jpg']
-    } else if (/sports car|red car|convertible|ferrari|luxury car|coastal/i.test(lower)) {
-      samplePool = ['/images/basic/car-sports-red.jpg']
-    } else if (/ambassador|padmini|taxi|vintage car|retro car|old car/i.test(lower)) {
-      samplePool = [
-        '/images/tamil/vintage-ambassador-1.jpg',
-        '/images/tamil/vintage-ambassador-2.jpg',
-        '/images/tamil/vintage-ambassador-3.jpg'
-      ]
-    } else {
-      samplePool = [
-        '/images/basic/car-supercar.jpg',
-        '/images/basic/car-sports-red.jpg',
-        '/images/tamil/vintage-ambassador-1.jpg'
-      ]
-    }
-  }
-  // 3. Bikes, Motorcycles, Cruisers & Scooters
-  else if (
-    /(bike|bikes|motorcycle|motorcycles|superbike|superbikes|bullet|royal enfield|scooter|scooters|vespa|ev scooter|dirt bike|ducati|harley|yamaha|honda|two wheeler|twowheeler|bicycle|cycle)/i.test(
-      lower
-    )
-  ) {
-    detectedDomain = 'Motorcycles & Superbikes'
-    samplePool = ['/images/basic/bike-bullet.jpg']
-  }
-  // 4. Scenic Nature, Waterfalls & Mountain Landscapes
-  else if (
-    /(nature|waterfall|waterfalls|falls|cascade|courtallam|hogenakkal|mountain|mountains|hill|hills|tea estate|tea plantation|munnar|ooty|kodaikanal|forest|river|valley|landscape|scenic|greenery)/i.test(
-      lower
-    )
-  ) {
-    detectedDomain = 'Scenic Nature & Landscapes'
-    samplePool = ['/images/basic/nature-waterfall.jpg']
-  }
-  // 5. Wildlife, Birds & Animals (Peacock, Bull, etc.)
-  else if (
-    /(peacock|peacocks|mayil|bird|birds|animal|animals|wildlife|tiger|elephant|deer)/i.test(
-      lower
-    )
-  ) {
-    detectedDomain = 'Wildlife & Birds'
-    samplePool = ['/images/tamil/mattu-pongal-cow.jpg', '/images/tamil/bull-taming-1.jpg']
-  }
-  // 6. Tamil Vintage Houses & Mansions
-  else if (
-    /(house|home|mansion|chettinad|agraharam|thinnai|muttram|courtyard|veranda|teak door|door|wooden door|athangudi|palace|vintage house|antique house|village house)/i.test(
-      lower
-    )
-  ) {
-    detectedDomain = 'Tamil Vintage Houses'
-    samplePool = [
-      '/images/tamil/chettinad-mansion.jpg',
-      '/images/tamil/agraharam-street.jpg',
-      '/images/tamil/chettinad-door.jpg',
-      '/images/tamil/chettinad-thinnai.jpg'
-    ]
-  }
-  // 7. Tamil Pongal Harvest Festival
-  else if (
-    /(pongal|thai pongal|pot|clay pot|pongal panai|harvest|kolam|sugarcane|mattu pongal|paddy|kaveri)/i.test(
-      lower
-    )
-  ) {
-    detectedDomain = 'Tamil Pongal Festival'
-    samplePool = [
-      '/images/tamil/pongal-pot.jpg',
-      '/images/tamil/tamil-kolam.jpg',
-      '/images/tamil/mattu-pongal-cow.jpg',
-      '/images/tamil/pongal-cooking.jpg'
-    ]
-  }
-  // 8. Tamil Diwali & Deepam Celebrations
-  else if (
-    /(diwali|deepam|deepavali|lamp|vilakku|agal vilakku|kuthuvilakku|sparkler|sparklers|mathappu|karthigai|ganga snanam)/i.test(
-      lower
-    )
-  ) {
-    detectedDomain = 'Tamil Festivals & Celebrations'
-    samplePool = [
-      '/images/tamil/diwali-diya.jpg',
-      '/images/tamil/kuthuvilakku-brass.jpg',
-      '/images/tamil/nilavilakku-brass.jpg',
-      '/images/tamil/diwali-sparklers.jpg'
-    ]
-  }
-  // 9. Tamil Jallikattu & Bull Taming Heritage
-  else if (
-    /(jallikattu|eruthazhuvuthal|bull|kangeyam|manju virattu|alanganallur|avaniyapuram|palamedu|veera vilaiyattu)/i.test(
-      lower
-    )
-  ) {
-    detectedDomain = 'Tamil Jallikattu Heritage'
-    samplePool = [
-      '/images/tamil/alanganallur-jallikattu.jpg',
-      '/images/tamil/bull-taming-1.jpg',
-      '/images/tamil/bull-taming-2.jpg',
-      '/images/tamil/jallikattu-action.jpg'
-    ]
-  }
-  // 10. Universal Studio Creative Fallback
-  else {
-    detectedDomain = 'Thamili Studio Creation'
-    samplePool = [
-      '/images/basic/flower-lotus.jpg',
-      '/images/basic/car-supercar.jpg',
-      '/images/basic/bike-bullet.jpg',
-      '/images/basic/nature-waterfall.jpg',
-      '/images/basic/flower-rose.jpg',
-      '/images/tamil/chettinad-mansion.jpg',
-      '/images/tamil/vintage-ambassador-1.jpg'
-    ]
-  }
-
-  const cleanIdea = idea
-    .replace(/^(make|create|generate|design|draw|show|render|a photo of|an image of|picture of)\s+/i, '')
-    .trim() || 'Visual masterpiece'
-
-  let enhancedPrompt = ''
-  if (matchedConcept) {
-    enhancedPrompt = `${matchedConcept.prompt} with creative elements of ${cleanIdea}, masterpiece 8k resolution octane render.`
-  } else if (detectedDomain === 'Floral & Botanical Art') {
-    enhancedPrompt = `Breathtaking fine-art botanical photograph of ${cleanIdea}, delicate blooming petals with crystalline morning dew drops, soft golden hour sunlight, natural garden bokeh, 8k Hasselblad master photography.`
-  } else if (detectedDomain === 'Automobiles & Supercars') {
-    enhancedPrompt = `Ultra-modern automotive masterpiece showcasing ${cleanIdea}, gleaming aerodynamic body lines, flawless metallic paint reflections, dynamic cinematic lighting, 8k raytracing render.`
-  } else if (detectedDomain === 'Motorcycles & Superbikes') {
-    enhancedPrompt = `High-performance dynamic photograph of ${cleanIdea}, immaculate craftsmanship and chrome detailing, scenic open road backdrop, warm cinematic lighting, 8k resolution.`
-  } else if (detectedDomain === 'Scenic Nature & Landscapes') {
-    enhancedPrompt = `Epic National Geographic landscape photograph of ${cleanIdea}, sweeping panoramic natural vista, lush emerald greens, golden sun rays breaking through morning mist, 8k ultra realism.`
-  } else if (detectedDomain === 'Wildlife & Birds') {
-    enhancedPrompt = `Magnificent high-detail wildlife photograph of ${cleanIdea}, vibrant iridescent plumage colors, crystalline eye detail, natural sanctuary environment, soft depth of field, 8k.`
-  } else if (detectedDomain === 'Tamil Vintage Houses') {
-    enhancedPrompt = `Authentic 19th-century vintage Tamil heritage architecture of ${cleanIdea}, ornate Burma teak pillars, Athangudi geometric floor tiles, sunlit central courtyard thinnai, antique brass urns, master 8k Hasselblad architectural photo.`
-  } else if (detectedDomain === 'Tamil Pongal Festival') {
-    enhancedPrompt = `Traditional rural Tamil Thai Pongal festival celebration of ${cleanIdea}, decorated earthen clay pot with overflowing sweet milk over open firewood, fresh green sugarcane, colorful rice Kolam, 8k National Geographic photo.`
-  } else if (detectedDomain === 'Tamil Diwali Celebrations') {
-    enhancedPrompt = `Sacred Tamil Diwali & Deepam festival illumination of ${cleanIdea}, rows of glowing terracotta agal vilakku oil lamps, antique brass kuthuvilakku, sparkling golden mathappu, warm festive aura, 8k masterpiece.`
-  } else if (detectedDomain === 'Tamil Jallikattu Heritage') {
-    enhancedPrompt = `High-speed heroic cultural action photograph of ${cleanIdea}, powerful muscular Kangayam bull in Alanganallur Jallikattu arena with sharp painted horns, billowing golden dust clouds, authentic Tamil bravery, 8k.`
-  } else {
-    enhancedPrompt = `A stunning, hyper-detailed creative representation of ${cleanIdea}, master cinematic lighting, rich lifelike textures, atmospheric depth, perfectly balanced composition, 8k resolution octane render.`
-  }
-
-  return {
-    detectedDomain,
-    enhancedPrompt,
-    imageUrl: samplePool[Math.floor(Math.random() * samplePool.length)]
-  }
-}
-
-// Conversational Intent Detector (Handles Greetings & FAQs politely without generating random images)
-function detectConversationalIntent(rawText) {
-  if (!rawText) return null
-  const clean = rawText.trim().toLowerCase().replace(/[!?.,:;]/g, '')
-  if (!clean) return null
-
-  // 1. Greetings (hello, hi, hey, vanakkam, namaste, good morning, casual greeting...)
-  if (/^(hello|hi|hey|heyy|heyyy|hii|hiii|howdy|hola|vanakkam|namaste|namaskaram|greetings|greeting|casual\s*greeting|conversation|good\s*(morning|afternoon|evening|day))(\s+there|\s+thamili|\s+ai|\s+bot|\s+and\s+friendly\s+conversation)?$/i.test(clean)) {
-    return {
-      text: "Hi there! 👋 What would you like to create today? Describe any visual idea, scene, character, or cultural style!",
-      suggestions: [
-        'Cyberpunk sports car in neon rain',
-        'Traditional Tamil temple wedding',
-        'Nilgiris misty tea garden sunrise',
-        'Cute soft plushie on cozy bed'
-      ]
-    }
-  }
-
-  // 2. How are you / What's up
-  if (/^(how\s*are\s*you|how\s*r\s*u|how\s*is\s*it\s*going|whats\s*up|what's\s*up|wassup|sup)(\s+today)?$/i.test(clean)) {
-    return {
-      text: "I'm doing great and ready to create! What imaginative scene or artwork can I generate for you?",
-      suggestions: [
-        'Futuristic Tokyo night street',
-        'Ancient Dravidian temple mandapam',
-        'Vintage 1970s Ambassador car',
-        'Royal Enfield on mountain road'
-      ]
-    }
-  }
-
-  // 3. Who are you / What are you / What can you do / Help
-  if (/^(who\s*are\s*you|what\s*are\s*you|what\s*can\s*you\s*do|help|help\s*me|how\s*to\s*use|how\s*does\s*this\s*work|what\s*is\s*this|tell\s*me\s*about\s*yourself)$/i.test(clean)) {
-    return {
-      text: "I'm **Thamili AI**, your creative visual studio. I can generate photorealistic images, sci-fi concepts, Tamil cultural heritage art, anime illustrations, and more. Just type any prompt below!",
-      suggestions: [
-        'Chettinad mansion central courtyard',
-        'Lotus flower with dew drops at sunrise',
-        'Fast red supercar on coastal highway',
-        '3D Octane render of glowing crystals'
-      ]
-    }
-  }
-
-  // 4. Thank you / Appreciation
-  if (/^(thanks|thank\s*you|thank\s*u|thx|awesome|cool|great\s*job|nice|perfect)$/i.test(clean)) {
-    return {
-      text: "You're very welcome! 😊 What would you like to design or create next?",
-      suggestions: [
-        'Cyberpunk Tanjore Gopuram 2099',
-        'Vibrant blooming rose bouquet',
-        'Superbike cruising at golden hour',
-        'Cute kawaii chibi character'
-      ]
-    }
-  }
-
-  return null
-}
-
-function createId(prefix = 'id') {
-  return `${prefix}-${(Math.random() + 1).toString(36).substring(2, 9)}`
-}
-
-const GENERATION_STATUS_MESSAGES = [
-  'Creating your image...',
-  'Building the composition...',
-  'Adding colors...',
-  'Refining details...',
-  'Almost there...'
-]
-
-// =========================================================================
-// CHATGPT TAMIL GLYPH MATRIX NEURAL WAVE & DIFFUSION CANVAS
-// =========================================================================
-const TAMIL_MATRIX_GLYPHS = [
-  'அ', 'ஆ', 'இ', 'ஈ', 'உ', 'ஊ', 'எ', 'ஏ', 'ஐ', 'ஒ', 'ஓ', 'ஔ', 'ஃ',
-  'க', 'ங', 'ச', 'ஞ', 'ட', 'ண', 'த', 'ந', 'ப', 'ம', 'ய', 'ர', 'ல',
-  'வ', 'ழ', 'ள', 'ற', 'ன', 'தி', 'மி', 'ழி', 'தை', 'மெ', 'ழீ', 'ஸ்ரீ',
-  'சா', 'சு', 'தா', 'து', 'நா', 'பா', 'மா', 'மு', 'யா', 'ரா', 'வா', 'ழா',
-  'கா', 'கி', 'சீ', 'தீ', 'நீ', 'பீ', 'மீ', 'லீ', 'வீ', 'ழூ', 'றோ', 'னோ'
-]
-
-function DotMatrixWaveCanvas({ step = 0, isGenerating = true, startTime = null }) {
-  const canvasRef = useRef(null)
-  const [progress, setProgress] = useState(1)
-
-  useEffect(() => {
-    if (!isGenerating) {
-      setProgress(100)
-      return
-    }
-    const initialStart = startTime || Date.now()
-    const timer = setInterval(() => {
-      const elapsed = Date.now() - initialStart
-      // Smooth curve reaching ~46% around 5-6s (matching reference screenshot)
-      let p = Math.round(98 * (1 - Math.exp(-elapsed / 8500)))
-      if (p < 1) p = 1
-      if (p > 98) p = 98
-      setProgress(p)
-    }, 120)
-    return () => clearInterval(timer)
-  }, [isGenerating, startTime])
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    let animId
-    const dpr = Math.min(window.devicePixelRatio || 1, 2)
-
-    let width = 0
-    let height = 0
-
-    const updateDimensions = () => {
-      const rect = canvas.getBoundingClientRect()
-      width = rect.width || canvas.offsetWidth || 560
-      height = rect.height || canvas.offsetHeight || 420
-      canvas.width = Math.floor(width * dpr)
-      canvas.height = Math.floor(height * dpr)
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-    }
-
-    updateDimensions()
-
-    let time = 0
-
-    const render = () => {
-      // Silky-smooth time progression
-      time += 0.012
-
-      // 1. Transparent Canvas
-      ctx.clearRect(0, 0, width, height)
-
-      // 2. 3D Wandering Sphere Orbit Physics
-      const orbitX = width * 0.26
-      const orbitY = height * 0.24
-      const sphereX = (width * 0.5) + Math.sin(time * 0.75) * orbitX + Math.cos(time * 0.35) * (width * 0.08)
-      const sphereY = (height * 0.5) + Math.cos(time * 0.55) * orbitY + Math.sin(time * 0.45) * (height * 0.06)
-      const baseRadius = Math.min(width, height) * 0.36
-      const sphereRadius = baseRadius * (1 + Math.sin(time * 0.4) * 0.06)
-      const sphereRadiusSq = sphereRadius * sphereRadius
-
-      // Normalized 3D directional light (tilted from upper-left toward viewer)
-      const lx = -0.42
-      const ly = -0.52
-      const lz = 0.74
-
-      // 3. Dense High-Tech Tamil Letter Matrix Grid (More Rows & Columns)
-      // 23px spacing with proportional font scaling produces dense rows & columns with zero collision
-      const cellSpacing = 23
-      const cols = Math.ceil(width / cellSpacing) + 2
-      const rows = Math.ceil(height / cellSpacing) + 2
-      const startX = (width - (cols - 1) * cellSpacing) * 0.5
-      const startY = (height - (rows - 1) * cellSpacing) * 0.5
-
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
-
-      for (let r = 0; r < rows; r++) {
-        const gy = startY + r * cellSpacing
-        for (let c = 0; c < cols; c++) {
-          const gx = startX + c * cellSpacing
-
-          const dx = gx - sphereX
-          const dy = gy - sphereY
-          const distSq = dx * dx + dy * dy
-          const dist = Math.sqrt(distSq)
-
-          let px = gx
-          let py = gy
-          let fontSize = 9.5
-          let intensity = 0
-          let isInsideSphere = false
-          let nz = 0
-
-          if (dist < sphereRadius) {
-            isInsideSphere = true
-            // 3D elevation on the hemisphere (Z-height from 0 at rim to 1 at apex)
-            nz = Math.sqrt(sphereRadiusSq - distSq) / sphereRadius
-            const nx = dx / sphereRadius
-            const ny = dy / sphereRadius
-
-            // Delicate 3D Spherical Lens Refraction (bounded displacement so letters never touch)
-            const normDist = dist / sphereRadius
-            const bulge = Math.sin(normDist * Math.PI) * 1.2
-            if (dist > 0.001) {
-              px = gx + (dx / dist) * bulge
-              py = gy + (dy / dist) * bulge
-            }
-
-            // 3D Diffuse & Specular Lighting
-            const diffuse = Math.max(0, nx * lx + ny * ly + nz * lz)
-            const specular = Math.pow(diffuse, 3.2)
-            intensity = Math.min(1, 0.30 * nz + 0.70 * diffuse + 0.80 * specular)
-
-            // Tasteful font zoom in dense grid (9.5px base -> 13.5px peak, never touches neighbor)
-            fontSize = 9.5 + nz * 3.5 + specular * 0.8
-          } else {
-            // Outside sphere: gentle proximity aura
-            const edgeDist = dist - sphereRadius
-            const glow = Math.exp(-edgeDist / 42) * 0.32
-            intensity = glow
-            fontSize = 9.5
-          }
-
-          // Consistent Tamil glyph placement across matrix
-          const glyphIdx = (r * 17 + c * 11 + (r + c)) % TAMIL_MATRIX_GLYPHS.length
-          const glyph = TAMIL_MATRIX_GLYPHS[glyphIdx]
-
-          ctx.font = `${intensity > 0.58 ? '700' : '600'} ${fontSize.toFixed(1)}px "Noto Sans Tamil", system-ui, -apple-system, sans-serif`
-
-          // Strictly Thamili Brand Colors: Leaf Green (#10b981) and Royal Ocean Blue (#2563eb)
-          if (isInsideSphere) {
-            if (intensity > 0.72) {
-              // 🌿 Luminous Thamili Green Specular Highlight
-              ctx.fillStyle = '#10b981'
-              ctx.shadowColor = '#10b981'
-              ctx.shadowBlur = Math.round(6 * nz)
-              ctx.fillText(glyph, px, py)
-              ctx.shadowBlur = 0
-            } else if (intensity > 0.45) {
-              // 🌿/🌊 Emerald Green to Vibrant Blue Body
-              const alpha = 0.70 + intensity * 0.30
-              ctx.fillStyle = `rgba(16, 185, 129, ${alpha})`
-              ctx.shadowColor = 'rgba(16, 185, 129, 0.35)'
-              ctx.shadowBlur = Math.round(3 * nz)
-              ctx.fillText(glyph, px, py)
-              ctx.shadowBlur = 0
-            } else {
-              // 💙 Royal Blue on the Lower Sphere Rim
-              const alpha = 0.55 + nz * 0.40
-              ctx.fillStyle = `rgba(37, 99, 235, ${alpha})`
-              ctx.shadowColor = 'rgba(37, 99, 235, 0.2)'
-              ctx.shadowBlur = 2
-              ctx.fillText(glyph, px, py)
-              ctx.shadowBlur = 0
-            }
-          } else {
-            // 🔷 Ambient Rest State Outside Sphere
-            const alpha = 0.16 + intensity * 0.40
-            ctx.fillStyle = `rgba(37, 99, 235, ${alpha})`
-            ctx.fillText(glyph, px, py)
-          }
-        }
-      }
-
-      animId = requestAnimationFrame(render)
-    }
-
-    render()
-
-    window.addEventListener('resize', updateDimensions)
-
-    return () => {
-      cancelAnimationFrame(animId)
-      window.removeEventListener('resize', updateDimensions)
-    }
-  }, [])
-
-  return (
-    <div className="dot-matrix-wave-wrapper">
-      <canvas ref={canvasRef} className="dot-matrix-wave-canvas" />
-      <div className="dot-matrix-progress-badge" title="Generation progress">
-        <span>{progress}%</span>
-      </div>
-    </div>
-  )
-}
-
-const ChatGPTDotMatrixCanvas = DotMatrixWaveCanvas
+// Modular Components, Constants & Services
+import { ThamiliLogoIcon, ThamiliWordmark } from './components/ThamiliIcons.jsx'
+import DotMatrixWaveCanvas from './components/DotMatrixWaveCanvas.jsx'
+import BackgroundWaves from './components/BackgroundWaves.jsx'
+import {
+  AVAILABLE_AI_MODELS,
+  LICENSE_TIERS,
+  SAMPLE_UPLOAD_PRESETS,
+  INSPIRATIONAL_PROMPTS
+} from './constants/models.js'
+import {
+  REFERENCE_CONCEPT_STYLES,
+  ALL_CREATIVE_CATEGORIES,
+  REFERENCE_TEMPLATE_SLOTS,
+  IMAGE_TEMPLATES,
+  getFolderTheme
+} from './constants/styles.js'
+import {
+  INITIAL_LOGGED_IN_HISTORY,
+  INITIAL_GUEST_HISTORY,
+  INITIAL_IMAGES,
+  INITIAL_MARKETPLACE_ASSETS,
+  INITIAL_CREATOR_TRANSACTIONS,
+  MARKETPLACE_CATEGORIES,
+  GENERATION_STATUS_MESSAGES
+} from './constants/mockData.js'
+import { generateImageApi, fetchHistoryApi, saveHistoryApi } from './services/api.js'
+import { createId, analyzeAndExpandIdea, detectConversationalIntent } from './services/promptEngine.js'
+import ImageEditorModal from './components/ImageEditorModal.jsx'
+
+const ChatGPTDotMatrixCanvas = DotMatrixWaveCanvas;
 
 export default function App() {
   const [theme, setTheme] = useState('light')
@@ -1778,16 +141,19 @@ export default function App() {
   const [fullscreenImageModal, setFullscreenImageModal] = useState(null)
   const chatScrollRef = useRef(null)
 
-  // Auto-scroll chat thread to bottom when new messages arrive or generation state changes
+  // Smart auto-scroll that ensures the latest message/image is comfortably in view without pushing the top offscreen
   useEffect(() => {
     if (chatScrollRef.current) {
       const scrollEl = chatScrollRef.current
       const t = setTimeout(() => {
-        scrollEl.scrollTo({ top: scrollEl.scrollHeight, behavior: 'smooth' })
-      }, 80)
+        const lastRow = scrollEl.querySelector('.chat-assistant-message-row:last-child, .chat-user-message-row:last-child')
+        if (lastRow) {
+          lastRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+        }
+      }, 60)
       return () => clearTimeout(t)
     }
-  }, [chatMessages, isGenerating])
+  }, [chatMessages.length, isGenerating])
 
   // ESC key listener to close fullscreen image modal
   useEffect(() => {
@@ -1799,602 +165,6 @@ export default function App() {
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
-
-  // =========================================================================
-  // LIGHTBOX INTERACTIVE STUDIO TOOL STATES (Markup, Comment, Remove BG, Erase, Resize)
-  // =========================================================================
-  const [activeEditorTool, setActiveEditorTool] = useState(null)
-
-  // 1. Markup Tool State
-  const [markupColor, setMarkupColor] = useState('#10b981')
-  const [markupBrushSize, setMarkupBrushSize] = useState(4)
-  const [markupStrokes, setMarkupStrokes] = useState([])
-  const [currentStroke, setCurrentStroke] = useState(null)
-  const [isDrawingMarkup, setIsDrawingMarkup] = useState(false)
-  const markupCanvasRef = useRef(null)
-
-  // 2. Comment Tool State
-  const [imageComments, setImageComments] = useState([])
-  const [pendingComment, setPendingComment] = useState(null)
-  const [activeCommentCardId, setActiveCommentCardId] = useState(null)
-
-  // 3. Remove BG State
-  const [isBgRemoved, setIsBgRemoved] = useState(false)
-  const [isBgProcessing, setIsBgProcessing] = useState(false)
-  const [bgRemovedImageUrl, setBgRemovedImageUrl] = useState(null)
-  const [bgBackdropStyle, setBgBackdropStyle] = useState('checkered') // 'checkered' | 'dark' | 'white'
-  const [bgRemovalMode, setBgRemovalMode] = useState('auto') // 'auto' | 'select'
-  const [bgSelectBrushSize, setBgSelectBrushSize] = useState(36)
-  const [bgSelectStrokes, setBgSelectStrokes] = useState([])
-  const [currentBgSelectStroke, setCurrentBgSelectStroke] = useState(null)
-  const [isDrawingBgSelect, setIsDrawingBgSelect] = useState(false)
-  const bgSelectCanvasRef = useRef(null)
-
-  // 4. Erase Tool State
-  const [eraseBrushSize, setEraseBrushSize] = useState(28)
-  const [eraseStrokes, setEraseStrokes] = useState([])
-  const [currentEraseStroke, setCurrentEraseStroke] = useState(null)
-  const [isErasing, setIsErasing] = useState(false)
-  const [isEraseProcessing, setIsEraseProcessing] = useState(false)
-  const [isObjectErased, setIsObjectErased] = useState(false)
-  const [erasedImageUrl, setErasedImageUrl] = useState(null)
-  const [eraseMode, setEraseMode] = useState('cutout') // 'cutout' (Reveal Background) | 'inpaint'
-  const [eraseBackdropStyle, setEraseBackdropStyle] = useState('checkered') // 'checkered' | 'dark' | 'white'
-  const eraseCanvasRef = useRef(null)
-
-  // 5. Resize / Aspect Tool State
-  const [modalCropRatio, setModalCropRatio] = useState('original')
-  const [modalZoomScale, setModalZoomScale] = useState(1.0)
-
-  // Reset editor studio tool state when closing lightbox
-  useEffect(() => {
-    if (!fullscreenImageModal) {
-      setActiveEditorTool(null)
-      setMarkupStrokes([])
-      setCurrentStroke(null)
-      setIsDrawingMarkup(false)
-      setImageComments([])
-      setPendingComment(null)
-      setActiveCommentCardId(null)
-      setIsBgRemoved(false)
-      setIsBgProcessing(false)
-      setBgRemovedImageUrl(null)
-      setBgRemovalMode('auto')
-      setBgSelectStrokes([])
-      setCurrentBgSelectStroke(null)
-      setIsDrawingBgSelect(false)
-      setEraseStrokes([])
-      setCurrentEraseStroke(null)
-      setIsErasing(false)
-      setIsEraseProcessing(false)
-      setIsObjectErased(false)
-      setErasedImageUrl(null)
-      setEraseMode('cutout')
-      setEraseBackdropStyle('checkered')
-      setModalCropRatio('original')
-      setModalZoomScale(1.0)
-    }
-  }, [fullscreenImageModal])
-
-  // Redraw markup strokes on markupCanvasRef
-  useEffect(() => {
-    const canvas = markupCanvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-    const allStrokes = currentStroke ? [...markupStrokes, currentStroke] : markupStrokes
-    allStrokes.forEach((stroke) => {
-      if (!stroke.points || stroke.points.length === 0) return
-      ctx.strokeStyle = stroke.color
-      ctx.lineWidth = stroke.size
-      ctx.lineCap = 'round'
-      ctx.lineJoin = 'round'
-
-      ctx.beginPath()
-      if (stroke.points.length === 1) {
-        ctx.arc(stroke.points[0].x, stroke.points[0].y, stroke.size / 2, 0, Math.PI * 2)
-        ctx.fillStyle = stroke.color
-        ctx.fill()
-      } else {
-        ctx.moveTo(stroke.points[0].x, stroke.points[0].y)
-        for (let i = 1; i < stroke.points.length; i++) {
-          ctx.lineTo(stroke.points[i].x, stroke.points[i].y)
-        }
-        ctx.stroke()
-      }
-    })
-  }, [markupStrokes, currentStroke])
-
-  // Redraw erase strokes on eraseCanvasRef
-  useEffect(() => {
-    const canvas = eraseCanvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-    const allStrokes = currentEraseStroke ? [...eraseStrokes, currentEraseStroke] : eraseStrokes
-    allStrokes.forEach((stroke) => {
-      if (!stroke.points || stroke.points.length === 0) return
-      ctx.strokeStyle = 'rgba(239, 68, 68, 0.75)'
-      ctx.lineWidth = stroke.size
-      ctx.lineCap = 'round'
-      ctx.lineJoin = 'round'
-
-      ctx.beginPath()
-      if (stroke.points.length === 1) {
-        ctx.arc(stroke.points[0].x, stroke.points[0].y, stroke.size / 2, 0, Math.PI * 2)
-        ctx.fillStyle = 'rgba(239, 68, 68, 0.75)'
-        ctx.fill()
-      } else {
-        ctx.moveTo(stroke.points[0].x, stroke.points[0].y)
-        for (let i = 1; i < stroke.points.length; i++) {
-          ctx.lineTo(stroke.points[i].x, stroke.points[i].y)
-        }
-        ctx.stroke()
-      }
-    })
-  }, [eraseStrokes, currentEraseStroke])
-
-  // Redraw select strokes on bgSelectCanvasRef
-  useEffect(() => {
-    const canvas = bgSelectCanvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-    const allStrokes = currentBgSelectStroke ? [...bgSelectStrokes, currentBgSelectStroke] : bgSelectStrokes
-    allStrokes.forEach((stroke) => {
-      if (!stroke.points || stroke.points.length === 0) return
-      ctx.strokeStyle = 'rgba(59, 130, 246, 0.65)'
-      ctx.lineWidth = stroke.size
-      ctx.lineCap = 'round'
-      ctx.lineJoin = 'round'
-
-      ctx.beginPath()
-      if (stroke.points.length === 1) {
-        ctx.arc(stroke.points[0].x, stroke.points[0].y, stroke.size / 2, 0, Math.PI * 2)
-        ctx.fillStyle = 'rgba(59, 130, 246, 0.65)'
-        ctx.fill()
-      } else {
-        ctx.moveTo(stroke.points[0].x, stroke.points[0].y)
-        for (let i = 1; i < stroke.points.length; i++) {
-          ctx.lineTo(stroke.points[i].x, stroke.points[i].y)
-        }
-        ctx.stroke()
-      }
-    })
-  }, [bgSelectStrokes, currentBgSelectStroke])
-
-  // Smart Background Removal Processor (Whole Subject Auto or Drawn Object Select Mode)
-  const handleRemoveBackground = async () => {
-    if (isBgProcessing) return
-    setIsBgProcessing(true)
-    try {
-      const sourceUrl = erasedImageUrl || fullscreenImageModal?.url
-      if (!sourceUrl) return
-
-      const img = new Image()
-      img.crossOrigin = 'anonymous'
-      img.src = sourceUrl
-      await new Promise((res, rej) => {
-        img.onload = res
-        img.onerror = rej
-      })
-
-      const width = img.naturalWidth || 800
-      const height = img.naturalHeight || 800
-      const canvas = document.createElement('canvas')
-      canvas.width = width
-      canvas.height = height
-      const ctx = canvas.getContext('2d')
-      ctx.drawImage(img, 0, 0, width, height)
-
-      const imgData = ctx.getImageData(0, 0, width, height)
-      const data = imgData.data
-
-      if (bgRemovalMode === 'select' && bgSelectStrokes.length > 0) {
-        // Draw user strokes to a full-res mask canvas
-        const maskCanvas = document.createElement('canvas')
-        maskCanvas.width = width
-        maskCanvas.height = height
-        const maskCtx = maskCanvas.getContext('2d')
-        maskCtx.fillStyle = '#000000'
-        maskCtx.fillRect(0, 0, width, height)
-
-        const scaleX = width / 800
-        const scaleY = height / 800
-
-        bgSelectStrokes.forEach((stroke) => {
-          if (!stroke.points || stroke.points.length === 0) return
-          maskCtx.strokeStyle = '#ffffff'
-          maskCtx.fillStyle = '#ffffff'
-          maskCtx.lineWidth = stroke.size * Math.max(scaleX, scaleY)
-          maskCtx.lineCap = 'round'
-          maskCtx.lineJoin = 'round'
-
-          maskCtx.beginPath()
-          if (stroke.points.length === 1) {
-            maskCtx.arc(stroke.points[0].x * scaleX, stroke.points[0].y * scaleY, (stroke.size * Math.max(scaleX, scaleY)) / 2, 0, Math.PI * 2)
-            maskCtx.fill()
-          } else {
-            maskCtx.moveTo(stroke.points[0].x * scaleX, stroke.points[0].y * scaleY)
-            for (let i = 1; i < stroke.points.length; i++) {
-              maskCtx.lineTo(stroke.points[i].x * scaleX, stroke.points[i].y * scaleY)
-            }
-            maskCtx.stroke()
-          }
-        })
-
-        const maskData = maskCtx.getImageData(0, 0, width, height).data
-
-        for (let i = 0; i < data.length; i += 4) {
-          const maskVal = maskData[i] // 255 = drawn object to keep, 0 = background
-          if (maskVal < 30) {
-            data[i + 3] = 0 // Remove unpainted background
-          } else if (maskVal < 230) {
-            data[i + 3] = Math.round(data[i + 3] * (maskVal / 255))
-          }
-        }
-      } else {
-        // Auto background flood-fill removal starting from borders
-        const cornerCoords = [
-          [0, 0], [width - 1, 0], [0, height - 1], [width - 1, height - 1],
-          [Math.floor(width / 2), 0], [0, Math.floor(height / 2)],
-          [width - 1, Math.floor(height / 2)], [Math.floor(width / 2), height - 1]
-        ]
-        let avgR = 0, avgG = 0, avgB = 0
-        cornerCoords.forEach(([cx, cy]) => {
-          const idx = (cy * width + cx) * 4
-          avgR += data[idx]
-          avgG += data[idx + 1]
-          avgB += data[idx + 2]
-        })
-        avgR /= cornerCoords.length
-        avgG /= cornerCoords.length
-        avgB /= cornerCoords.length
-
-        const colorDist = (r, g, b) => Math.sqrt((r - avgR) ** 2 + (g - avgG) ** 2 + (b - avgB) ** 2)
-        const visited = new Uint8Array(width * height)
-        const queue = []
-        const threshold = 48
-        const feather = 20
-
-        for (let x = 0; x < width; x += 2) {
-          queue.push([x, 0])
-          queue.push([x, height - 1])
-        }
-        for (let y = 0; y < height; y += 2) {
-          queue.push([0, y])
-          queue.push([width - 1, y])
-        }
-
-        let head = 0
-        while (head < queue.length) {
-          const [cx, cy] = queue[head++]
-          const pidx = (cy * width + cx) * 4
-          const pr = data[pidx]
-          const pg = data[pidx + 1]
-          const pb = data[pidx + 2]
-
-          const cd = colorDist(pr, pg, pb)
-          if (cd <= threshold) {
-            data[pidx + 3] = 0
-          } else if (cd <= threshold + feather) {
-            const ratio = (cd - threshold) / feather
-            data[pidx + 3] = Math.round(data[pidx + 3] * ratio)
-          } else {
-            continue
-          }
-
-          const neighbors = [[cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]]
-          for (let i = 0; i < neighbors.length; i++) {
-            const [nx, ny] = neighbors[i]
-            if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
-              const nidx = ny * width + nx
-              if (!visited[nidx]) {
-                visited[nidx] = 1
-                queue.push([nx, ny])
-              }
-            }
-          }
-        }
-      }
-
-      ctx.putImageData(imgData, 0, 0)
-      const cutoutDataUrl = canvas.toDataURL('image/png')
-      setBgRemovedImageUrl(cutoutDataUrl)
-      setIsBgRemoved(true)
-      showToast(bgRemovalMode === 'select' ? 'Object isolated & background removed! 🎯' : 'Background removed successfully!')
-    } catch (e) {
-      console.error('BG removal fallback:', e)
-      setIsBgRemoved(true)
-      showToast('Background cutout applied')
-    } finally {
-      setIsBgProcessing(false)
-    }
-  }
-
-  // Smart Object Erase Processor (Supports both Cutout to Reveal Background & AI Inpaint)
-  const handleApplyErase = async (mode = 'cutout') => {
-    if (eraseStrokes.length === 0 || isEraseProcessing) return
-    setIsEraseProcessing(true)
-    try {
-      const sourceUrl = bgRemovedImageUrl || erasedImageUrl || fullscreenImageModal?.url
-      if (!sourceUrl) return
-
-      const img = new Image()
-      img.crossOrigin = 'anonymous'
-      img.src = sourceUrl
-      await new Promise((res, rej) => {
-        img.onload = res
-        img.onerror = rej
-      })
-
-      const width = img.naturalWidth || 800
-      const height = img.naturalHeight || 800
-
-      if (mode === 'cutout') {
-        // Direct pixel alpha transparent erasing to reveal underlying background
-        const canvas = document.createElement('canvas')
-        canvas.width = width
-        canvas.height = height
-        const ctx = canvas.getContext('2d')
-        ctx.drawImage(img, 0, 0, width, height)
-
-        ctx.save()
-        ctx.globalCompositeOperation = 'destination-out'
-        const scaleX = width / 800
-        const scaleY = height / 800
-
-        eraseStrokes.forEach((stroke) => {
-          if (!stroke.points || stroke.points.length === 0) return
-          const scaledSize = stroke.size * Math.max(scaleX, scaleY)
-          ctx.lineWidth = scaledSize
-          ctx.lineCap = 'round'
-          ctx.lineJoin = 'round'
-
-          if (stroke.points.length === 1) {
-            ctx.beginPath()
-            ctx.arc(stroke.points[0].x * scaleX, stroke.points[0].y * scaleY, scaledSize / 2, 0, Math.PI * 2)
-            ctx.fill()
-          } else {
-            ctx.beginPath()
-            ctx.moveTo(stroke.points[0].x * scaleX, stroke.points[0].y * scaleY)
-            for (let i = 1; i < stroke.points.length; i++) {
-              ctx.lineTo(stroke.points[i].x * scaleX, stroke.points[i].y * scaleY)
-            }
-            ctx.stroke()
-          }
-        })
-        ctx.restore()
-
-        const cutoutDataUrl = canvas.toDataURL('image/png')
-        setErasedImageUrl(cutoutDataUrl)
-        setIsObjectErased(true)
-        setEraseStrokes([])
-        setCurrentEraseStroke(null)
-        showToast('Object erased! Background is now visible through the cutout ')
-      } else {
-        // 1. Build mask canvas from erase strokes for AI Inpainting
-        const maskCanvas = document.createElement('canvas')
-        maskCanvas.width = width
-        maskCanvas.height = height
-        const maskCtx = maskCanvas.getContext('2d')
-        maskCtx.fillStyle = 'black'
-        maskCtx.fillRect(0, 0, width, height)
-
-        eraseStrokes.forEach((stroke) => {
-          if (!stroke.points || stroke.points.length === 0) return
-          maskCtx.strokeStyle = 'white'
-          maskCtx.fillStyle = 'white'
-          const scaleX = width / 800
-          const scaleY = height / 800
-          const scaledSize = stroke.size * Math.max(scaleX, scaleY)
-          maskCtx.lineWidth = scaledSize
-          maskCtx.lineCap = 'round'
-          maskCtx.lineJoin = 'round'
-
-          if (stroke.points.length === 1) {
-            maskCtx.beginPath()
-            maskCtx.arc(stroke.points[0].x * scaleX, stroke.points[0].y * scaleY, scaledSize / 2, 0, Math.PI * 2)
-            maskCtx.fill()
-          } else {
-            maskCtx.beginPath()
-            maskCtx.moveTo(stroke.points[0].x * scaleX, stroke.points[0].y * scaleY)
-            for (let i = 1; i < stroke.points.length; i++) {
-              maskCtx.lineTo(stroke.points[i].x * scaleX, stroke.points[i].y * scaleY)
-            }
-            maskCtx.stroke()
-          }
-        })
-
-        const maskData = maskCtx.getImageData(0, 0, width, height).data
-
-        // 2. Draw base image onto working canvas
-        const canvas = document.createElement('canvas')
-        canvas.width = width
-        canvas.height = height
-        const ctx = canvas.getContext('2d')
-        ctx.drawImage(img, 0, 0, width, height)
-        const imgData = ctx.getImageData(0, 0, width, height)
-        const data = imgData.data
-
-        // 3. Texture synthesis inpainting
-        const maxRadius = Math.min(50, Math.floor(Math.max(width, height) * 0.08))
-
-        for (let y = 0; y < height; y++) {
-          for (let x = 0; x < width; x++) {
-            const idx = (y * width + x) * 4
-            if (maskData[idx] > 60) {
-              let totalWeight = 0
-              let sumR = 0, sumG = 0, sumB = 0, sumA = 0
-              const rays = 16
-
-              for (let a = 0; a < rays; a++) {
-                const theta = (a * 2 * Math.PI) / rays
-                const dx = Math.cos(theta)
-                const dy = Math.sin(theta)
-
-                for (let r = 1; r <= maxRadius; r += 2) {
-                  const nx = Math.round(x + dx * r)
-                  const ny = Math.round(y + dy * r)
-                  if (nx < 0 || nx >= width || ny < 0 || ny >= height) break
-                  const nidx = (ny * width + nx) * 4
-                  if (maskData[nidx] <= 50) {
-                    const weight = 1 / (r * r)
-                    sumR += data[nidx] * weight
-                    sumG += data[nidx + 1] * weight
-                    sumB += data[nidx + 2] * weight
-                    sumA += data[nidx + 3] * weight
-                    totalWeight += weight
-                    break
-                  }
-                }
-              }
-
-              if (totalWeight > 0) {
-                data[idx] = Math.round(sumR / totalWeight)
-                data[idx + 1] = Math.round(sumG / totalWeight)
-                data[idx + 2] = Math.round(sumB / totalWeight)
-                data[idx + 3] = Math.round(sumA / totalWeight)
-              }
-            }
-          }
-        }
-
-        ctx.putImageData(imgData, 0, 0)
-        const inpaintedDataUrl = canvas.toDataURL('image/png')
-        setErasedImageUrl(inpaintedDataUrl)
-        setIsObjectErased(true)
-        setEraseStrokes([])
-        setCurrentEraseStroke(null)
-        showToast('AI Object erased and inpainted seamlessly ')
-      }
-    } catch (e) {
-      console.error('Erase error:', e)
-      showToast('Object erase completed ')
-    } finally {
-      setIsEraseProcessing(false)
-    }
-  }
-
-  const handleApplyEraseInpaint = () => handleApplyErase('inpaint')
-
-  // Studio Lightbox Multi-Layer Export & Download
-  const handleStudioExportDownload = async () => {
-    try {
-      showToast('Exporting high-resolution studio image... 📥')
-      const sourceUrl = bgRemovedImageUrl || erasedImageUrl || fullscreenImageModal?.url
-      if (!sourceUrl) return
-
-      const img = new Image()
-      img.crossOrigin = 'anonymous'
-      img.src = sourceUrl
-      await new Promise((res, rej) => {
-        img.onload = res
-        img.onerror = rej
-      })
-
-      const origW = img.naturalWidth || 1024
-      const origH = img.naturalHeight || 1024
-
-      // Calculate crop dimensions if aspect ratio is selected
-      let targetW = origW
-      let targetH = origH
-      let srcX = 0
-      let srcY = 0
-      let srcW = origW
-      let srcH = origH
-
-      if (modalCropRatio && modalCropRatio !== 'original') {
-        const ratioParts = modalCropRatio.split(':').map(Number)
-        if (ratioParts.length === 2 && ratioParts[0] > 0 && ratioParts[1] > 0) {
-          const targetRatio = ratioParts[0] / ratioParts[1]
-          const currentRatio = origW / origH
-
-          if (currentRatio > targetRatio) {
-            srcW = Math.round(origH * targetRatio)
-            srcX = Math.round((origW - srcW) / 2)
-            targetW = srcW
-            targetH = origH
-          } else {
-            srcH = Math.round(origW / targetRatio)
-            srcY = Math.round((origH - srcH) / 2)
-            targetW = origW
-            targetH = srcH
-          }
-        }
-      }
-
-      const canvas = document.createElement('canvas')
-      canvas.width = targetW
-      canvas.height = targetH
-      const ctx = canvas.getContext('2d')
-
-      // Draw background backdrop if specified
-      if (isBgRemoved) {
-        if (bgBackdropStyle === 'dark') {
-          ctx.fillStyle = '#090d16'
-          ctx.fillRect(0, 0, targetW, targetH)
-        } else if (bgBackdropStyle === 'white') {
-          ctx.fillStyle = '#ffffff'
-          ctx.fillRect(0, 0, targetW, targetH)
-        }
-      }
-
-      // Draw cropped image
-      ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, targetW, targetH)
-
-      // Draw markup strokes if any exist
-      if (markupStrokes.length > 0) {
-        const scaleX = targetW / 800
-        const scaleY = targetH / 800
-
-        markupStrokes.forEach((stroke) => {
-          if (!stroke.points || stroke.points.length === 0) return
-          ctx.beginPath()
-          ctx.strokeStyle = stroke.color
-          ctx.fillStyle = stroke.color
-          const scaledSize = stroke.size * Math.max(scaleX, scaleY)
-          ctx.lineWidth = scaledSize
-          ctx.lineCap = 'round'
-          ctx.lineJoin = 'round'
-
-          if (stroke.points.length === 1) {
-            ctx.arc(stroke.points[0].x * scaleX, stroke.points[0].y * scaleY, scaledSize / 2, 0, Math.PI * 2)
-            ctx.fill()
-          } else {
-            ctx.moveTo(stroke.points[0].x * scaleX, stroke.points[0].y * scaleY)
-            for (let i = 1; i < stroke.points.length; i++) {
-              ctx.lineTo(stroke.points[i].x * scaleX, stroke.points[i].y * scaleY)
-            }
-            ctx.stroke()
-          }
-        })
-      }
-
-      
-
-      canvas.toBlob((blob) => {
-        if (!blob) return
-        const downloadUrl = URL.createObjectURL(blob)
-        const link = document.createElement('a')
-        const rawTitle = fullscreenImageModal?.originalIdea || fullscreenImageModal?.prompt || 'thamili_studio'
-        const cleanName = rawTitle.slice(0, 24).replace(/[^a-zA-Z0-9]/g, '_')
-        link.href = downloadUrl
-        link.download = `thamili-${cleanName}.png`
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        URL.revokeObjectURL(downloadUrl)
-        showToast('Studio image exported successfully! ✓')
-      }, 'image/png')
-    } catch (e) {
-      console.error('Studio export failed:', e)
-      handleDirectDownload(sourceUrl, fullscreenImageModal?.originalIdea || fullscreenImageModal?.prompt)
-    }
-  }
 
   // Progressive Disclosure Plus Menu & Ratio Submenu
   const [isPlusMenuOpen, setIsPlusMenuOpen] = useState(false)
@@ -2412,6 +182,10 @@ export default function App() {
   const [selectedCategoryField, setSelectedCategoryField] = useState('All')
   const [categorySearchQuery, setCategorySearchQuery] = useState('')
   const [newFolderName, setNewFolderName] = useState('')
+  const [folderSearchQuery, setFolderSearchQuery] = useState('')
+  const [folderSortBy, setFolderSortBy] = useState('recent') // 'recent' | 'name' | 'count'
+  const [targetAssignImageId, setTargetAssignImageId] = useState(null)
+  const [isManageFoldersMode, setIsManageFoldersMode] = useState(false)
   const [toast, setToast] = useState(null)
   const [copiedPromptId, setCopiedPromptId] = useState(null)
 
@@ -3052,6 +826,54 @@ function generateCreativeReferencePrompt(concept, fileName = '') {
   return `High quality ${concept?.name || 'artistic'} style render of ${cleanSubject}, 8k resolution, detailed lighting`
 }
 
+/**
+ * Intelligent folder name suggestion engine based on user prompt, model, and concept styles
+ */
+function generateSuggestedFolderName(prompt = '', model = '', references = []) {
+  const p = (prompt || '').trim().toLowerCase()
+  const refName = (references[0]?.conceptName || references[0]?.name || references[0]?.style || '').toLowerCase()
+
+  if (refName.includes('hollywood') || p.includes('hollywood') || p.includes('glamour') || p.includes('tuxedo')) {
+    return 'Hollywood Glamour Portraits'
+  }
+  if (refName.includes('neon') || p.includes('cyberpunk') || p.includes('tokyo') || p.includes('neon') || p.includes('arcade')) {
+    return 'Cyberpunk & Tokyo Neon'
+  }
+  if (refName.includes('paint') || p.includes('oil painting') || p.includes('canvas') || p.includes('impressionist') || p.includes('watercolor')) {
+    return 'Oil & Fine Art Paintings'
+  }
+  if (refName.includes('anime') || refName.includes('chibi') || p.includes('anime') || p.includes('manga') || p.includes('kawaii')) {
+    return 'Anime & Manga Studio'
+  }
+  if (p.includes('car') || p.includes('supercar') || p.includes('automobile') || p.includes('ferrari') || p.includes('porsche')) {
+    return 'Automobiles & Supercars'
+  }
+  if (p.includes('bike') || p.includes('motorcycle') || p.includes('bullet') || p.includes('superbike')) {
+    return 'Motorcycles & Superbikes'
+  }
+  if (p.includes('flower') || p.includes('lotus') || p.includes('floral') || p.includes('bloom') || p.includes('rose') || p.includes('lavender')) {
+    return 'Floral & Botanical Art'
+  }
+  if (p.includes('nature') || p.includes('mountain') || p.includes('waterfall') || p.includes('landscape') || p.includes('sunset') || p.includes('forest')) {
+    return 'Scenic Nature & Landscapes'
+  }
+  if (p.includes('pongal') || p.includes('temple') || p.includes('tamil') || p.includes('chettinad') || p.includes('dravidian') || p.includes('gopuram') || p.includes('jallikattu')) {
+    return 'Tamil Cultural Heritage'
+  }
+  if (p.includes('portrait') || p.includes('person') || p.includes('man') || p.includes('woman') || p.includes('girl') || p.includes('face') || p.includes('fashion')) {
+    return 'Portrait Studio Collection'
+  }
+
+  // Extract clean keywords from prompt
+  const clean = prompt.replace(/[^\w\s]/g, '').trim()
+  const words = clean.split(/\s+/).filter((w) => w.length > 2).slice(0, 3)
+  if (words.length > 0) {
+    return words.map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') + ' Studio'
+  }
+
+  return `${model || 'Thamili'} Collection`
+}
+
   // Handle applying reference concept directly into composer on main page
   const handleApplyCategoryPrompt = (cat) => {
     setActiveTab('AI Image')
@@ -3107,16 +929,6 @@ function generateCreativeReferencePrompt(concept, fileName = '') {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
   }, [theme])
-
-  // Auto-scroll chat stream to bottom
-  useEffect(() => {
-    if (chatScrollRef.current) {
-      chatScrollRef.current.scrollTo({
-        top: chatScrollRef.current.scrollHeight,
-        behavior: 'smooth'
-      })
-    }
-  }, [chatMessages, isGenerating, generationStep])
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'))
@@ -3335,7 +1147,22 @@ function generateCreativeReferencePrompt(concept, fileName = '') {
       : galleryImages.filter((img) => img.folderId === viewingFolder.id)
     : currentFolderImages
 
-  // Create Manual User Folder
+  // Filter and sort folders in folder manager
+  const filteredFolders = useMemo(() => {
+    let list = [...combinedFolders]
+    if (folderSearchQuery.trim()) {
+      const q = folderSearchQuery.toLowerCase()
+      list = list.filter((f) => f.name.toLowerCase().includes(q))
+    }
+    if (folderSortBy === 'name') {
+      list.sort((a, b) => a.name.localeCompare(b.name))
+    } else if (folderSortBy === 'count') {
+      list.sort((a, b) => (b.count || 0) - (a.count || 0))
+    }
+    return list
+  }, [combinedFolders, folderSearchQuery, folderSortBy])
+
+  // Create Manual User Folder & assign pending image if applicable
   const handleCreateFolder = (e) => {
     if (e) e.preventDefault()
     if (!newFolderName.trim()) return
@@ -3349,9 +1176,50 @@ function generateCreativeReferencePrompt(concept, fileName = '') {
 
     setManualFolders((prev) => [newFolder, ...prev])
     setSelectedFolderId(newFolder.id)
+
+    if (targetAssignImageId) {
+      setGalleryImages((prev) =>
+        prev.map((img) => (img.id === targetAssignImageId ? { ...img, folderId: newFolder.id } : img))
+      )
+      setChatMessages((prev) =>
+        prev.map((msg) => (msg.id === targetAssignImageId ? { ...msg, folderId: newFolder.id, folderName: newFolder.name } : msg))
+      )
+      showToast(`Created & saved creation to "${newFolder.name}" 📁`)
+      setTargetAssignImageId(null)
+      setIsFolderModalOpen(false)
+    } else {
+      showToast(`Created folder "${newFolder.name}" 📁`)
+    }
+
     setNewFolderName('')
     setIsCreatingFolder(false)
-    showToast(`Created folder "${newFolder.name}" `)
+  }
+
+  // Select or assign folder
+  const handleSelectOrAssignFolder = (folder) => {
+    setSelectedFolderId(folder.id)
+    if (targetAssignImageId) {
+      setGalleryImages((prev) =>
+        prev.map((img) =>
+          img.id === targetAssignImageId
+            ? { ...img, folderId: folder.isManual ? folder.id : null, domain: folder.isAutoDomain ? folder.domain : img.domain }
+            : img
+        )
+      )
+      setChatMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === targetAssignImageId
+            ? { ...msg, folderId: folder.isManual ? folder.id : null, folderName: folder.name }
+            : msg
+        )
+      )
+      showToast(`Saved creation to folder "${folder.name}" 📁`)
+      setTargetAssignImageId(null)
+      setIsFolderModalOpen(false)
+    } else {
+      setViewingFolder(folder)
+      showToast(`Opened "${folder.name}"`)
+    }
   }
 
   // Delete manual folder
@@ -3470,7 +1338,10 @@ function generateCreativeReferencePrompt(concept, fileName = '') {
     const backendReferences = currentAttachedRefs.map((r) => ({
       name: r.name,
       data: r.preview,
-      type: r.type || 'reference'
+      type: r.type || 'reference',
+      conceptName: r.conceptName || '',
+      style: r.conceptName || r.domain || r.name || '',
+      conceptPrompt: r.conceptPrompt || ''
     }))
 
     const userMsgId = createId('msg-user')
@@ -3518,6 +1389,13 @@ function generateCreativeReferencePrompt(concept, fileName = '') {
       isRevealing: false,
       saved: false
     })
+
+    // Auto-assign folder name and open folder popup so user can confirm/edit or pick existing folder
+    const suggestedFolder = generateSuggestedFolderName(rawPromptText, selectedModel, currentAttachedRefs)
+    setNewFolderName(suggestedFolder)
+    setTargetAssignImageId(generationId)
+    setIsCreatingFolder(true)
+    setIsFolderModalOpen(true)
 
     // Rotating Status Steps during generation
     const stepIntervals = [800, 1600, 2500, 3400]
@@ -3727,10 +1605,23 @@ function generateCreativeReferencePrompt(concept, fileName = '') {
   // Copy Image / Prompt to Clipboard
   const handleCopyImageOrPrompt = async (imageUrl, promptText) => {
     try {
+      if (imageUrl && imageUrl.startsWith('data:image')) {
+        try {
+          const res = await fetch(imageUrl)
+          const blob = await res.blob()
+          await navigator.clipboard.write([
+            new ClipboardItem({ [blob.type || 'image/png']: blob })
+          ])
+          showToast('Image copied to clipboard! 📋')
+          return
+        } catch {
+          // Fallback if browser security blocks binary image clipboard copy
+        }
+      }
       if (promptText) {
         await navigator.clipboard.writeText(promptText)
         showToast('Prompt copied to clipboard! 📋')
-      } else {
+      } else if (imageUrl) {
         await navigator.clipboard.writeText(imageUrl)
         showToast('Image link copied! 📋')
       }
@@ -3759,6 +1650,51 @@ function generateCreativeReferencePrompt(concept, fileName = '') {
       showToast('Image link copied to clipboard! 🔗')
     } catch {
       showToast('Share link copied! 🔗')
+    }
+  }
+
+  // Curated list of prompt inspirations for 1-click generation
+  const INSPIRATIONAL_PROMPTS = [
+    'A majestic Chola Dynasty royal temple towering in golden hour mist, Dravidian architecture, intricate stone carvings, 8k cinematic masterpiece',
+    'Cyberpunk Chennai in 2088 with flying vehicles, glowing neon Tamil signage, holographic rain reflections, octane render',
+    'An ethereal Bharatanatyam dancer surrounded by glowing celestial lotus petals, fluid silk saree motion, dramatic studio lighting',
+    'A mystical white royal tiger resting in an ancient overgrown jungle temple in Tamil Nadu, sunbeams piercing through lush canopy, 8k',
+    'Cute chibi anime character in traditional pastel pink and gold pavadai saree holding a glowing lotus lantern, Makoto Shinkai aesthetic',
+    'Cinematic close-up portrait of a Tamil warrior king with ornate golden jewelry and battle armor, dramatic rim lighting, 85mm lens',
+    'Futuristic electric supercar parked on Marina Beach Chennai at twilight, neon reflections on wet sand, photorealistic reflections',
+    'Cozy traditional South Indian courtyard home during Pongal sunrise, colorful kolam art, clay pots, warm golden atmospheric lighting',
+    'Mythological Garuda soaring above misty sacred mountains in the Western Ghats, volumetric god rays, epic fantasy art',
+    'Steampunk robotic temple elephant adorned with glowing brass gears and glowing turquoise gems, intricate details, photorealistic'
+  ]
+
+  const handleRandomInspirePrompt = () => {
+    const randomPrompt = INSPIRATIONAL_PROMPTS[Math.floor(Math.random() * INSPIRATIONAL_PROMPTS.length)]
+    setIdeaText(randomPrompt)
+    showToast('✨ Inspired prompt loaded! Press Generate 🚀')
+    if (searchInputRef.current) {
+      searchInputRef.current.focus()
+      searchInputRef.current.select?.()
+    }
+  }
+
+  const handleRemixImage = (msg) => {
+    if (!msg) return
+    const basePrompt = msg.originalIdea || msg.prompt || ''
+    const variations = [
+      'dramatic volumetric lighting and vibrant atmosphere',
+      'golden hour cinematic lighting, ultra-detailed 8k masterpiece',
+      'cyberpunk neon glowing accents with high dynamic range',
+      'soft ethereal studio lighting, 85mm portrait depth of field'
+    ]
+    const chosenVar = variations[Math.floor(Math.random() * variations.length)]
+    const newPrompt = basePrompt.includes(',') ? `${basePrompt}, ${chosenVar}` : `${basePrompt}, with ${chosenVar}`
+    setIdeaText(newPrompt)
+    if (msg.ratio) setAspectRatio(msg.ratio)
+    showToast('🎨 Remix prompt loaded! Ready to generate variations ✨')
+    if (fullscreenImageModal) setFullscreenImageModal(null)
+    if (searchInputRef.current) {
+      searchInputRef.current.focus()
+      searchInputRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
   }
 
@@ -4513,7 +2449,7 @@ function generateCreativeReferencePrompt(concept, fileName = '') {
 
                         {/* PROMPT BAR CONTROLS */}
                         <div className="composer-action-bar">
-                          {/* LEFT CONTROLS: [ + ] [ Images ] */}
+                          {/* LEFT CONTROLS: [ + ] [ Inspire 🎲 ] */}
                           <div className="composer-left-actions">
                             <div className="plus-menu-anchor-wrap" ref={plusMenuRef}>
                               <button
@@ -4601,6 +2537,18 @@ function generateCreativeReferencePrompt(concept, fileName = '') {
                                 </div>
                               )}
                             </div>
+
+                            {/* INSPIRE / SURPRISE ME DICE BUTTON */}
+                            <button
+                              type="button"
+                              className="composer-inspire-btn"
+                              onClick={handleRandomInspirePrompt}
+                              title="Surprise me — Inspire with an epic prompt (🎲)"
+                            >
+                              <span className="inspire-sheen" />
+                              <Dices size={15} className="inspire-dice-icon" />
+                              <span className="inspire-label">Inspire</span>
+                            </button>
                           </div>
 
                           {/* RIGHT CONTROLS: [ Flash ▼ ] [ Generate ] */}
@@ -4675,17 +2623,24 @@ function generateCreativeReferencePrompt(concept, fileName = '') {
                               )}
                             </div>
 
-                            {/* PRIMARY GENERATE BUTTON */}
+                            {/* PRIMARY GENERATE / STOP BUTTON */}
                             <button
                               type="button"
-                              className={`composer-generate-btn ${isGenerating ? 'btn-generating' : ''}`}
-                              disabled={isGenerating}
-                              onClick={() => handleGenerateFromIdea()}
-                              title="Generate image"
+                              className={`composer-generate-btn ${isGenerating ? 'btn-generating is-stop-btn' : ''}`}
+                              onClick={isGenerating ? handleStopGenerating : () => handleGenerateFromIdea()}
+                              title={isGenerating ? "Stop generating" : "Generate image"}
+                              aria-label={isGenerating ? "Stop generating" : "Generate image"}
                             >
-                              <span className="btn-generate-sheen" />
-                              
-                              <span className="generate-btn-text">Generate</span>
+                              {isGenerating ? (
+                                <span className="composer-stop-icon-wrapper">
+                                  <Square size={13} fill="currentColor" strokeWidth={0} className="composer-stop-icon" />
+                                </span>
+                              ) : (
+                                <>
+                                  <span className="btn-generate-sheen" />
+                                  <span className="generate-btn-text">Generate</span>
+                                </>
+                              )}
                             </button>
                           </div>
                         </div>
@@ -4957,7 +2912,7 @@ function generateCreativeReferencePrompt(concept, fileName = '') {
                                   </div>
                                 )}
 
-                                {/* In-Card Bottom Overlay: Edit Pill (Bottom-Left) */}
+                                {/* In-Card Bottom Overlay: Edit & Remix Pills (Bottom-Left) */}
                                 {hasImage && (
                                   <div className="chat-img-in-card-bottom-overlay">
                                     <button
@@ -4983,7 +2938,7 @@ function generateCreativeReferencePrompt(concept, fileName = '') {
                                 {hasImage && (
                                   <div className="chat-img-watermark-logo" title="Created with Thamili AI">
                                     <img
-                                      src={thamiliLogoImg}
+                                      src={thamiliWatermarkImg}
                                       alt="Thamili AI"
                                       className="chat-img-watermark-icon"
                                     />
@@ -5250,6 +3205,18 @@ function generateCreativeReferencePrompt(concept, fileName = '') {
                                 </div>
                               )}
                             </div>
+
+                            {/* INSPIRE / SURPRISE ME DICE BUTTON */}
+                            <button
+                              type="button"
+                              className="composer-inspire-btn"
+                              onClick={handleRandomInspirePrompt}
+                              title="Surprise me — Inspire with an epic prompt (🎲)"
+                            >
+                              <span className="inspire-sheen" />
+                              <Dices size={15} className="inspire-dice-icon" />
+                              <span className="inspire-label">Inspire</span>
+                            </button>
                           </div>
 
                           {/* RIGHT CONTROLS: [ Flash ▼ ] [ Generate ] */}
@@ -5324,17 +3291,24 @@ function generateCreativeReferencePrompt(concept, fileName = '') {
                               )}
                             </div>
 
-                            {/* PRIMARY GENERATE BUTTON */}
+                            {/* PRIMARY GENERATE / STOP BUTTON */}
                             <button
                               type="button"
-                              className={`composer-generate-btn ${isGenerating ? 'btn-generating' : ''}`}
-                              disabled={isGenerating}
-                              onClick={() => handleGenerateFromIdea()}
-                              title="Generate image"
+                              className={`composer-generate-btn ${isGenerating ? 'btn-generating is-stop-btn' : ''}`}
+                              onClick={isGenerating ? handleStopGenerating : () => handleGenerateFromIdea()}
+                              title={isGenerating ? "Stop generating" : "Generate image"}
+                              aria-label={isGenerating ? "Stop generating" : "Generate image"}
                             >
-                              <span className="btn-generate-sheen" />
-                              
-                              <span className="generate-btn-text">Generate</span>
+                              {isGenerating ? (
+                                <span className="composer-stop-icon-wrapper">
+                                  <Square size={13} fill="currentColor" strokeWidth={0} className="composer-stop-icon" />
+                                </span>
+                              ) : (
+                                <>
+                                  <span className="btn-generate-sheen" />
+                                  <span className="generate-btn-text">Generate</span>
+                                </>
+                              )}
                             </button>
                           </div>
                         </div>
@@ -5942,87 +3916,145 @@ function generateCreativeReferencePrompt(concept, fileName = '') {
             className="modal-content folder-popup-modal"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* VIEW 1: ONLY FOLDERS LIST (Default View) */}
+            {/* VIEW 1: ONLY FOLDERS LIST (Default View Matching Screenshot) */}
             {!viewingFolder ? (
               <>
                 <div className="modal-header">
                   <div className="modal-title-group">
-                    <Layers size={20} className="modal-title-icon" />
-                    <h3 className="modal-title">Saved Gallery & Folders</h3>
+                    <div className="modal-title-icon-box">
+                      <Folder size={18} />
+                    </div>
+                    <div>
+                      <h3 className="modal-title">Saved Gallery & Folders</h3>
+                      <p className="modal-subtitle">Organize your saved creations</p>
+                    </div>
                   </div>
-                  <button
-                    className="modal-close-btn"
-                    onClick={() => {
-                      setIsFolderModalOpen(false)
-                      setIsGalleryOpen(false)
-                      setIsCreatingFolder(false)
-                      setViewingFolder(null)
-                    }}
-                  >
-                    <X size={17} />
-                  </button>
+                  <div className="modal-header-actions">
+                    <button
+                      type="button"
+                      className="btn-create-folder-pill"
+                      onClick={() => {
+                        setIsCreatingFolder((prev) => !prev)
+                        if (!isCreatingFolder && !newFolderName) {
+                          setNewFolderName('My New Collection')
+                        }
+                      }}
+                    >
+                      <Plus size={15} />
+                      <span>Create New Folder</span>
+                    </button>
+                    <button
+                      className="modal-close-btn"
+                      onClick={() => {
+                        setIsFolderModalOpen(false)
+                        setIsGalleryOpen(false)
+                        setIsCreatingFolder(false)
+                        setViewingFolder(null)
+                        setTargetAssignImageId(null)
+                      }}
+                      title="Close"
+                    >
+                      <X size={17} />
+                    </button>
+                  </div>
                 </div>
 
-                {/* Top Action Bar: [ + Create New Folder ] */}
-                <div className="folder-top-actions">
-                  <button
-                    type="button"
-                    className={`btn-create-folder-glass ${isCreatingFolder ? 'active' : ''}`}
-                    onClick={() => setIsCreatingFolder((prev) => !prev)}
-                  >
-                    <FolderPlus size={15} />
-                    <span>Create New Folder</span>
-                  </button>
-                </div>
-
-                {/* Inline iOS Glass Folder Creator Form */}
+                {/* Inline Folder Creator / Auto-assigned Prompt Box */}
                 {isCreatingFolder && (
                   <form onSubmit={handleCreateFolder} className="folder-create-glass-card">
-                    <input
-                      className="input-field"
-                      placeholder="Enter folder name (e.g. Private Photos, Favorites)..."
-                      value={newFolderName}
-                      autoFocus
-                      onChange={(e) => setNewFolderName(e.target.value)}
-                    />
-                    <div className="folder-create-actions">
-                      <button
-                        type="button"
-                        className="btn-cancel-glass"
-                        onClick={() => {
-                          setIsCreatingFolder(false)
-                          setNewFolderName('')
-                        }}
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="submit"
-                        className="btn-add-folder"
-                        disabled={!newFolderName.trim()}
-                      >
-                        <Check size={14} />
-                        <span>Create Folder</span>
-                      </button>
+                    <div className="folder-create-header">
+                      <Sparkles size={14} className="folder-sparkle-icon" />
+                      <span>{targetAssignImageId ? 'Auto-Assigned Folder Name for this Creation' : 'Create New Folder'}</span>
+                    </div>
+                    <div className="folder-create-input-row">
+                      <input
+                        className="input-field folder-name-input"
+                        placeholder="Enter folder name..."
+                        value={newFolderName}
+                        autoFocus
+                        onChange={(e) => setNewFolderName(e.target.value)}
+                      />
+                      <div className="folder-create-actions">
+                        <button
+                          type="button"
+                          className="btn-cancel-glass"
+                          onClick={() => {
+                            setIsCreatingFolder(false)
+                            if (!targetAssignImageId) setNewFolderName('')
+                          }}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="btn-add-folder"
+                          disabled={!newFolderName.trim()}
+                        >
+                          <Check size={14} />
+                          <span>{targetAssignImageId ? 'OK / Save Folder' : 'Create Folder'}</span>
+                        </button>
+                      </div>
                     </div>
                   </form>
                 )}
 
+                {/* Search & Sort Controls Bar */}
+                <div className="folder-search-sort-bar">
+                  <div className="folder-search-box">
+                    <Search size={15} className="folder-search-icon" />
+                    <input
+                      type="text"
+                      className="folder-search-input"
+                      placeholder="Search folders..."
+                      value={folderSearchQuery}
+                      onChange={(e) => setFolderSearchQuery(e.target.value)}
+                    />
+                    {folderSearchQuery && (
+                      <button
+                        type="button"
+                        className="folder-search-clear"
+                        onClick={() => setFolderSearchQuery('')}
+                      >
+                        <X size={12} />
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="folder-sort-box">
+                    <SlidersHorizontal size={13} className="folder-sort-icon" />
+                    <select
+                      className="folder-sort-select"
+                      value={folderSortBy}
+                      onChange={(e) => setFolderSortBy(e.target.value)}
+                    >
+                      <option value="recent">Sort by: Recently updated</option>
+                      <option value="name">Sort by: Name (A-Z)</option>
+                      <option value="count">Sort by: Photo count</option>
+                    </select>
+                  </div>
+                </div>
+
                 {/* Folders List Header */}
                 <div className="modal-divider-text">
-                  <span>Folders ({combinedFolders.length})</span>
+                  <span>FOLDERS ({filteredFolders.length})</span>
+                  {targetAssignImageId && (
+                    <span className="folder-target-hint">Click a folder to assign creation</span>
+                  )}
                 </div>
 
                 <div className="existing-folders-list custom-scroll">
-                  {combinedFolders.length === 0 ? (
-                    <p className="empty-folders-note">No folders yet. Generate an image or create a folder!</p>
+                  {filteredFolders.length === 0 ? (
+                    <div className="empty-folders-note">
+                      <Folder size={26} className="empty-folder-icon" />
+                      <p>No matching folders found. Create one above!</p>
+                    </div>
                   ) : (
-                    combinedFolders.map((folder) => {
+                    filteredFolders.map((folder) => {
                       const theme = getFolderTheme(folder.name)
                       return (
                         <div
                           key={folder.id}
-                          className="folder-list-item"
+                          className={`folder-list-item ${selectedFolderId === folder.id ? 'is-selected' : ''}`}
                           style={{
                             '--folder-color': theme.iconColor,
                             '--folder-border': theme.border,
@@ -6033,10 +4065,7 @@ function generateCreativeReferencePrompt(concept, fileName = '') {
                             '--folder-badge-bg': theme.badgeBg,
                             '--folder-badge-text': theme.badgeText
                           }}
-                          onClick={() => {
-                            setSelectedFolderId(folder.id)
-                            setViewingFolder(folder)
-                          }}
+                          onClick={() => handleSelectOrAssignFolder(folder)}
                         >
                           <div className="folder-item-left">
                             <div
@@ -6050,8 +4079,8 @@ function generateCreativeReferencePrompt(concept, fileName = '') {
                               <Folder size={18} />
                             </div>
                             <div className="folder-item-info">
-                              <div className="folder-item-name">{folder.name}</div>
-                              <div className="folder-item-meta">
+                              <div className="folder-item-title-row">
+                                <span className="folder-item-name">{folder.name}</span>
                                 <span
                                   className="folder-badge-pill"
                                   style={{
@@ -6059,16 +4088,19 @@ function generateCreativeReferencePrompt(concept, fileName = '') {
                                     color: theme.badgeText
                                   }}
                                 >
-                                  {folder.isAutoDomain ? 'Domain' : 'Private'}
+                                  {folder.isAutoDomain ? 'DOMAIN' : 'CUSTOM'}
                                 </span>
+                              </div>
+                              <div className="folder-item-meta">
+                                <span>{folder.count || 0} {folder.count === 1 ? 'photo' : 'photos'}</span>
                                 <span>•</span>
-                                <span>{folder.count} {folder.count === 1 ? 'photo' : 'photos'}</span>
+                                <span>Updated recently</span>
                               </div>
                             </div>
                           </div>
 
                           <div className="folder-item-right" onClick={(e) => e.stopPropagation()}>
-                            {folder.isManual && (
+                            {isManageFoldersMode && folder.isManual && (
                               <button
                                 className="btn-delete-folder-icon"
                                 title="Delete folder"
@@ -6080,11 +4112,8 @@ function generateCreativeReferencePrompt(concept, fileName = '') {
                             <div
                               className="folder-enter-chevron"
                               style={{ color: theme.iconColor }}
-                              title="Open folder"
-                              onClick={() => {
-                                setSelectedFolderId(folder.id)
-                                setViewingFolder(folder)
-                              }}
+                              title="Select / Open folder"
+                              onClick={() => handleSelectOrAssignFolder(folder)}
                             >
                               <ChevronRight size={17} />
                             </div>
@@ -6098,12 +4127,22 @@ function generateCreativeReferencePrompt(concept, fileName = '') {
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn-secondary"
+                    className={`btn-manage-folders-toggle ${isManageFoldersMode ? 'active' : ''}`}
+                    onClick={() => setIsManageFoldersMode((prev) => !prev)}
+                  >
+                    <SlidersHorizontal size={14} />
+                    <span>{isManageFoldersMode ? 'Done managing' : 'Manage folders'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn-secondary btn-close-pill"
                     onClick={() => {
                       setIsFolderModalOpen(false)
                       setIsGalleryOpen(false)
                       setIsCreatingFolder(false)
                       setViewingFolder(null)
+                      setTargetAssignImageId(null)
                     }}
                   >
                     Close
@@ -7543,887 +5582,23 @@ function generateCreativeReferencePrompt(concept, fileName = '') {
         </div>
       )}
 
-      {/* ================= FULLSCREEN EXPANDED IMAGE LIGHTBOX MODAL ================= */}
+      {/* ================= FULLSCREEN EXPANDED IMAGE LIGHTBOX / STUDIO EDITOR ================= */}
       {fullscreenImageModal && (
-        <div
-          className="fullscreen-lightbox-backdrop"
-          onClick={() => setFullscreenImageModal(null)}
-          role="dialog"
-          aria-modal="true"
-        >
-          <div
-            className="fullscreen-lightbox-dialog"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Top Bar Controls */}
-            <div className="fullscreen-lightbox-header">
-              <div className="fullscreen-header-left-spacer" />
-
-              {/* Top Center Editor Toolbar Pill */}
-              <div className="fullscreen-editor-toolbar-pill">
-                <button
-                  type="button"
-                  className={`editor-tool-btn ${activeEditorTool === 'markup' ? 'active-tool' : ''}`}
-                  onClick={() => {
-                    const next = activeEditorTool === 'markup' ? null : 'markup'
-                    setActiveEditorTool(next)
-                    if (next) showToast('Markup mode active — Draw & annotate on image ✏️')
-                  }}
-                  title="Markup"
-                >
-                  <PenLine size={14} className="editor-tool-icon" />
-                  <span>Markup</span>
-                </button>
-                <button
-                  type="button"
-                  className={`editor-tool-btn ${activeEditorTool === 'comment' ? 'active-tool' : ''}`}
-                  onClick={() => {
-                    const next = activeEditorTool === 'comment' ? null : 'comment'
-                    setActiveEditorTool(next)
-                    if (next) showToast('Comment mode — Click anywhere on the image to add notes 💬')
-                  }}
-                  title="Comment"
-                >
-                  <MessageSquarePlus size={14} className="editor-tool-icon" />
-                  <span>Comment</span>
-                  {imageComments.length > 0 && (
-                    <span className="tool-count-badge">{imageComments.length}</span>
-                  )}
-                </button>
-                <button
-                  type="button"
-                  className={`editor-tool-btn ${activeEditorTool === 'removebg' ? 'active-tool' : ''}`}
-                  onClick={() => {
-                    const next = activeEditorTool === 'removebg' ? null : 'removebg'
-                    setActiveEditorTool(next)
-                    if (next) showToast('AI Background Removal Studio ✂️')
-                  }}
-                  title="Remove BG"
-                >
-                  <Scissors size={14} className="editor-tool-icon" />
-                  <span>Remove BG</span>
-                </button>
-                <button
-                  type="button"
-                  className={`editor-tool-btn ${activeEditorTool === 'erase' ? 'active-tool' : ''}`}
-                  onClick={() => {
-                    const next = activeEditorTool === 'erase' ? null : 'erase'
-                    setActiveEditorTool(next)
-                    if (next) showToast('Object Eraser brush active — Highlight objects to erase 🧹')
-                  }}
-                  title="Erase"
-                >
-                  <Eraser size={14} className="editor-tool-icon" />
-                  <span>Erase</span>
-                </button>
-                <button
-                  type="button"
-                  className={`editor-tool-btn ${activeEditorTool === 'resize' ? 'active-tool' : ''}`}
-                  onClick={() => {
-                    const next = activeEditorTool === 'resize' ? null : 'resize'
-                    setActiveEditorTool(next)
-                    if (next) showToast('Resize & Aspect Ratio framing 📐')
-                  }}
-                  title="Resize"
-                >
-                  <Crop size={14} className="editor-tool-icon" />
-                  <span>Resize</span>
-                </button>
-              </div>
-
-              <div className="fullscreen-header-actions">
-                <button
-                  type="button"
-                  className="fullscreen-glass-btn"
-                  onClick={handleStudioExportDownload}
-                  title="Download studio image"
-                >
-                  <Download size={18} />
-                </button>
-                <button
-                  type="button"
-                  className="fullscreen-glass-btn"
-                  onClick={() => handleCopyImageOrPrompt(fullscreenImageModal.url, fullscreenImageModal.originalIdea || fullscreenImageModal.prompt)}
-                  title="Copy prompt"
-                >
-                  <Copy size={18} />
-                </button>
-                <button
-                  type="button"
-                  className="fullscreen-glass-btn"
-                  onClick={() => handleShareImage(fullscreenImageModal.url, fullscreenImageModal.originalIdea || fullscreenImageModal.prompt)}
-                  title="Share image"
-                >
-                  <Share2 size={18} />
-                </button>
-                <button
-                  type="button"
-                  className="fullscreen-glass-btn btn-close-fullscreen"
-                  onClick={() => setFullscreenImageModal(null)}
-                  title="Close (Esc)"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-            </div>
-
-            {/* FLOATING TOOL SETTINGS DRAWER */}
-            {activeEditorTool && (
-              <div className="fullscreen-tool-drawer-overlay">
-                {/* 1. MARKUP TOOLBAR */}
-                {activeEditorTool === 'markup' && (
-                  <div className="tool-drawer-card">
-                    <div className="drawer-section">
-                      <span className="drawer-label">Color</span>
-                      <div className="drawer-colors-row">
-                        {['#10b981', '#2563eb', '#ef4444', '#f59e0b', '#ffffff', '#0f172a'].map((c) => (
-                          <button
-                            key={c}
-                            type="button"
-                            className={`color-dot-btn ${markupColor === c ? 'active' : ''}`}
-                            style={{ backgroundColor: c }}
-                            onClick={() => setMarkupColor(c)}
-                            title={c}
-                          />
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="drawer-divider" />
-
-                    <div className="drawer-section">
-                      <span className="drawer-label">Size</span>
-                      <div className="drawer-sizes-row">
-                        {[2, 4, 8, 14].map((s) => (
-                          <button
-                            key={s}
-                            type="button"
-                            className={`size-pill-btn ${markupBrushSize === s ? 'active' : ''}`}
-                            onClick={() => setMarkupBrushSize(s)}
-                          >
-                            <span style={{ width: s * 1.4, height: s * 1.4, borderRadius: '50%', backgroundColor: 'currentColor' }} />
-                            <span>{s}px</span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="drawer-divider" />
-
-                    <div className="drawer-actions-row">
-                      <button
-                        type="button"
-                        className="drawer-action-btn"
-                        onClick={() => {
-                          setMarkupStrokes((prev) => prev.slice(0, -1))
-                        }}
-                        disabled={markupStrokes.length === 0}
-                        title="Undo stroke"
-                      >
-                        <Undo2 size={14} />
-                        <span>Undo</span>
-                      </button>
-                      <button
-                        type="button"
-                        className="drawer-action-btn btn-clear-danger"
-                        onClick={() => {
-                          setMarkupStrokes([])
-                          setCurrentStroke(null)
-                          showToast('Markup canvas cleared')
-                        }}
-                        disabled={markupStrokes.length === 0}
-                        title="Clear markup"
-                      >
-                        <RotateCcw size={14} />
-                        <span>Clear</span>
-                      </button>
-                      <button
-                        type="button"
-                        className="drawer-action-btn btn-primary-apply"
-                        onClick={() => {
-                          setActiveEditorTool(null)
-                          showToast('Annotations saved to image ')
-                        }}
-                      >
-                        <Check size={14} />
-                        <span>Done</span>
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* 2. COMMENT TOOLBAR */}
-                {activeEditorTool === 'comment' && (
-                  <div className="tool-drawer-card">
-                    <div className="drawer-info-text">
-                      <MessageSquarePlus size={15} className="drawer-info-icon" />
-                      <span>Click anywhere on the image to drop a note pin</span>
-                    </div>
-
-                    <div className="drawer-divider" />
-
-                    <div className="drawer-actions-row">
-                      <span className="drawer-badge-count">
-                        {imageComments.length} {imageComments.length === 1 ? 'Pin' : 'Pins'}
-                      </span>
-                      {imageComments.length > 0 && (
-                        <button
-                          type="button"
-                          className="drawer-action-btn btn-clear-danger"
-                          onClick={() => {
-                            setImageComments([])
-                            showToast('All comment pins cleared')
-                          }}
-                        >
-                          <Trash2 size={13} />
-                          <span>Clear All</span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* 3. REMOVE BG TOOLBAR */}
-                {activeEditorTool === 'removebg' && (
-                  <div className="tool-drawer-card">
-                    {/* Removal Mode: Auto Cutout or Select */}
-                    <div className="drawer-section">
-                      <span className="drawer-label">Mode</span>
-                      <div className="drawer-sizes-row">
-                        <button
-                          type="button"
-                          className={`size-pill-btn ${bgRemovalMode === 'auto' ? 'active' : ''}`}
-                          onClick={() => {
-                            setBgRemovalMode('auto')
-                            showToast('Auto Mode: Detects full subject')
-                          }}
-                        >
-                          <span>Auto Cutout</span>
-                        </button>
-                        <button
-                          type="button"
-                          className={`size-pill-btn ${bgRemovalMode === 'select' ? 'active' : ''}`}
-                          onClick={() => {
-                            setBgRemovalMode('select')
-                            showToast('Select Mode: Draw / paint over the object you want to keep 🎯')
-                          }}
-                        >
-                          <span>Select</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    {bgRemovalMode === 'select' && (
-                      <>
-                        <div className="drawer-divider" />
-                        <div className="drawer-section">
-                          <span className="drawer-label">Brush Size ({bgSelectBrushSize}px)</span>
-                          <div className="drawer-sizes-row">
-                            {[18, 32, 50, 70].map((s) => (
-                              <button
-                                key={s}
-                                type="button"
-                                className={`size-pill-btn ${bgSelectBrushSize === s ? 'active' : ''}`}
-                                onClick={() => setBgSelectBrushSize(s)}
-                              >
-                                <span>{s}px</span>
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      </>
-                    )}
-
-                    <div className="drawer-divider" />
-
-                    {/* Action button */}
-                    <div className="drawer-actions-row">
-                      {!isBgRemoved ? (
-                        <button
-                          type="button"
-                          className="drawer-action-btn btn-primary-apply"
-                          disabled={isBgProcessing || (bgRemovalMode === 'select' && bgSelectStrokes.length === 0)}
-                          onClick={handleRemoveBackground}
-                        >
-                          <Scissors size={14} />
-                          <span>
-                            {isBgProcessing
-                              ? 'Removing BG...'
-                              : bgRemovalMode === 'select'
-                              ? 'Remove Background'
-                              : 'Remove Background'}
-                          </span>
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          className="drawer-action-btn btn-clear-danger"
-                          onClick={() => {
-                            setIsBgRemoved(false)
-                            setBgRemovedImageUrl(null)
-                            showToast('Restored original background')
-                          }}
-                        >
-                          <RotateCcw size={14} />
-                          <span>Restore Original</span>
-                        </button>
-                      )}
-
-                      {bgRemovalMode === 'select' && !isBgRemoved && bgSelectStrokes.length > 0 && (
-                        <button
-                          type="button"
-                          className="drawer-action-btn"
-                          onClick={() => {
-                            setBgSelectStrokes((prev) => prev.slice(0, -1))
-                          }}
-                          title="Undo stroke"
-                        >
-                          <Undo2 size={13} />
-                          <span>Undo</span>
-                        </button>
-                      )}
-
-                      {bgRemovalMode === 'select' && !isBgRemoved && bgSelectStrokes.length > 0 && (
-                        <button
-                          type="button"
-                          className="drawer-action-btn btn-clear-danger"
-                          onClick={() => {
-                            setBgSelectStrokes([])
-                            setCurrentBgSelectStroke(null)
-                          }}
-                          title="Clear mask"
-                        >
-                          <RotateCcw size={13} />
-                          <span>Clear</span>
-                        </button>
-                      )}
-                    </div>
-
-                    {isBgRemoved && (
-                      <>
-                        <div className="drawer-divider" />
-                        <div className="drawer-section">
-                          <span className="drawer-label">Backdrop</span>
-                          <div className="drawer-sizes-row">
-                            {[
-                              { id: 'checkered', label: 'Transparent' },
-                              { id: 'dark', label: 'Dark' },
-                              { id: 'white', label: 'White' }
-                            ].map((b) => (
-                              <button
-                                key={b.id}
-                                type="button"
-                                className={`size-pill-btn ${bgBackdropStyle === b.id ? 'active' : ''}`}
-                                onClick={() => setBgBackdropStyle(b.id)}
-                              >
-                                <span>{b.label}</span>
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="drawer-divider" />
-                        <button
-                          type="button"
-                          className="drawer-action-btn btn-primary-apply"
-                          onClick={handleStudioExportDownload}
-                        >
-                          <Download size={14} />
-                          <span>Download PNG</span>
-                        </button>
-                      </>
-                    )}
-                  </div>
-                )}
-
-                {/* 4. ERASE TOOLBAR */}
-                {activeEditorTool === 'erase' && (
-                  <div className="tool-drawer-card">
-                    {/* Erase Mode Selector */}
-                    <div className="drawer-section">
-                      <span className="drawer-label">Erase Mode</span>
-                      <div className="drawer-sizes-row">
-                        <button
-                          type="button"
-                          className={`size-pill-btn ${eraseMode === 'cutout' ? 'active' : ''}`}
-                          onClick={() => {
-                            setEraseMode('cutout')
-                            showToast('Mode: Reveal Background (Cutout)')
-                          }}
-                        >
-                          
-                          <span>Reveal Background</span>
-                        </button>
-                        <button
-                          type="button"
-                          className={`size-pill-btn ${eraseMode === 'inpaint' ? 'active' : ''}`}
-                          onClick={() => {
-                            setEraseMode('inpaint')
-                            showToast('Mode: AI Inpaint Texture')
-                          }}
-                        >
-                          <Zap size={12} />
-                          <span>AI Inpaint</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="drawer-divider" />
-
-                    {/* Brush Size */}
-                    <div className="drawer-section">
-                      <span className="drawer-label">Brush Size ({eraseBrushSize}px)</span>
-                      <div className="drawer-sizes-row">
-                        {[12, 24, 36, 50, 70].map((s) => (
-                          <button
-                            key={s}
-                            type="button"
-                            className={`size-pill-btn ${eraseBrushSize === s ? 'active' : ''}`}
-                            onClick={() => setEraseBrushSize(s)}
-                          >
-                            <span>{s}px</span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="drawer-divider" />
-
-                    {/* Backdrop Pattern when Erased */}
-                    <div className="drawer-section">
-                      <span className="drawer-label">Background Pattern</span>
-                      <div className="drawer-sizes-row">
-                        {[
-                          { id: 'checkered', label: 'Transparent Grid' },
-                          { id: 'dark', label: 'Dark Studio' },
-                          { id: 'white', label: 'White Canvas' }
-                        ].map((b) => (
-                          <button
-                            key={b.id}
-                            type="button"
-                            className={`size-pill-btn ${eraseBackdropStyle === b.id ? 'active' : ''}`}
-                            onClick={() => setEraseBackdropStyle(b.id)}
-                          >
-                            <span>{b.label}</span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="drawer-divider" />
-
-                    <div className="drawer-actions-row">
-                      <button
-                        type="button"
-                        className="drawer-action-btn btn-primary-apply"
-                        disabled={eraseStrokes.length === 0 || isEraseProcessing}
-                        onClick={() => handleApplyErase(eraseMode)}
-                      >
-                        <Eraser size={14} />
-                        <span>
-                          {isEraseProcessing
-                            ? 'Erasing...'
-                            : eraseMode === 'cutout'
-                            ? 'Apply Erase (Cutout)'
-                            : 'Apply AI Inpaint'}
-                        </span>
-                      </button>
-
-                      {eraseStrokes.length > 0 && (
-                        <button
-                          type="button"
-                          className="drawer-action-btn"
-                          onClick={() => {
-                            setEraseStrokes((prev) => prev.slice(0, -1))
-                          }}
-                          title="Undo last stroke"
-                        >
-                          <Undo2 size={13} />
-                          <span>Undo</span>
-                        </button>
-                      )}
-
-                      {eraseStrokes.length > 0 && (
-                        <button
-                          type="button"
-                          className="drawer-action-btn btn-clear-danger"
-                          onClick={() => {
-                            setEraseStrokes([])
-                            setCurrentEraseStroke(null)
-                          }}
-                        >
-                          <RotateCcw size={13} />
-                          <span>Reset Mask</span>
-                        </button>
-                      )}
-
-                      {isObjectErased && (
-                        <button
-                          type="button"
-                          className="drawer-action-btn btn-clear-danger"
-                          onClick={() => {
-                            setErasedImageUrl(null)
-                            setIsObjectErased(false)
-                            setEraseStrokes([])
-                            showToast('Restored original image')
-                          }}
-                        >
-                          <RotateCcw size={13} />
-                          <span>Revert</span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* 5. RESIZE & ZOOM TOOLBAR */}
-                {activeEditorTool === 'resize' && (
-                  <div className="tool-drawer-card resize-compact-drawer">
-                    <div className="drawer-section">
-                      <span className="drawer-label">Aspect Ratio</span>
-                      <div className="drawer-sizes-row">
-                        {['original', '1:1', '16:9', '9:16', '4:3', '3:2'].map((r) => (
-                          <button
-                            key={r}
-                            type="button"
-                            className={`size-pill-btn ${modalCropRatio === r ? 'active' : ''}`}
-                            onClick={() => {
-                              setModalCropRatio(r)
-                              showToast(`Framed to ${r.toUpperCase()}`)
-                            }}
-                          >
-                            <span>{r === 'original' ? 'Original' : r}</span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="drawer-divider" />
-
-                    {/* Compact Zoom Pill Widget */}
-                    <div className="compact-zoom-widget">
-                      <div className="compact-zoom-label-group">
-                        <Search size={15} className="compact-zoom-icon" />
-                        <span className="compact-zoom-label">Zoom</span>
-                      </div>
-                      <div className="compact-zoom-stepper">
-                        <button
-                          type="button"
-                          className="compact-zoom-btn"
-                          onClick={() => setModalZoomScale((prev) => Math.max(0.25, parseFloat((prev - 0.1).toFixed(2))))}
-                          title="Zoom out (-10%)"
-                          disabled={modalZoomScale <= 0.25}
-                        >
-                          <Minus size={14} />
-                        </button>
-                        <button
-                          type="button"
-                          className="compact-zoom-percent-pill"
-                          onClick={() => setModalZoomScale(1.0)}
-                          title="Click to reset to 100%"
-                        >
-                          {Math.round(modalZoomScale * 100)}%
-                        </button>
-                        <button
-                          type="button"
-                          className="compact-zoom-btn"
-                          onClick={() => setModalZoomScale((prev) => Math.min(4.0, parseFloat((prev + 0.1).toFixed(2))))}
-                          title="Zoom in (+10%)"
-                          disabled={modalZoomScale >= 4.0}
-                        >
-                          <Plus size={14} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Center High-Res Image Stage */}
-            <div
-              className={`fullscreen-image-stage ${activeEditorTool ? 'has-active-tool-drawer' : ''}`}
-              onClick={() => {
-                if (!activeEditorTool && !pendingComment) {
-                  setFullscreenImageModal(null)
-                }
-              }}
-            >
-              <div
-                className={`fullscreen-rendered-wrapper ${isBgRemoved ? `bg-removed-mode bg-mode-${bgBackdropStyle}` : (isObjectErased || activeEditorTool === 'erase' ? `bg-removed-mode bg-mode-${eraseBackdropStyle}` : '')} ${activeEditorTool === 'comment' ? 'tool-comment-active' : ''} ${activeEditorTool ? 'has-active-tool-drawer' : ''}`}
-                data-ratio={modalCropRatio !== 'original' ? modalCropRatio : undefined}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  // Drop comment pin if comment tool is active
-                  if (activeEditorTool === 'comment') {
-                    const rect = e.currentTarget.getBoundingClientRect()
-                    const x = Math.max(5, Math.min(95, Math.round(((e.clientX - rect.left) / rect.width) * 100)))
-                    const y = Math.max(5, Math.min(95, Math.round(((e.clientY - rect.top) / rect.height) * 100)))
-                    setPendingComment({ x, y, text: '' })
-                  }
-                }}
-              >
-                {/* Background Removal Scanning Laser Effect */}
-                {isBgProcessing && <div className="ai-bg-scan-beam" />}
-
-                {/* Main Rendered Image */}
-                <img
-                  src={bgRemovedImageUrl || erasedImageUrl || fullscreenImageModal.url}
-                  alt={fullscreenImageModal.originalIdea || fullscreenImageModal.prompt}
-                  className={`fullscreen-rendered-img ${isObjectErased ? 'erased-inpainted-active' : ''}`}
-                  style={{
-                    transform: `scale(${modalZoomScale})`,
-                    transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
-                  }}
-                />
-
-                {/* 1. Interactive Canvas Layer for Freehand Markup Drawing (always mounted so annotations stay visible) */}
-                <canvas
-                  ref={markupCanvasRef}
-                  className="fullscreen-markup-canvas"
-                  width={800}
-                  height={800}
-                  style={{
-                    pointerEvents: activeEditorTool === 'markup' ? 'auto' : 'none',
-                    zIndex: activeEditorTool === 'markup' ? 8 : 6
-                  }}
-                  onPointerDown={(e) => {
-                    if (activeEditorTool !== 'markup') return
-                    const rect = e.currentTarget.getBoundingClientRect()
-                    const x = (e.clientX - rect.left) * (800 / rect.width)
-                    const y = (e.clientY - rect.top) * (800 / rect.height)
-                    setIsDrawingMarkup(true)
-                    setCurrentStroke({ color: markupColor, size: markupBrushSize, points: [{ x, y }] })
-                  }}
-                  onPointerMove={(e) => {
-                    if (!isDrawingMarkup || !currentStroke || activeEditorTool !== 'markup') return
-                    const rect = e.currentTarget.getBoundingClientRect()
-                    const x = (e.clientX - rect.left) * (800 / rect.width)
-                    const y = (e.clientY - rect.top) * (800 / rect.height)
-                    setCurrentStroke((prev) => prev ? { ...prev, points: [...prev.points, { x, y }] } : null)
-                  }}
-                  onPointerUp={() => {
-                    if (currentStroke && currentStroke.points.length > 0) {
-                      setMarkupStrokes((prev) => [...prev, currentStroke])
-                    }
-                    setCurrentStroke(null)
-                    setIsDrawingMarkup(false)
-                  }}
-                  onPointerLeave={() => {
-                    if (currentStroke && currentStroke.points.length > 0) {
-                      setMarkupStrokes((prev) => [...prev, currentStroke])
-                    }
-                    setCurrentStroke(null)
-                    setIsDrawingMarkup(false)
-                  }}
-                />
-
-                {/* 2. Interactive Canvas Layer for Object Eraser Brush */}
-                {activeEditorTool === 'erase' && (
-                  <canvas
-                    ref={eraseCanvasRef}
-                    className="fullscreen-erase-canvas"
-                    width={800}
-                    height={800}
-                    onPointerDown={(e) => {
-                      const rect = e.currentTarget.getBoundingClientRect()
-                      const x = (e.clientX - rect.left) * (800 / rect.width)
-                      const y = (e.clientY - rect.top) * (800 / rect.height)
-                      setIsErasing(true)
-                      setCurrentEraseStroke({ size: eraseBrushSize, points: [{ x, y }] })
-                    }}
-                    onPointerMove={(e) => {
-                      if (!isErasing || !currentEraseStroke) return
-                      const rect = e.currentTarget.getBoundingClientRect()
-                      const x = (e.clientX - rect.left) * (800 / rect.width)
-                      const y = (e.clientY - rect.top) * (800 / rect.height)
-                      setCurrentEraseStroke((prev) => prev ? { ...prev, points: [...prev.points, { x, y }] } : null)
-                    }}
-                    onPointerUp={() => {
-                      if (currentEraseStroke && currentEraseStroke.points.length > 0) {
-                        setEraseStrokes((prev) => [...prev, currentEraseStroke])
-                      }
-                      setCurrentEraseStroke(null)
-                      setIsErasing(false)
-                    }}
-                    onPointerLeave={() => {
-                      if (currentEraseStroke && currentEraseStroke.points.length > 0) {
-                        setEraseStrokes((prev) => [...prev, currentEraseStroke])
-                      }
-                      setCurrentEraseStroke(null)
-                      setIsErasing(false)
-                    }}
-                  />
-                )}
-
-                {/* 3. Interactive Canvas Layer for Freehand Object Selection in Remove BG Mode */}
-                {activeEditorTool === 'removebg' && bgRemovalMode === 'select' && !isBgRemoved && (
-                  <>
-                    <canvas
-                      ref={bgSelectCanvasRef}
-                      className="fullscreen-bg-select-canvas"
-                      width={800}
-                      height={800}
-                      onPointerDown={(e) => {
-                        const rect = e.currentTarget.getBoundingClientRect()
-                        const x = (e.clientX - rect.left) * (800 / rect.width)
-                        const y = (e.clientY - rect.top) * (800 / rect.height)
-                        setIsDrawingBgSelect(true)
-                        setCurrentBgSelectStroke({ size: bgSelectBrushSize, points: [{ x, y }] })
-                      }}
-                      onPointerMove={(e) => {
-                        if (!isDrawingBgSelect || !currentBgSelectStroke) return
-                        const rect = e.currentTarget.getBoundingClientRect()
-                        const x = (e.clientX - rect.left) * (800 / rect.width)
-                        const y = (e.clientY - rect.top) * (800 / rect.height)
-                        setCurrentBgSelectStroke((prev) => (prev ? { ...prev, points: [...prev.points, { x, y }] } : null))
-                      }}
-                      onPointerUp={() => {
-                        if (currentBgSelectStroke && currentBgSelectStroke.points.length > 0) {
-                          setBgSelectStrokes((prev) => [...prev, currentBgSelectStroke])
-                        }
-                        setCurrentBgSelectStroke(null)
-                        setIsDrawingBgSelect(false)
-                      }}
-                      onPointerLeave={() => {
-                        if (currentBgSelectStroke && currentBgSelectStroke.points.length > 0) {
-                          setBgSelectStrokes((prev) => [...prev, currentBgSelectStroke])
-                        }
-                        setCurrentBgSelectStroke(null)
-                        setIsDrawingBgSelect(false)
-                      }}
-                    />
-                    <div className="bg-selection-hint-pill">
-                      <span>Draw / paint over the object you want to keep</span>
-                    </div>
-                  </>
-                )}
-
-                {/* 3. Interactive Comment Pins Overlay */}
-                {imageComments.map((comment, idx) => (
-                  <div
-                    key={comment.id}
-                    className="comment-pin-marker"
-                    style={{ left: `${comment.x}%`, top: `${comment.y}%` }}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setActiveCommentCardId(activeCommentCardId === comment.id ? null : comment.id)
-                    }}
-                  >
-                    <div className="comment-pin-badge">
-                      <span>{idx + 1}</span>
-                    </div>
-
-                    {/* Expandable Comment Card Popover */}
-                    {activeCommentCardId === comment.id && (
-                      <div className="comment-pin-popover" onClick={(e) => e.stopPropagation()}>
-                        <div className="popover-header">
-                          <span className="popover-author">{comment.author}</span>
-                          <span className="popover-time">{comment.time}</span>
-                          <button
-                            type="button"
-                            className="btn-delete-comment"
-                            onClick={() => {
-                              setImageComments((prev) => prev.filter((c) => c.id !== comment.id))
-                              setActiveCommentCardId(null)
-                              showToast('Comment deleted')
-                            }}
-                            title="Delete note"
-                          >
-                            <Trash2 size={12} />
-                          </button>
-                        </div>
-                        <p className="popover-text">{comment.text}</p>
-                      </div>
-                    )}
-                  </div>
-                ))}
-
-                {/* 4. Pending Comment Input Popover */}
-                {pendingComment && (
-                  <div
-                    className="pending-comment-card"
-                    style={{ left: `${pendingComment.x}%`, top: `${pendingComment.y}%` }}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <div className="pending-card-header">
-                      <MessageSquare size={13} />
-                      <span>Add Note Pin</span>
-                    </div>
-                    <input
-                      type="text"
-                      className="pending-comment-input"
-                      placeholder="Type your note here..."
-                      value={pendingComment.text}
-                      onChange={(e) => setPendingComment({ ...pendingComment, text: e.target.value })}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && pendingComment.text.trim()) {
-                          setImageComments((prev) => [
-                            ...prev,
-                            {
-                              id: Date.now(),
-                              x: pendingComment.x,
-                              y: pendingComment.y,
-                              text: pendingComment.text.trim(),
-                              author: currentUser?.name || 'You',
-                              time: 'Just now'
-                            }
-                          ])
-                          setPendingComment(null)
-                          showToast('Note pinned to image! 📌')
-                        }
-                      }}
-                      autoFocus
-                    />
-                    <div className="pending-card-actions">
-                      <button
-                        type="button"
-                        className="btn-cancel-pending"
-                        onClick={() => setPendingComment(null)}
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="button"
-                        className="btn-save-pending"
-                        disabled={!pendingComment.text.trim()}
-                        onClick={() => {
-                          if (pendingComment.text.trim()) {
-                            setImageComments((prev) => [
-                              ...prev,
-                              {
-                                id: Date.now(),
-                                x: pendingComment.x,
-                                y: pendingComment.y,
-                                text: pendingComment.text.trim(),
-                                author: currentUser?.name || 'You',
-                                time: 'Just now'
-                              }
-                            ])
-                            setPendingComment(null)
-                            showToast('Note pinned to image! 📌')
-                          }
-                        }}
-                      >
-                        <Send size={12} />
-                        <span>Post</span>
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Official Thamili Watermark Logo */}
-                <div className="fullscreen-watermark-logo" title="Created with Thamili AI">
-                  <img
-                    src={thamiliLogoImg}
-                    alt="Thamili AI"
-                    className="fullscreen-watermark-icon"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ImageEditorModal
+          image={fullscreenImageModal}
+          currentUser={currentUser}
+          showToast={showToast}
+          onClose={() => setFullscreenImageModal(null)}
+          onSave={(updatedImage) => {
+            setGalleryImages((prev) =>
+              prev.map((item) => (item.id === updatedImage.id ? { ...item, ...updatedImage } : item))
+            )
+            if (currentGeneration && currentGeneration.id === updatedImage.id) {
+              setCurrentGeneration((prev) => ({ ...prev, ...updatedImage }))
+            }
+            setFullscreenImageModal(null)
+          }}
+        />
       )}
 
       {/* ================= GOOGLE GEMINI-STYLE SEARCH CHATS & HISTORY MODAL ================= */}

@@ -33,33 +33,7 @@ router.post('/generate', async (req, res) => {
       referenceImages: Array.isArray(referenceImages) ? referenceImages : []
     }
 
-    // 1. Attempt generation via high-performance FastAPI Python engine
-    try {
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 65000)
-
-      const pyResponse = await fetch(`${FASTAPI_URL}/api/generate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        signal: controller.signal
-      })
-
-      clearTimeout(timeoutId)
-
-      if (pyResponse.ok) {
-        const pyData = await pyResponse.json()
-        if (pyData && pyData.success && pyData.data) {
-          console.log('[Node Gateway] Generated successfully via FastAPI Python Engine!')
-          return res.status(200).json(pyData)
-        }
-      }
-      console.warn(`[Node Gateway] FastAPI returned status ${pyResponse.status}. Falling back to Node AI engine...`)
-    } catch (fastApiErr) {
-      console.warn(`[Node Gateway] FastAPI engine unreachable (${fastApiErr.message}). Cascading to Node.js AI Engine...`)
-    }
-
-    // 2. Fallback to Node.js asynchronous image service
+    // Generate directly via Hugging Face image pipeline
     const result = await generateImage(payload)
     return res.status(200).json({
       success: true,
