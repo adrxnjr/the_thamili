@@ -370,8 +370,9 @@ async def generate_with_neural_core(
         "censor_nsfw": True,
     }
 
+    horde_key = (os.getenv("AI_HORDE_API_KEY") or "").strip() or "0000000000"
     headers = {
-        "apikey": "0000000000",
+        "apikey": horde_key,
         "Content-Type": "application/json",
         "Client-Agent": "thamili:2.0:adrxnjr",
     }
