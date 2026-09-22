@@ -1233,6 +1233,7 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
     setIsGalleryOpen(false)
     setIsCreatingFolder(false)
     setViewingFolder(null)
+    setTargetAssignImageId(null)
     setActiveTab('AI Image')
     setImagesSubTab('studio')
 
@@ -1240,6 +1241,15 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
     const slug = (folder.name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-')
     if (slug) {
       window.history.pushState({ folderId: folder.id }, '', `/${slug}`)
+    }
+
+    // If there is a pending generation awaiting user folder selection, execute it directly now!
+    if (pendingGenerationRef.current) {
+      const pendingParams = pendingGenerationRef.current
+      pendingGenerationRef.current = null
+      executeRealGenerationPipeline(pendingParams, folder)
+      setNewFolderName('')
+      return
     }
 
     // Restore or open chat for this folder
@@ -1617,6 +1627,7 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
 
       const newImg = {
         id: generationId,
+        chatId: effectiveChatId,
         folderId: assignedFolder ? assignedFolder.id : null,
         folderName: assignedFolder ? assignedFolder.name : '',
         originalIdea: rawPromptText,
@@ -2009,15 +2020,18 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
   // Start fresh new chat session
   const handleResetToNewChat = () => {
     setActiveChatId(null)
+    setSelectedFolderId(null)
     setChatMessages([])
     setCurrentGeneration(null)
     setIdeaText('')
     setAttachedReferences([])
+    window.history.pushState({}, '', '/')
     showToast('Started new image chat session ')
   }
 
   // Navigate to Home Page / Studio from any tab or view
   const handleNavigateHome = () => {
+    setSelectedFolderId(null)
     setActiveTab('AI Image')
     setImagesSubTab('studio')
     setIsImagesDropdownOpen(true)
@@ -2284,7 +2298,6 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
                     <Layers size={14} className="sub-btn-icon sub-icon-layers" />
                     <span>Gallery & Folders</span>
                   </div>
-                  <span className="sub-count-badge">{galleryImages.length}</span>
                 </button>
 
                 {/* 3. Recent Searches & Chat History Section */}
@@ -4225,9 +4238,10 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
                         setNewFolderName('My New Collection')
                       }
                     }}
+                    title="Create New Folder"
+                    aria-label="Create New Folder"
                   >
-                    <Plus size={15} />
-                    <span>Create New Folder</span>
+                    <Plus size={16} />
                   </button>
                 )}
                 <button
@@ -4258,7 +4272,7 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
                 }}
               >
                 <Folder size={15} />
-                <span>Folders ({combinedFolders.length})</span>
+                <span>Folders</span>
               </button>
               <button
                 type="button"
@@ -4269,7 +4283,7 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
                 }}
               >
                 <ImageIcon size={15} />
-                <span>Gallery ({galleryImages.length})</span>
+                <span>Gallery</span>
               </button>
             </div>
 
@@ -4352,7 +4366,7 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
 
                 {/* Folders List Header */}
                 <div className="modal-divider-text">
-                  <span>FOLDERS ({filteredFolders.length})</span>
+                  <span>FOLDERS</span>
                   {targetAssignImageId && (
                     <span className="folder-target-hint">Click a folder to assign creation</span>
                   )}
@@ -4523,8 +4537,7 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
               <>
                 <div className="modal-gallery-container custom-scroll">
                   <div className="modal-divider-text">
-                    <span>ALL CREATIONS ({galleryImages.length})</span>
-                    <span className="folder-target-hint">All images ever created</span>
+                    <span>ALL CREATIONS</span>
                   </div>
 
                   {galleryImages.length === 0 ? (
@@ -4539,53 +4552,24 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
                           key={img.id}
                           className="modal-gallery-item"
                           onClick={() => {
-                            setFullscreenImageModal({
+                            handleLoadChatFromHistory({
+                              id: img.chatId || `chat-${img.id}`,
+                              query: img.originalIdea || img.prompt,
+                              title: img.originalIdea || img.prompt,
+                              image: img.url,
                               url: img.url,
-                              prompt: img.prompt,
-                              id: img.id
+                              domain: img.domain,
+                              ratio: img.ratio,
+                              createdAt: img.createdAt || 'Earlier'
                             })
                           }}
-                          title={img.prompt || 'Generated Artwork'}
                         >
                           <img
                             src={img.url}
-                            alt={img.prompt || 'Creation'}
+                            alt=""
                             className="modal-gallery-img"
                             loading="lazy"
                           />
-                          <div className="modal-gallery-overlay">
-                            <p className="modal-gallery-prompt" title={img.prompt}>
-                              {img.prompt}
-                            </p>
-                            <div className="modal-gallery-actions" onClick={(e) => e.stopPropagation()}>
-                              <button
-                                type="button"
-                                className="modal-gallery-btn"
-                                onClick={() => {
-                                  navigator.clipboard.writeText(img.prompt || '')
-                                  showToast('Prompt copied! 📋')
-                                }}
-                                title="Copy prompt"
-                              >
-                                <Copy size={13} />
-                              </button>
-                              <button
-                                type="button"
-                                className="modal-gallery-btn use-studio-btn"
-                                onClick={() => {
-                                  setIdeaText(img.originalIdea || img.prompt || '')
-                                  setIsFolderModalOpen(false)
-                                  setIsGalleryOpen(false)
-                                  setActiveTab('AI Image')
-                                  setImagesSubTab('studio')
-                                  showToast('Loaded prompt into studio 🎨')
-                                }}
-                                title="Open & use in Studio"
-                              >
-                                <span>Use</span>
-                              </button>
-                            </div>
-                          </div>
                         </div>
                       ))}
                     </div>

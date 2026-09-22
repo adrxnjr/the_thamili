@@ -4876,23 +4876,21 @@
 .btn-create-folder-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 7px 15px;
-  border-radius: var(--radius-full);
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
   color: #ffffff;
-  font-size: 0.82rem;
-  font-weight: 700;
   border: none;
   cursor: pointer;
-  box-shadow: 0 3px 12px rgba(99, 102, 241, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.3);
-  transition: all 0.2s var(--ease-apple);
-  white-space: nowrap;
+  box-shadow: 0 3px 10px rgba(14, 165, 233, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-create-folder-pill:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 5px 16px rgba(99, 102, 241, 0.45);
+  transform: scale(1.08);
+  box-shadow: 0 5px 14px rgba(14, 165, 233, 0.45);
 }
 
 .modal-close-btn {
@@ -5584,26 +5582,57 @@
 .folder-sort-icon {
   position: absolute;
   left: 10px;
-  color: var(--text-muted);
+  color: #0284c7;
   pointer-events: none;
 }
 
 .folder-sort-select {
-  padding: 7px 14px 7px 28px;
-  border-radius: var(--radius-full);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  background: rgba(255, 255, 255, 0.95);
+  padding: 6px 14px 6px 28px;
+  border-radius: 12px;
+  border: 1px solid rgba(14, 165, 233, 0.4);
+  background: rgba(240, 249, 255, 0.9);
   font-size: 0.78rem;
   font-weight: 600;
-  color: var(--text-main);
+  color: #0369a1;
   cursor: pointer;
   outline: none;
+  transition: all 0.2s ease;
+}
+
+.folder-sort-select:hover {
+  border-color: #0284c7;
+  background: rgba(224, 242, 254, 1);
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.15);
+}
+
+.folder-sort-select:focus {
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+}
+
+[data-theme="dark"] .folder-sort-icon {
+  color: #38bdf8;
 }
 
 [data-theme="dark"] .folder-sort-select {
-  background: rgba(30, 41, 59, 0.85);
-  border-color: rgba(255, 255, 255, 0.12);
-  color: #ffffff;
+  background: rgba(15, 23, 42, 0.85);
+  border-color: rgba(56, 189, 248, 0.35);
+  color: #7dd3fc;
+}
+
+[data-theme="dark"] .folder-sort-select:hover {
+  border-color: #38bdf8;
+  background: rgba(12, 74, 110, 0.3);
+}
+
+.folder-sort-select option {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+[data-theme="dark"] .folder-sort-select option {
+  background: #0f172a;
+  color: #f8fafc;
 }
 
 /* Modal Divider Header */
