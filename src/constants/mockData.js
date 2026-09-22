@@ -304,74 +304,112 @@ export const INITIAL_GUEST_HISTORY = [
 
 export const INITIAL_IMAGES = [
   {
-    id: 'sample-flower-1',
-    originalIdea: 'Vibrant pink blooming lotus in water pond',
-    prompt: 'Close-up photograph of a vibrant pink blooming lotus flower in a serene water pond with crystal clear dew drops on petals, warm soft morning sunlight, 8k resolution',
-    domain: 'Floral & Botanical Art',
-    ratio: '4:3',
-    url: 'https://images.unsplash.com/photo-1508615039623-a25605d2b022?w=1024&auto=format&fit=crop&q=85',
-    saved: true,
-    createdAt: 'Just now'
-  },
-  {
-    id: 'sample-car-1',
-    originalIdea: 'Futuristic blue cyber supercar in neon city street',
-    prompt: 'Futuristic sleek modern blue and cyan supercar parked in an aesthetic neon-lit city street at dusk, gleaming reflections, ultra high detail, 8k render',
-    domain: 'Automobiles & Supercars',
-    ratio: '4:3',
-    url: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1024&auto=format&fit=crop&q=85',
-    saved: true,
-    createdAt: 'Just now'
-  },
-  {
-    id: 'sample-bike-1',
-    originalIdea: 'Royal Enfield Bullet cruiser on scenic Ooty mountain road',
-    prompt: 'Classic vintage Royal Enfield Bullet cruiser motorcycle parked on a picturesque green mountain road in Ooty, gleaming chrome tank, golden sunrise mist, 8k photography',
-    domain: 'Motorcycles & Superbikes',
-    ratio: '4:3',
-    url: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=1024&auto=format&fit=crop&q=85',
-    saved: false,
-    createdAt: 'Just now'
-  },
-  {
-    id: 'sample-nature-1',
-    originalIdea: 'Scenic Courtallam cascading waterfall in rainforest',
-    prompt: 'Breathtaking scenic cascading Courtallam waterfall surrounded by lush green tropical rainforest, misty water spray with gentle rainbow, 8k landscape photography',
-    domain: 'Scenic Nature & Landscapes',
-    ratio: '4:3',
-    url: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=1024&auto=format&fit=crop&q=85',
-    saved: true,
-    createdAt: 'Just now'
-  },
-  {
-    id: 'sample-1',
-    originalIdea: 'Chettinad vintage house with teak pillars and Athangudi tiles',
-    prompt: 'Authentic 19th-century Chettinad vintage ancestral mansion with massive carved Burma teak wood pillars, hand-crafted Athangudi geometric tiles, sunlit central courtyard thinnai, vintage brass urns, 8k Hasselblad photography',
-    domain: 'Tamil Vintage Houses',
+    id: 'tamil-people-1',
+    folderId: 'domain-people',
+    folderName: 'People',
+    originalIdea: 'Traditional Bharatanatyam classical dancer in golden temple mandapam',
+    prompt: 'Graceful Tamil classical Bharatanatyam dancer in traditional maroon and gold silk costume, ornate temple jewelry, expressive mudra pose in an ancient stone temple mandapam, dramatic chiaroscuro lighting, 8k cinematic photography',
+    domain: 'People',
     ratio: '1:1',
+    url: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1024&auto=format&fit=crop&q=85',
+    saved: true,
+    createdAt: 'Just now'
+  },
+  {
+    id: 'tamil-nature-1',
+    folderId: 'domain-nature',
+    folderName: 'Nature',
+    originalIdea: 'Scenic Nilgiris tea plantations in misty mountain sunrise',
+    prompt: 'Breathtaking rolling emerald green tea estates in Nilgiris Ooty mountains, soft morning sun rays piercing through floating white mist, serene valley vista, 8k National Geographic landscape',
+    domain: 'Nature',
+    ratio: '16:9',
+    url: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=1024&auto=format&fit=crop&q=85',
+    saved: true,
+    createdAt: 'Just now'
+  },
+  {
+    id: 'tamil-animals-1',
+    folderId: 'domain-animals',
+    folderName: 'Animals',
+    originalIdea: 'Royal Tamil temple elephant adorned in golden nettipattam',
+    prompt: 'Magnificent Tamil heritage temple elephant adorned in traditional gold nettipattam head ornament and colorful ceremonial silks, walking majestically through temple corridor, warm divine glow, 8k photography',
+    domain: 'Animals',
+    ratio: '1:1',
+    url: 'https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?w=1024&auto=format&fit=crop&q=85',
+    saved: true,
+    createdAt: 'Just now'
+  },
+  {
+    id: 'tamil-places-1',
+    folderId: 'domain-places',
+    folderName: 'Places',
+    originalIdea: 'Thanjavur Brihadeeswarar Big Temple monumental stone gopuram',
+    prompt: 'Monumental 1000-year-old Thanjavur Brihadeeswarar Big Temple towering granite Vimana gopuram at golden sunset, intricate Chola architectural stone carvings, reflective temple pond, 8k architectural masterpiece',
+    domain: 'Places',
+    ratio: '16:9',
     url: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=1024&auto=format&fit=crop&q=85',
     saved: true,
-    createdAt: 'Aug 24'
+    createdAt: 'Just now'
   },
   {
-    id: 'sample-2',
-    originalIdea: 'Vintage Ambassador car on 1970s Madras street',
-    prompt: 'Vintage 1970s Hindustan Ambassador car parked on an old Madras colonial street under rain trees, vintage typography shop boards, morning chai stall, nostalgic warm Kodachrome film color grading, 8k',
-    domain: 'Tamil Vintage Cars & Streets',
+    id: 'tamil-education-1',
+    folderId: 'domain-education',
+    folderName: 'Education',
+    originalIdea: 'Ancient Tamil palm-leaf manuscripts and classical literature',
+    prompt: 'Ancient Tamil palm-leaf Olai Chuvadi manuscripts inscribed with classic Sangam poetry and Thirukkural verses, bronze stylus, oil lamp illumination, wooden scholar desk, 8k macro photography',
+    domain: 'Education',
     ratio: '1:1',
-    url: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=1024&auto=format&fit=crop&q=85',
-    saved: false,
-    createdAt: 'Aug 24'
+    url: 'https://images.unsplash.com/photo-1532012164546-f432f2e3777a?w=1024&auto=format&fit=crop&q=85',
+    saved: true,
+    createdAt: 'Just now'
   },
   {
-    id: 'sample-3',
-    originalIdea: 'Traditional village Thai Pongal with overflowing clay pot',
-    prompt: 'Traditional village Thai Pongal celebration in ancestral house open courtyard, decorated terracotta clay pot with boiling milk overflowing, open woodfire stove, tall fresh sugarcane, colorful rice flour Kolam, 8k National Geographic',
-    domain: 'Tamil Pongal Festival',
-    ratio: '16:9',
-    url: 'https://images.unsplash.com/photo-1609766857041-ed402ea8069a?w=1024&auto=format&fit=crop&q=85',
+    id: 'tamil-art-1',
+    folderId: 'domain-art',
+    folderName: 'Art',
+    originalIdea: 'Traditional Tanjore gold foil painting with rich gemstone inlays',
+    prompt: 'Masterpiece classical Thanjavur Tanjore painting with 22-carat gold foil relief work, semi-precious gem inlays, vivid mineral pigments, ornate teak wood frame, heritage Indian fine art, 8k',
+    domain: 'Art',
+    ratio: '1:1',
+    url: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=1024&auto=format&fit=crop&q=85',
     saved: true,
-    createdAt: 'Aug 24'
+    createdAt: 'Just now'
+  },
+  {
+    id: 'tamil-tech-1',
+    folderId: 'domain-technology',
+    folderName: 'Technology',
+    originalIdea: 'Cyberpunk Tamil futuristic neon temple city in 2099',
+    prompt: 'Futuristic Cyberpunk Chennai 2099 smart city skyline, towering holographic Dravidian temple gopurams glowing with neon Tamil typography, flying autonomous vehicles, wet reflective glass streets, 8k Unreal Engine 5 render',
+    domain: 'Technology',
+    ratio: '16:9',
+    url: 'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=1024&auto=format&fit=crop&q=85',
+    saved: true,
+    createdAt: 'Just now'
+  },
+  {
+    id: 'tamil-food-1',
+    folderId: 'domain-food',
+    folderName: 'Food',
+    originalIdea: 'Traditional Tamil banana leaf feast with crispy dosa and filter coffee',
+    prompt: 'Lavish traditional South Indian Tamil festive meal served on a fresh green banana leaf with golden crispy ghee roast dosa, piping hot sambar, coconut chutneys, medu vada, and frothy brass filter coffee, 8k culinary photography',
+    domain: 'Food',
+    ratio: '1:1',
+    url: 'https://images.unsplash.com/photo-1610192244261-3f33de3f55e4?w=1024&auto=format&fit=crop&q=85',
+    saved: true,
+    createdAt: 'Just now'
+  },
+  {
+    id: 'tamil-products-1',
+    folderId: 'domain-products',
+    folderName: 'Products',
+    originalIdea: 'Handcrafted pure Kanchipuram silk saree with rich gold zari',
+    prompt: 'Luxurious authentic handwoven Kanchipuram pure silk saree with intricate pure gold zari temple border and peacock motifs, accompanied by traditional brass Kuthu Vilakku lamp, rich fabric texture, 8k studio product photography',
+    domain: 'Products',
+    ratio: '1:1',
+    url: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=1024&auto=format&fit=crop&q=85',
+    saved: true,
+    createdAt: 'Just now'
   }
 ]
 

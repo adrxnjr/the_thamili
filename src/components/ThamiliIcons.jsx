@@ -116,23 +116,7 @@ export function ThamiliLogoIcon({ className = 'logo-icon-svg' }) {
 export function ThamiliWordmark({ className = 'brand-title', isHero = false }) {
   return (
     <span className={`thamili-brand-text ${className} ${isHero ? 'hero-brand-text' : ''}`}>
-      <span className="thamili-letters">THAM</span>
-      <span className="thamili-i-wrap">
-        <span className="thamili-i-glyph">I</span>
-        <svg className="thamili-i-sparkle" viewBox="0 0 20 20" fill="none">
-          <defs>
-            <linearGradient id="thamiliISparkleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#00e5ff" />
-              <stop offset="100%" stopColor="#c084fc" />
-            </linearGradient>
-          </defs>
-          <path
-            d="M 10 1 Q 10 10, 1 10 Q 10 10, 10 19 Q 10 10, 19 10 Q 10 10, 10 1 Z"
-            fill="url(#thamiliISparkleGrad)"
-          />
-        </svg>
-      </span>
-      <span className="thamili-letters">LI</span>
+      <span className="thamili-letters">THAMILI</span>
     </span>
   )
 }

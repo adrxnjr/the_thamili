@@ -16,6 +16,7 @@ import {
   FolderPlus,
   Folder,
   Trash2,
+  Pencil,
   Save,
   X,
   Check,
@@ -66,8 +67,7 @@ import {
   ZoomOut,
   Minus,
   Dices,
-  Wand2,
-  Sparkles
+  Wand2
 } from 'lucide-react'
 import thamiliLogoImg from './assets/thamili-logo.png'
 import sidebarLogoImg from './assets/thamili-logo.png'
@@ -140,6 +140,7 @@ export default function App() {
   const [activeChatId, setActiveChatId] = useState(null)
   const [fullscreenImageModal, setFullscreenImageModal] = useState(null)
   const chatScrollRef = useRef(null)
+  const pendingGenerationRef = useRef(null)
 
   // Smart auto-scroll that ensures the latest message/image is comfortably in view without pushing the top offscreen
   useEffect(() => {
@@ -177,6 +178,11 @@ export default function App() {
   // Folder Modal & Toast states
   const [isFolderModalOpen, setIsFolderModalOpen] = useState(false)
   const [isGalleryOpen, setIsGalleryOpen] = useState(false)
+  const [modalActiveTab, setModalActiveTab] = useState('folders') // 'folders' | 'gallery'
+  const [editingFolderId, setEditingFolderId] = useState(null)
+  const [editingFolderName, setEditingFolderName] = useState('')
+  const [deletedDomainFolderIds, setDeletedDomainFolderIds] = useState([])
+  const [renamedDomainFolders, setRenamedDomainFolders] = useState({})
   const [viewingFolder, setViewingFolder] = useState(null)
   const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false)
   const [selectedCategoryField, setSelectedCategoryField] = useState('All')
@@ -185,6 +191,7 @@ export default function App() {
   const [folderSearchQuery, setFolderSearchQuery] = useState('')
   const [folderSortBy, setFolderSortBy] = useState('recent') // 'recent' | 'name' | 'count'
   const [targetAssignImageId, setTargetAssignImageId] = useState(null)
+  const [isExistingFolderDropdownOpen, setIsExistingFolderDropdownOpen] = useState(false)
   const [isManageFoldersMode, setIsManageFoldersMode] = useState(false)
   const [toast, setToast] = useState(null)
   const [copiedPromptId, setCopiedPromptId] = useState(null)
@@ -843,7 +850,7 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
     return 'Oil & Fine Art Paintings'
   }
   if (refName.includes('anime') || refName.includes('chibi') || p.includes('anime') || p.includes('manga') || p.includes('kawaii')) {
-    return 'Anime & Manga Studio'
+    return 'Anime & Manga'
   }
   if (p.includes('car') || p.includes('supercar') || p.includes('automobile') || p.includes('ferrari') || p.includes('porsche')) {
     return 'Automobiles & Supercars'
@@ -861,14 +868,14 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
     return 'Tamil Cultural Heritage'
   }
   if (p.includes('portrait') || p.includes('person') || p.includes('man') || p.includes('woman') || p.includes('girl') || p.includes('face') || p.includes('fashion')) {
-    return 'Portrait Studio Collection'
+    return 'Portrait Collection'
   }
 
   // Extract clean keywords from prompt
   const clean = prompt.replace(/[^\w\s]/g, '').trim()
   const words = clean.split(/\s+/).filter((w) => w.length > 2).slice(0, 3)
   if (words.length > 0) {
-    return words.map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') + ' Studio'
+    return words.map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
   }
 
   return `${model || 'Thamili'} Collection`
@@ -1104,48 +1111,66 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
   }
 
   // =========================================================================
-  // DYNAMIC DOMAIN FOLDER ENGINE & USER-CREATED MANUAL FOLDERS
+  // 9 BASIC DEFAULT DOMAIN FOLDERS & USER-CREATED MANUAL FOLDERS
   // =========================================================================
-  // 1. Distinct active domains from actual images in gallery
-  const activeDomains = Array.from(
-    new Set(galleryImages.map((img) => img.domain).filter(Boolean))
-  )
+  const COMMON_DOMAIN_FOLDERS = useMemo(() => [
+    { id: 'domain-people', name: 'People', domain: 'People', isCommonDomain: true },
+    { id: 'domain-nature', name: 'Nature', domain: 'Nature', isCommonDomain: true },
+    { id: 'domain-animals', name: 'Animals', domain: 'Animals', isCommonDomain: true },
+    { id: 'domain-places', name: 'Places', domain: 'Places', isCommonDomain: true },
+    { id: 'domain-education', name: 'Education', domain: 'Education', isCommonDomain: true },
+    { id: 'domain-art', name: 'Art', domain: 'Art', isCommonDomain: true },
+    { id: 'domain-technology', name: 'Technology', domain: 'Technology', isCommonDomain: true },
+    { id: 'domain-food', name: 'Food', domain: 'Food', isCommonDomain: true },
+    { id: 'domain-products', name: 'Products', domain: 'Products', isCommonDomain: true }
+  ], [])
 
-  // 2. Automatic domain folders (created ONLY when at least 1 image belongs to that domain)
-  const autoDomainFolders = activeDomains.map((domain) => ({
-    id: `domain-${domain}`,
-    name: domain,
-    domain: domain,
-    isAutoDomain: true,
-    count: galleryImages.filter((img) => img.domain === domain).length
-  }))
+  // 1. Exactly 9 basic default domain folders
+  const commonDomainFolders = useMemo(() => {
+    return COMMON_DOMAIN_FOLDERS
+      .filter((f) => !deletedDomainFolderIds.includes(f.id))
+      .map((f) => {
+        const customName = renamedDomainFolders[f.id] || f.name
+        return {
+          ...f,
+          name: customName,
+          count: galleryImages.filter((img) => {
+            const d = (img.domain || '').toLowerCase()
+            const fn = (img.folderName || '').toLowerCase()
+            const fid = (img.folderId || '').toLowerCase()
+            const matchKey = f.name.toLowerCase()
+            const customMatchKey = customName.toLowerCase()
+            return (
+              fid === f.id ||
+              d === matchKey ||
+              fn === matchKey ||
+              d.includes(matchKey) ||
+              fn.includes(matchKey) ||
+              d.includes(customMatchKey) ||
+              fn.includes(customMatchKey)
+            )
+          }).length
+        }
+      })
+  }, [galleryImages, COMMON_DOMAIN_FOLDERS, deletedDomainFolderIds, renamedDomainFolders])
 
-  // 3. User manual folders (can exist even with 0 images)
-  const userManualFolders = manualFolders.map((f) => ({
-    ...f,
-    count: galleryImages.filter((img) => img.folderId === f.id).length
-  }))
+  // 2. User-created manual folders
+  const userManualFolders = useMemo(() => {
+    return manualFolders.map((f) => ({
+      ...f,
+      isManual: true,
+      count: galleryImages.filter((img) => img.folderId === f.id).length
+    }))
+  }, [manualFolders, galleryImages])
 
-  // 4. Combined folders list
-  const combinedFolders = [...userManualFolders, ...autoDomainFolders]
+  // 3. Combined folders list (User created folders + 5 common domain folders)
+  const combinedFolders = useMemo(() => {
+    return [...userManualFolders, ...commonDomainFolders]
+  }, [userManualFolders, commonDomainFolders])
 
   // Active selected folder
   const activeFolder =
     combinedFolders.find((f) => f.id === selectedFolderId) || combinedFolders[0] || null
-
-  // Images in currently selected folder
-  const currentFolderImages = activeFolder
-    ? activeFolder.isAutoDomain
-      ? galleryImages.filter((img) => img.domain === activeFolder.domain)
-      : galleryImages.filter((img) => img.folderId === activeFolder.id)
-    : galleryImages
-
-  // Images in the folder currently being viewed inside the modal
-  const viewingFolderImages = viewingFolder
-    ? viewingFolder.isAutoDomain
-      ? galleryImages.filter((img) => img.domain === viewingFolder.domain)
-      : galleryImages.filter((img) => img.folderId === viewingFolder.id)
-    : currentFolderImages
 
   // Filter and sort folders in folder manager
   const filteredFolders = useMemo(() => {
@@ -1167,81 +1192,182 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
     if (e) e.preventDefault()
     if (!newFolderName.trim()) return
 
-    const newFolder = {
-      id: createId('f-user'),
-      name: newFolderName.trim(),
-      isManual: true,
-      createdAt: 'Just now'
+    const trimmedName = newFolderName.trim()
+    let targetFolder = combinedFolders.find(
+      (f) => f.name.toLowerCase() === trimmedName.toLowerCase()
+    )
+
+    if (!targetFolder) {
+      targetFolder = {
+        id: createId('f-user'),
+        name: trimmedName,
+        isManual: true,
+        createdAt: 'Just now'
+      }
+      setManualFolders((prev) => [targetFolder, ...prev])
     }
 
-    setManualFolders((prev) => [newFolder, ...prev])
-    setSelectedFolderId(newFolder.id)
-
-    if (targetAssignImageId) {
-      setGalleryImages((prev) =>
-        prev.map((img) => (img.id === targetAssignImageId ? { ...img, folderId: newFolder.id } : img))
-      )
-      setChatMessages((prev) =>
-        prev.map((msg) => (msg.id === targetAssignImageId ? { ...msg, folderId: newFolder.id, folderName: newFolder.name } : msg))
-      )
-      showToast(`Created & saved creation to "${newFolder.name}" 📁`)
-      setTargetAssignImageId(null)
-      setIsFolderModalOpen(false)
-    } else {
-      showToast(`Created folder "${newFolder.name}" 📁`)
-    }
-
-    setNewFolderName('')
+    setSelectedFolderId(targetFolder.id)
+    setIsFolderModalOpen(false)
+    setIsExistingFolderDropdownOpen(false)
+    setTargetAssignImageId(null)
     setIsCreatingFolder(false)
+
+    // If there is a pending generation, start the image generation pipeline now!
+    if (pendingGenerationRef.current) {
+      const pendingParams = pendingGenerationRef.current
+      pendingGenerationRef.current = null
+      executeRealGenerationPipeline(pendingParams, targetFolder)
+      setNewFolderName('')
+      return
+    }
+
+    showToast(`Created folder "${targetFolder.name}" 📁`)
+    setNewFolderName('')
   }
 
-  // Select or assign folder
+  // Select folder and navigate directly to chat stream with URL slug
   const handleSelectOrAssignFolder = (folder) => {
     setSelectedFolderId(folder.id)
-    if (targetAssignImageId) {
-      setGalleryImages((prev) =>
-        prev.map((img) =>
-          img.id === targetAssignImageId
-            ? { ...img, folderId: folder.isManual ? folder.id : null, domain: folder.isAutoDomain ? folder.domain : img.domain }
-            : img
-        )
-      )
-      setChatMessages((prev) =>
-        prev.map((msg) =>
-          msg.id === targetAssignImageId
-            ? { ...msg, folderId: folder.isManual ? folder.id : null, folderName: folder.name }
-            : msg
-        )
-      )
-      showToast(`Saved creation to folder "${folder.name}" 📁`)
-      setTargetAssignImageId(null)
-      setIsFolderModalOpen(false)
-    } else {
-      setViewingFolder(folder)
-      showToast(`Opened "${folder.name}"`)
+    setIsFolderModalOpen(false)
+    setIsGalleryOpen(false)
+    setIsCreatingFolder(false)
+    setViewingFolder(null)
+    setActiveTab('AI Image')
+    setImagesSubTab('studio')
+
+    // Update browser URL (e.g. /people, /nature, /technology)
+    const slug = (folder.name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-')
+    if (slug) {
+      window.history.pushState({ folderId: folder.id }, '', `/${slug}`)
     }
+
+    // Restore or open chat for this folder
+    const matchingImg = galleryImages.find(
+      (img) =>
+        img.folderId === folder.id ||
+        (img.domain || '').toLowerCase() === (folder.name || '').toLowerCase()
+    )
+
+    if (matchingImg) {
+      const userMsg = {
+        id: `msg-folder-${folder.id}-user`,
+        role: 'user',
+        text: matchingImg.originalIdea || matchingImg.prompt,
+        createdAt: 'Just now'
+      }
+      const assistantMsg = {
+        id: `gen-folder-${folder.id}`,
+        role: 'assistant',
+        originalIdea: matchingImg.originalIdea || matchingImg.prompt,
+        prompt: matchingImg.prompt,
+        domain: matchingImg.domain || folder.name,
+        ratio: matchingImg.ratio || '1:1',
+        url: matchingImg.url,
+        isGenerating: false,
+        saved: true,
+        liked: false,
+        disliked: false,
+        folderId: folder.id,
+        folderName: folder.name,
+        createdAt: 'Just now'
+      }
+      setChatMessages([userMsg, assistantMsg])
+      setCurrentGeneration(assistantMsg)
+    }
+
+    // If there is a pending generation, start the image generation pipeline now!
+    if (pendingGenerationRef.current) {
+      const pendingParams = pendingGenerationRef.current
+      pendingGenerationRef.current = null
+      executeRealGenerationPipeline(pendingParams, folder)
+      setNewFolderName('')
+      return
+    }
+
+    showToast(`Opened "${folder.name}" in chat 💬`)
+    setTimeout(() => {
+      if (chatScrollRef.current) {
+        chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight
+      }
+      searchInputRef.current?.focus()
+    }, 80)
   }
 
-  // Delete manual folder
+  // URL slug routing listener for direct /people, /nature, /places navigation
+  useEffect(() => {
+    const handleUrlRoute = () => {
+      const path = window.location.pathname.replace(/^\/+|\/+$/g, '').toLowerCase()
+      if (!path) return
+      const matched = combinedFolders.find((f) => {
+        const slug = (f.name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-')
+        return slug === path || (f.id || '').toLowerCase() === path
+      })
+      if (matched) {
+        setSelectedFolderId(matched.id)
+        setActiveTab('AI Image')
+        setImagesSubTab('studio')
+      }
+    }
+
+    handleUrlRoute()
+    window.addEventListener('popstate', handleUrlRoute)
+    return () => window.removeEventListener('popstate', handleUrlRoute)
+  }, [combinedFolders])
+
+  // Rename Folder handlers
+  const handleStartRenameFolder = (folder, e) => {
+    if (e) e.stopPropagation()
+    setEditingFolderId(folder.id)
+    setEditingFolderName(folder.name)
+  }
+
+  const handleSaveRenameFolder = (folderId, e) => {
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+    const trimmed = editingFolderName.trim()
+    if (!trimmed) return
+
+    setManualFolders((prev) =>
+      prev.map((f) => (f.id === folderId ? { ...f, name: trimmed } : f))
+    )
+    setRenamedDomainFolders((prev) => ({ ...prev, [folderId]: trimmed }))
+    setGalleryImages((prev) =>
+      prev.map((img) => (img.folderId === folderId ? { ...img, folderName: trimmed } : img))
+    )
+    setChatMessages((prev) =>
+      prev.map((msg) => (msg.folderId === folderId ? { ...msg, folderName: trimmed } : msg))
+    )
+    setEditingFolderId(null)
+    setEditingFolderName('')
+    showToast(`Renamed folder to "${trimmed}" 📁`)
+  }
+
+  const handleCancelRenameFolder = (e) => {
+    if (e) e.stopPropagation()
+    setEditingFolderId(null)
+    setEditingFolderName('')
+  }
+
+  // Delete folder
   const handleDeleteFolder = (folderId, e) => {
-    e.stopPropagation()
+    if (e) e.stopPropagation()
     setManualFolders((prev) => prev.filter((f) => f.id !== folderId))
+    setDeletedDomainFolderIds((prev) => [...prev, folderId])
     if (selectedFolderId === folderId) {
       setSelectedFolderId(combinedFolders[0]?.id || null)
-    }
-    if (viewingFolder?.id === folderId) {
-      setViewingFolder(null)
     }
     showToast('Folder deleted.')
   }
 
-  // Select and open folder view
+  // Select and open folder view in chat
   const handleSelectFolder = (folderId) => {
     setSelectedFolderId(folderId)
     const f = combinedFolders.find((item) => item.id === folderId)
     if (f) {
-      setViewingFolder(f)
-      showToast(`Opened "${f.name}"`)
+      handleSelectOrAssignFolder(f)
     }
   }
 
@@ -1265,7 +1391,7 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
     setTimeout(() => searchInputRef.current?.focus(), 50)
   }
 
-  // Main AI Idea-to-Image Generation Trigger with Real Asynchronous Backend API Pipeline
+  // Main AI Idea-to-Image Generation Trigger: Opens the folder popup first
   const handleGenerateFromIdea = async (customPromptText = null) => {
     if (isGenerating) return
 
@@ -1317,10 +1443,6 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
       }
     }
 
-    const generationId = createId('gen')
-    activeGenerationIdRef.current = generationId
-    clearGenerationTimers()
-
     let rawPromptText = effectiveText
     if (!rawPromptText) {
       if (attachedReferences[0]?.conceptPrompt) {
@@ -1344,6 +1466,57 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
       conceptPrompt: r.conceptPrompt || ''
     }))
 
+    // If user already created or chose a folder, immediately start generating and store in that folder without popup
+    const chosenFolder = selectedFolderId ? combinedFolders.find((f) => f.id === selectedFolderId) : null
+    if (chosenFolder) {
+      executeRealGenerationPipeline({
+        rawPromptText,
+        effectiveText,
+        currentAttachedRefs,
+        backendReferences,
+        effectiveChatId,
+        aspectRatio,
+        selectedModel
+      }, chosenFolder)
+      return
+    }
+
+    // Save pending parameters until user clicks OK in folder popup
+    pendingGenerationRef.current = {
+      rawPromptText,
+      effectiveText,
+      currentAttachedRefs,
+      backendReferences,
+      effectiveChatId,
+      aspectRatio,
+      selectedModel
+    }
+
+    // Auto-suggest folder name and open folder popup so user can confirm/edit or pick existing folder
+    const suggestedFolder = generateSuggestedFolderName(rawPromptText, selectedModel, currentAttachedRefs)
+    setNewFolderName(suggestedFolder)
+    setTargetAssignImageId('pending-gen')
+    setIsCreatingFolder(true)
+    setIsFolderModalOpen(true)
+    setIsExistingFolderDropdownOpen(false)
+  }
+
+  // Real Asynchronous Generation Execution (triggered ONLY after user clicks OK or when folder is chosen)
+  const executeRealGenerationPipeline = async (params, assignedFolder) => {
+    const {
+      rawPromptText,
+      effectiveText,
+      currentAttachedRefs,
+      backendReferences,
+      effectiveChatId,
+      aspectRatio: genRatio,
+      selectedModel: genModel
+    } = params
+
+    const generationId = createId('gen')
+    activeGenerationIdRef.current = generationId
+    clearGenerationTimers()
+
     const userMsgId = createId('msg-user')
     const userMessage = {
       id: userMsgId,
@@ -1358,14 +1531,16 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
       role: 'assistant',
       originalIdea: rawPromptText,
       prompt: rawPromptText,
-      domain: `${selectedModel} Generation`,
-      ratio: aspectRatio,
+      domain: assignedFolder?.name || `${genModel} Generation`,
+      ratio: genRatio,
       url: '',
       isGenerating: true,
       generationStep: 0,
       saved: false,
       liked: false,
       disliked: false,
+      folderId: assignedFolder ? assignedFolder.id : null,
+      folderName: assignedFolder ? assignedFolder.name : '',
       createdAt: 'Just now'
     }
 
@@ -1382,20 +1557,15 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
       id: generationId,
       originalIdea: rawPromptText,
       enhancedPrompt: rawPromptText,
-      domain: `${selectedModel} Generation`,
-      ratio: aspectRatio,
+      domain: assignedFolder?.name || `${genModel} Generation`,
+      ratio: genRatio,
       url: '',
       isRendering: true,
       isRevealing: false,
-      saved: false
+      saved: false,
+      folderId: assignedFolder ? assignedFolder.id : null,
+      folderName: assignedFolder ? assignedFolder.name : ''
     })
-
-    // Auto-assign folder name and open folder popup so user can confirm/edit or pick existing folder
-    const suggestedFolder = generateSuggestedFolderName(rawPromptText, selectedModel, currentAttachedRefs)
-    setNewFolderName(suggestedFolder)
-    setTargetAssignImageId(generationId)
-    setIsCreatingFolder(true)
-    setIsFolderModalOpen(true)
 
     // Rotating Status Steps during generation
     const stepIntervals = [800, 1600, 2500, 3400]
@@ -1422,8 +1592,8 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
         },
         body: JSON.stringify({
           prompt: rawPromptText,
-          aspectRatio: aspectRatio,
-          selectedModel: selectedModel,
+          aspectRatio: genRatio,
+          selectedModel: genModel,
           referenceImages: backendReferences
         })
       })
@@ -1447,11 +1617,12 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
 
       const newImg = {
         id: generationId,
-        folderId: activeFolder && activeFolder.isManual ? activeFolder.id : null,
+        folderId: assignedFolder ? assignedFolder.id : null,
+        folderName: assignedFolder ? assignedFolder.name : '',
         originalIdea: rawPromptText,
         prompt: generatedData.enhancedPrompt || rawPromptText,
-        domain: `${selectedModel} Engine`,
-        ratio: generatedData.aspectRatio || aspectRatio,
+        domain: assignedFolder?.name || `${genModel} Engine`,
+        ratio: generatedData.aspectRatio || genRatio,
         dimensions: generatedData.dimensions,
         url: generatedData.imageUrl,
         saved: false,
@@ -1484,7 +1655,7 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
 
       setGalleryImages((prev) => [newImg, ...prev])
       setIsGenerating(false)
-      showToast(`Generated with ${selectedModel} Engine (${newImg.ratio})!`)
+      showToast(`Generated & saved to "${assignedFolder?.name || 'Gallery'}"! 📁`)
 
       const revealTimer = setTimeout(() => {
         if (activeGenerationIdRef.current === generationId) {
@@ -3901,8 +4072,125 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
         )}
       </div>
 
+      {/* ================= COMPACT SQUARE POPUP WHILE SAVING IMAGE ================= */}
+      {targetAssignImageId && isFolderModalOpen && (
+        <div
+          className="modal-overlay compact-save-backdrop"
+          onClick={() => {
+            setIsFolderModalOpen(false)
+            setTargetAssignImageId(null)
+            setIsCreatingFolder(false)
+            setNewFolderName('')
+            setIsExistingFolderDropdownOpen(false)
+          }}
+        >
+          <div
+            className="compact-square-save-card"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <form onSubmit={handleCreateFolder} className="compact-square-save-form">
+              <div className="compact-square-header">
+                <div className="compact-square-title">
+                  <span>Save to Folder</span>
+                </div>
+                <button
+                  type="button"
+                  className="compact-square-close"
+                  onClick={() => {
+                    setIsFolderModalOpen(false)
+                    setTargetAssignImageId(null)
+                    setIsCreatingFolder(false)
+                    setNewFolderName('')
+                    setIsExistingFolderDropdownOpen(false)
+                  }}
+                  title="Close"
+                >
+                  <X size={15} />
+                </button>
+              </div>
+
+              {/* Input row with Folder Symbol Button right next to it */}
+              <div className="compact-input-group">
+                <div className="compact-input-box">
+                  <input
+                    className="compact-square-input"
+                    placeholder="Enter folder name..."
+                    value={newFolderName}
+                    autoFocus
+                    onChange={(e) => setNewFolderName(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className={`btn-folder-symbol-trigger ${isExistingFolderDropdownOpen ? 'active' : ''}`}
+                    onClick={() => setIsExistingFolderDropdownOpen((prev) => !prev)}
+                    title="Choose from existing folders"
+                  >
+                    <Folder size={16} />
+                  </button>
+                </div>
+
+                {/* Dropdown list of existing folders when folder button is clicked */}
+                {isExistingFolderDropdownOpen && (
+                  <div className="compact-existing-folders-menu custom-scroll">
+                    <div className="compact-menu-header">Select an existing folder:</div>
+                    {combinedFolders.length === 0 ? (
+                      <div className="compact-menu-empty">No existing folders yet</div>
+                    ) : (
+                      combinedFolders.map((folder) => {
+                        const isSelected =
+                          newFolderName.trim().toLowerCase() === folder.name.toLowerCase()
+                        return (
+                          <div
+                            key={folder.id}
+                            className={`compact-folder-option ${isSelected ? 'selected' : ''}`}
+                            onClick={() => {
+                              setNewFolderName(folder.name)
+                              setIsExistingFolderDropdownOpen(false)
+                            }}
+                          >
+                            <Folder size={14} className="folder-option-icon" />
+                            <span className="folder-option-name">{folder.name}</span>
+                            <span className="folder-option-count">
+                              {folder.count || 0}
+                            </span>
+                          </div>
+                        )
+                      })
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="compact-square-actions">
+                <button
+                  type="button"
+                  className="btn-cancel-glass compact-square-btn"
+                  onClick={() => {
+                    setIsFolderModalOpen(false)
+                    setTargetAssignImageId(null)
+                    setIsCreatingFolder(false)
+                    setNewFolderName('')
+                    setIsExistingFolderDropdownOpen(false)
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn-add-folder compact-square-btn"
+                  disabled={!newFolderName.trim()}
+                >
+                  <span>OK</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* ================= FOLDER MANAGEMENT & GALLERY MODAL ================= */}
-      {(isFolderModalOpen || isGalleryOpen) && (
+      {!targetAssignImageId && (isFolderModalOpen || isGalleryOpen) && (
         <div
           className="modal-overlay folder-modal-glass-backdrop"
           onClick={() => {
@@ -3910,61 +4198,89 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
             setIsGalleryOpen(false)
             setIsCreatingFolder(false)
             setViewingFolder(null)
+            setEditingFolderId(null)
           }}
         >
           <div
             className="modal-content folder-popup-modal"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* VIEW 1: ONLY FOLDERS LIST (Default View Matching Screenshot) */}
-            {!viewingFolder ? (
-              <>
-                <div className="modal-header">
-                  <div className="modal-title-group">
-                    <div className="modal-title-icon-box">
-                      <Folder size={18} />
-                    </div>
-                    <div>
-                      <h3 className="modal-title">Saved Gallery & Folders</h3>
-                      <p className="modal-subtitle">Organize your saved creations</p>
-                    </div>
-                  </div>
-                  <div className="modal-header-actions">
-                    <button
-                      type="button"
-                      className="btn-create-folder-pill"
-                      onClick={() => {
-                        setIsCreatingFolder((prev) => !prev)
-                        if (!isCreatingFolder && !newFolderName) {
-                          setNewFolderName('My New Collection')
-                        }
-                      }}
-                    >
-                      <Plus size={15} />
-                      <span>Create New Folder</span>
-                    </button>
-                    <button
-                      className="modal-close-btn"
-                      onClick={() => {
-                        setIsFolderModalOpen(false)
-                        setIsGalleryOpen(false)
-                        setIsCreatingFolder(false)
-                        setViewingFolder(null)
-                        setTargetAssignImageId(null)
-                      }}
-                      title="Close"
-                    >
-                      <X size={17} />
-                    </button>
-                  </div>
+            <div className="modal-header">
+              <div className="modal-title-group">
+                <div className="modal-title-icon-box">
+                  {modalActiveTab === 'gallery' ? <ImageIcon size={18} /> : <Folder size={18} />}
                 </div>
+                <div>
+                  <h3 className="modal-title">Saved Gallery & Folders</h3>
+                </div>
+              </div>
+              <div className="modal-header-actions">
+                {modalActiveTab === 'folders' && (
+                  <button
+                    type="button"
+                    className="btn-create-folder-pill"
+                    onClick={() => {
+                      setIsCreatingFolder((prev) => !prev)
+                      if (!isCreatingFolder && !newFolderName) {
+                        setNewFolderName('My New Collection')
+                      }
+                    }}
+                  >
+                    <Plus size={15} />
+                    <span>Create New Folder</span>
+                  </button>
+                )}
+                <button
+                  className="modal-close-btn"
+                  onClick={() => {
+                    setIsFolderModalOpen(false)
+                    setIsGalleryOpen(false)
+                    setIsCreatingFolder(false)
+                    setViewingFolder(null)
+                    setTargetAssignImageId(null)
+                    setEditingFolderId(null)
+                  }}
+                  title="Close"
+                >
+                  <X size={17} />
+                </button>
+              </div>
+            </div>
 
-                {/* Inline Folder Creator / Auto-assigned Prompt Box */}
+            {/* TOP TABS: 📁 FOLDERS | 🖼️ GALLERY */}
+            <div className="modal-top-tabs">
+              <button
+                type="button"
+                className={`modal-tab-btn ${modalActiveTab === 'folders' ? 'active' : ''}`}
+                onClick={() => {
+                  setModalActiveTab('folders')
+                  setViewingFolder(null)
+                }}
+              >
+                <Folder size={15} />
+                <span>Folders ({combinedFolders.length})</span>
+              </button>
+              <button
+                type="button"
+                className={`modal-tab-btn ${modalActiveTab === 'gallery' ? 'active' : ''}`}
+                onClick={() => {
+                  setModalActiveTab('gallery')
+                  setViewingFolder(null)
+                }}
+              >
+                <ImageIcon size={15} />
+                <span>Gallery ({galleryImages.length})</span>
+              </button>
+            </div>
+
+            {/* TAB 1: FOLDERS VIEW */}
+            {modalActiveTab === 'folders' && (
+              <>
+                {/* Inline Folder Creator */}
                 {isCreatingFolder && (
                   <form onSubmit={handleCreateFolder} className="folder-create-glass-card">
                     <div className="folder-create-header">
-                      <Sparkles size={14} className="folder-sparkle-icon" />
-                      <span>{targetAssignImageId ? 'Auto-Assigned Folder Name for this Creation' : 'Create New Folder'}</span>
+                      <span>Create New Folder</span>
                     </div>
                     <div className="folder-create-input-row">
                       <input
@@ -3991,7 +4307,7 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
                           disabled={!newFolderName.trim()}
                         >
                           <Check size={14} />
-                          <span>{targetAssignImageId ? 'OK / Save Folder' : 'Create Folder'}</span>
+                          <span>Create Folder</span>
                         </button>
                       </div>
                     </div>
@@ -4051,6 +4367,8 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
                   ) : (
                     filteredFolders.map((folder) => {
                       const theme = getFolderTheme(folder.name)
+                      const isEditingThis = editingFolderId === folder.id
+
                       return (
                         <div
                           key={folder.id}
@@ -4065,7 +4383,11 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
                             '--folder-badge-bg': theme.badgeBg,
                             '--folder-badge-text': theme.badgeText
                           }}
-                          onClick={() => handleSelectOrAssignFolder(folder)}
+                          onClick={() => {
+                            if (!isEditingThis) {
+                              handleSelectOrAssignFolder(folder)
+                            }
+                          }}
                         >
                           <div className="folder-item-left">
                             <div
@@ -4078,41 +4400,82 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
                             >
                               <Folder size={18} />
                             </div>
-                            <div className="folder-item-info">
-                              <div className="folder-item-title-row">
-                                <span className="folder-item-name">{folder.name}</span>
-                                <span
-                                  className="folder-badge-pill"
-                                  style={{
-                                    background: theme.badgeBg,
-                                    color: theme.badgeText
-                                  }}
-                                >
-                                  {folder.isAutoDomain ? 'DOMAIN' : 'CUSTOM'}
-                                </span>
+
+                            {isEditingThis ? (
+                              <form
+                                className="folder-rename-form"
+                                onSubmit={(e) => handleSaveRenameFolder(folder.id, e)}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <input
+                                  className="folder-rename-input"
+                                  value={editingFolderName}
+                                  autoFocus
+                                  onChange={(e) => setEditingFolderName(e.target.value)}
+                                  placeholder="Folder name..."
+                                />
+                                <div className="folder-rename-actions">
+                                  <button type="submit" className="btn-save-rename" title="Save">
+                                    <Check size={14} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="btn-cancel-rename"
+                                    onClick={(e) => handleCancelRenameFolder(e)}
+                                    title="Cancel"
+                                  >
+                                    <X size={14} />
+                                  </button>
+                                </div>
+                              </form>
+                            ) : (
+                              <div className="folder-item-info">
+                                <div className="folder-item-title-row">
+                                  <span className="folder-item-name">{folder.name}</span>
+                                  <span
+                                    className="folder-badge-pill"
+                                    style={{
+                                      background: theme.badgeBg,
+                                      color: theme.badgeText
+                                    }}
+                                  >
+                                    {folder.isCommonDomain ? 'DOMAIN' : 'CUSTOM'}
+                                  </span>
+                                </div>
+                                <div className="folder-item-meta">
+                                  <span>{folder.count || 0} {folder.count === 1 ? 'photo' : 'photos'}</span>
+                                  <span>•</span>
+                                  <span>Updated recently</span>
+                                </div>
                               </div>
-                              <div className="folder-item-meta">
-                                <span>{folder.count || 0} {folder.count === 1 ? 'photo' : 'photos'}</span>
-                                <span>•</span>
-                                <span>Updated recently</span>
-                              </div>
-                            </div>
+                            )}
                           </div>
 
                           <div className="folder-item-right" onClick={(e) => e.stopPropagation()}>
-                            {isManageFoldersMode && folder.isManual && (
-                              <button
-                                className="btn-delete-folder-icon"
-                                title="Delete folder"
-                                onClick={(e) => handleDeleteFolder(folder.id, e)}
-                              >
-                                <Trash2 size={15} />
-                              </button>
+                            {isManageFoldersMode && (
+                              <div className="folder-manage-actions-group">
+                                <button
+                                  type="button"
+                                  className="btn-rename-folder-icon"
+                                  title="Rename folder"
+                                  onClick={(e) => handleStartRenameFolder(folder, e)}
+                                >
+                                  <Pencil size={15} style={{ color: '#000000' }} />
+                                </button>
+                                <button
+                                  type="button"
+                                  className="btn-delete-folder-icon"
+                                  title="Delete folder"
+                                  onClick={(e) => handleDeleteFolder(folder.id, e)}
+                                >
+                                  <Trash2 size={15} style={{ color: '#ef4444' }} />
+                                </button>
+                              </div>
                             )}
                             <div
                               className="folder-enter-chevron"
                               style={{ color: theme.iconColor }}
-                              title="Select / Open folder"
+                              title="Open folder in chat"
                               onClick={() => handleSelectOrAssignFolder(folder)}
                             >
                               <ChevronRight size={17} />
@@ -4128,7 +4491,10 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
                   <button
                     type="button"
                     className={`btn-manage-folders-toggle ${isManageFoldersMode ? 'active' : ''}`}
-                    onClick={() => setIsManageFoldersMode((prev) => !prev)}
+                    onClick={() => {
+                      setIsManageFoldersMode((prev) => !prev)
+                      setEditingFolderId(null)
+                    }}
                   >
                     <SlidersHorizontal size={14} />
                     <span>{isManageFoldersMode ? 'Done managing' : 'Manage folders'}</span>
@@ -4143,175 +4509,105 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
                       setIsCreatingFolder(false)
                       setViewingFolder(null)
                       setTargetAssignImageId(null)
+                      setEditingFolderId(null)
                     }}
                   >
                     Close
                   </button>
                 </div>
               </>
-            ) : (
-              /* VIEW 2: INSIDE FOLDER PHOTOS VIEW */
-              <>
-                {(() => {
-                  const currentTheme = getFolderTheme(viewingFolder.name)
-                  return (
-                    <>
-                      <div className="modal-header folder-inside-header">
-                        <button
-                          type="button"
-                          className="btn-back-folders-nav"
-                          onClick={() => setViewingFolder(null)}
-                          title="Back to all folders"
-                        >
-                          <ArrowLeft size={16} />
-                          <span>Folders</span>
-                        </button>
+            )}
 
-                        <div className="modal-title-group folder-view-title-group">
-                          <div
-                            className="folder-view-icon-badge"
-                            style={{
-                              background: currentTheme.badgeBg,
-                              color: currentTheme.iconColor,
-                              border: `1px solid ${currentTheme.border}`
-                            }}
-                          >
-                            <Folder size={17} />
-                          </div>
-                          <div className="folder-view-title-wrap">
-                            <h3 className="modal-title" title={viewingFolder.name}>
-                              {viewingFolder.name}
-                            </h3>
-                            <span
-                              className="folder-view-count-badge"
-                              style={{
-                                background: currentTheme.badgeBg,
-                                color: currentTheme.badgeText
-                              }}
-                            >
-                              {viewingFolderImages.length} {viewingFolderImages.length === 1 ? 'photo' : 'photos'}
-                            </span>
+            {/* TAB 2: GALLERY VIEW (All images ever created) */}
+            {modalActiveTab === 'gallery' && (
+              <>
+                <div className="modal-gallery-container custom-scroll">
+                  <div className="modal-divider-text">
+                    <span>ALL CREATIONS ({galleryImages.length})</span>
+                    <span className="folder-target-hint">All images ever created</span>
+                  </div>
+
+                  {galleryImages.length === 0 ? (
+                    <div className="empty-folders-note">
+                      <ImageIcon size={32} className="empty-folder-icon" />
+                      <p>No creations yet. Start creating in chat!</p>
+                    </div>
+                  ) : (
+                    <div className="modal-gallery-grid">
+                      {galleryImages.map((img) => (
+                        <div
+                          key={img.id}
+                          className="modal-gallery-item"
+                          onClick={() => {
+                            setFullscreenImageModal({
+                              url: img.url,
+                              prompt: img.prompt,
+                              id: img.id
+                            })
+                          }}
+                          title={img.prompt || 'Generated Artwork'}
+                        >
+                          <img
+                            src={img.url}
+                            alt={img.prompt || 'Creation'}
+                            className="modal-gallery-img"
+                            loading="lazy"
+                          />
+                          <div className="modal-gallery-overlay">
+                            <p className="modal-gallery-prompt" title={img.prompt}>
+                              {img.prompt}
+                            </p>
+                            <div className="modal-gallery-actions" onClick={(e) => e.stopPropagation()}>
+                              <button
+                                type="button"
+                                className="modal-gallery-btn"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(img.prompt || '')
+                                  showToast('Prompt copied! 📋')
+                                }}
+                                title="Copy prompt"
+                              >
+                                <Copy size={13} />
+                              </button>
+                              <button
+                                type="button"
+                                className="modal-gallery-btn use-studio-btn"
+                                onClick={() => {
+                                  setIdeaText(img.originalIdea || img.prompt || '')
+                                  setIsFolderModalOpen(false)
+                                  setIsGalleryOpen(false)
+                                  setActiveTab('AI Image')
+                                  setImagesSubTab('studio')
+                                  showToast('Loaded prompt into studio 🎨')
+                                }}
+                                title="Open & use in Studio"
+                              >
+                                <span>Use</span>
+                              </button>
+                            </div>
                           </div>
                         </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
-                        <button
-                          className="modal-close-btn"
-                          onClick={() => {
-                            setIsFolderModalOpen(false)
-                            setIsGalleryOpen(false)
-                            setIsCreatingFolder(false)
-                            setViewingFolder(null)
-                          }}
-                        >
-                          <X size={17} />
-                        </button>
-                      </div>
-
-                      <div className="modal-folder-photos-container custom-scroll">
-                        {viewingFolderImages.length === 0 ? (
-                          <div className="empty-folder-photos-state">
-                            <div
-                              className="empty-folder-icon-wrap"
-                              style={{
-                                background: currentTheme.badgeBg,
-                                color: currentTheme.iconColor
-                              }}
-                            >
-                              <Folder size={32} />
-                            </div>
-                            <p className="empty-folder-title">No photos in "{viewingFolder.name}" yet</p>
-                            <p className="empty-folder-desc">
-                              Generate new images with matching prompts or save them to this folder!
-                            </p>
-                          </div>
-                        ) : (
-                          <div className="modal-gallery-inside-grid">
-                            {viewingFolderImages.map((img) => (
-                              <div key={img.id} className="modal-photo-item-card">
-                                <div className="modal-photo-img-wrap">
-                                  <img
-                                    src={img.url}
-                                    alt={img.prompt}
-                                    className="modal-photo-img"
-                                    loading="lazy"
-                                  />
-                                  <div className="modal-photo-overlay">
-                                    <div className="modal-photo-top-actions">
-                                      <button
-                                        type="button"
-                                        className="modal-photo-action-btn"
-                                        onClick={() => handleCopyPrompt(img.prompt, img.id)}
-                                        title="Copy prompt"
-                                      >
-                                        {copiedPromptId === img.id ? (
-                                          <Check size={13} color="#10b981" />
-                                        ) : (
-                                          <Copy size={13} />
-                                        )}
-                                      </button>
-                                      <button
-                                        type="button"
-                                        className={`modal-photo-action-btn ${img.saved ? 'saved' : ''}`}
-                                        onClick={() => handleToggleSave(img.id)}
-                                        title="Toggle save"
-                                      >
-                                        {img.saved ? <Check size={13} /> : <Save size={13} />}
-                                      </button>
-                                    </div>
-
-                                    <div className="modal-photo-bottom-info">
-                                      <p className="modal-photo-prompt-line" title={img.prompt}>
-                                        {img.prompt}
-                                      </p>
-                                      <button
-                                        type="button"
-                                        className="modal-photo-use-btn"
-                                        onClick={() => {
-                                          setIdeaText(img.originalIdea || img.prompt)
-                                          setIsFolderModalOpen(false)
-                                          setIsGalleryOpen(false)
-                                          setViewingFolder(null)
-                                          showToast('Prompt loaded into Studio! ')
-                                        }}
-                                        title="Use this prompt in Studio"
-                                      >
-                                        
-                                        <span>Use Prompt</span>
-                                      </button>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="modal-footer folder-inside-footer">
-                        <button
-                          type="button"
-                          className="btn-back-folders-footer"
-                          onClick={() => setViewingFolder(null)}
-                        >
-                          <ArrowLeft size={14} />
-                          <span>All Folders</span>
-                        </button>
-                        <button
-                          type="button"
-                          className="btn-secondary"
-                          onClick={() => {
-                            setIsFolderModalOpen(false)
-                            setIsGalleryOpen(false)
-                            setIsCreatingFolder(false)
-                            setViewingFolder(null)
-                          }}
-                        >
-                          Close
-                        </button>
-                      </div>
-                    </>
-                  )
-                })()}
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn-secondary btn-close-pill"
+                    onClick={() => {
+                      setIsFolderModalOpen(false)
+                      setIsGalleryOpen(false)
+                      setIsCreatingFolder(false)
+                      setViewingFolder(null)
+                      setTargetAssignImageId(null)
+                      setEditingFolderId(null)
+                    }}
+                  >
+                    Close
+                  </button>
+                </div>
               </>
             )}
           </div>
