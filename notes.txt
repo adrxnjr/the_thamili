@@ -1,0 +1,62 @@
+================================================================================
+THAMILI AI - PROJECT SUMMARY
+================================================================================
+
+1. ABOUT THE PROJECT
+--------------------------------------------------------------------------------
+Thamili AI is a creative AI image generation web app focused on Tamil heritage, 
+culture, and modern art styles. Users can generate, edit, crop, and download 
+high-quality AI images across multiple models and aspect ratios.
+
+
+2. FRONTEND
+--------------------------------------------------------------------------------
+- Tech: React 19, JavaScript (JSX), HTML5, Vanilla CSS, Vite
+- Main Features:
+  * Interactive prompt composer and aspect ratio selector
+  * Animated dot-matrix wave canvas background
+  * In-browser image editor with AI background removal
+  * Chat history, search modal, and guest/user sign-in
+  * Dark and Light theme support
+
+
+3. BACKEND
+--------------------------------------------------------------------------------
+- Tech: Node.js (Express) & Python (FastAPI)
+- Main Features:
+  * API gateway routing (`/api/generate`, `/api/history`, `/api/chat`)
+  * Sharp image processing (resizing, watermark cleanup, base64 encoding)
+  * Chat history persistence in JSON format
+  * Async Python FastAPI AI generation service
+
+
+4. API KEYS & EXTERNAL SERVICES (File Locations)
+--------------------------------------------------------------------------------
+- Hugging Face API (HF_TOKEN / HUGGINGFACE_API_KEY):
+  * Configured in: `.env` / `.env.example`
+  * Implemented in: `server/services/imageService.js` & `server/services/huggingfaceChatService.js`
+- Pollinations.ai API (Free fallback image generator):
+  * Implemented in: `server/services/imageService.js`
+- Wikimedia Commons API (Public visual & reference search):
+  * Implemented in: `server/services/imageService.js`
+- Client API Bridge:
+  * Implemented in: `src/services/api.js`
+
+
+5. TEAM CONTRIBUTIONS & WORK DIVISION
+--------------------------------------------------------------------------------
+• Teammate 01 - SETHU (Backend & AI Integration):
+  - Built the Node.js Express server and FastAPI Python backend routes.
+  - Integrated Hugging Face, Pollinations APIs, and Sharp image processing.
+  - Managed chat history data persistence and API gateway connection.
+
+• Teammate 02 - ADRIN (Frontend & UI/UX):
+  - Built the React UI components, studio layout, and responsive styles.
+  - Implemented the prompt composer, dot-matrix canvas, and Image Editor.
+  - Created theme switching (dark/light) and client-side history navigation.
+
+
+6. RUNNING COMMAND
+--------------------------------------------------------------------------------
+Run `npm run dev` for frontend UI (or `npm start` to run full client & backend servers together).
+================================================================================
