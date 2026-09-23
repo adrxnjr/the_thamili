@@ -5,7 +5,6 @@ import {
   Image as ImageIcon,
   Video,
   GraduationCap,
-  LayoutGrid,
   ChevronDown,
   ChevronRight,
   SunMedium,
@@ -2911,7 +2910,6 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
                           <div className="see-all-content-overlay">
                             <div className="see-all-bottom-bar">
                               <div className="see-all-pill-btn">
-                                <LayoutGrid size={13} className="see-all-grid-icon" />
                                 <span>More</span>
                               </div>
                               <span className="see-all-sub-caption">11 Styles ➔</span>
@@ -4611,17 +4609,9 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
             {/* Clean, Balanced Header */}
             <div className="ref-modal-header">
               <div className="ref-modal-header-left">
-                <div className="ref-modal-badge-icon">
-                  
-                </div>
-                <div>
-                  <div className="ref-modal-title-row">
-                    <h2 className="ref-modal-title">Reference Image Concepts</h2>
-                    <span className="ref-modal-count-pill">{filteredCategories.length} styles</span>
-                  </div>
-                  <p className="ref-modal-subtitle">
-                    Select any visual reference concept to apply to your generation
-                  </p>
+                <div className="ref-modal-title-row">
+                  <h2 className="ref-modal-title">Reference images</h2>
+                  <span className="ref-modal-count-pill">{filteredCategories.length} styles</span>
                 </div>
               </div>
 
