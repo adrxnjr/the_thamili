@@ -122,18 +122,19 @@ export default function App() {
   const [activeChatId, setActiveChatId] = useState(null)
   const [fullscreenImageModal, setFullscreenImageModal] = useState(null)
   const chatScrollRef = useRef(null)
+  const chatBottomRef = useRef(null)
   const pendingGenerationRef = useRef(null)
 
-  // Smart auto-scroll that ensures the latest message/image is comfortably in view without pushing the top offscreen
+  // Center generating view when new generation/message starts and keep it firmly in position
   useEffect(() => {
     if (chatScrollRef.current) {
       const scrollEl = chatScrollRef.current
       const t = setTimeout(() => {
-        const lastRow = scrollEl.querySelector('.chat-assistant-message-row:last-child, .chat-user-message-row:last-child')
-        if (lastRow) {
-          lastRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+        const targetCard = scrollEl.querySelector('.chat-assistant-message-row:has(.is-generating), .chat-generating-view, .chat-assistant-message-row:last-child')
+        if (targetCard) {
+          targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' })
         }
-      }, 60)
+      }, 50)
       return () => clearTimeout(t)
     }
   }, [chatMessages.length, isGenerating])
@@ -1856,7 +1857,6 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
                     <Plus size={15} className="sub-btn-icon sub-icon-plus" />
                     <span>New Chat</span>
                   </div>
-                  <span className="sub-btn-pill-tag">New</span>
                 </button>
 
                 {/* 2. Gallery & Folders Sub-Button (Moved from hero search bar below to here) */}
@@ -2081,9 +2081,6 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
                       <h1 className="create-images-title">
                         Create images with <span className="title-brand-accent">Thamili AI</span>
                       </h1>
-                      <p className="create-images-subtitle">
-                        Try a template or describe an idea in chat.
-                      </p>
                     </div>
 
                     <div className="workspace-stage-wrapper">
@@ -2750,6 +2747,8 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
                           </div>
                         )
                       })}
+                      {/* Anchor element to automatically scroll all the way to bottom */}
+                      <div ref={chatBottomRef} className="chat-thread-bottom-anchor" style={{ height: '1px', width: '100%', flexShrink: 0, pointerEvents: 'none' }} />
                     </div>
 
                     {/* Sticky Bottom Prompt Composer */}
@@ -3237,11 +3236,8 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
           >
             <div className="modal-header">
               <div className="modal-title-group">
-                <div className="modal-title-icon-box">
-                  {modalActiveTab === 'gallery' ? <ImageIcon size={18} /> : <Folder size={18} />}
-                </div>
                 <div>
-                  <h3 className="modal-title">Saved Gallery & Folders</h3>
+                  <h3 className="modal-title">Saved Folders and Gallery</h3>
                 </div>
               </div>
               <div className="modal-header-actions">
@@ -3521,14 +3517,13 @@ function generateSuggestedFolderName(prompt = '', model = '', references = []) {
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className={`btn-manage-folders-toggle ${isManageFoldersMode ? 'active' : ''}`}
+                    className={`btn-secondary btn-close-pill btn-manage-folders-toggle ${isManageFoldersMode ? 'active' : ''}`}
                     onClick={() => {
                       setIsManageFoldersMode((prev) => !prev)
                       setEditingFolderId(null)
                     }}
                   >
-                    <SlidersHorizontal size={14} />
-                    <span>{isManageFoldersMode ? 'Done managing' : 'Manage folders'}</span>
+                    <span>{isManageFoldersMode ? 'Done customizing' : 'Customize folders'}</span>
                   </button>
 
                   <button
